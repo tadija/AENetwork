@@ -2,16 +2,16 @@ import XCTest
 @testable import Network
 
 class NetworkTests: XCTestCase {
+    
     func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        XCTAssertEqual(Network().text, "Hello, World!")
+        /// - TODO: Write real tests
+        XCTAssert(true)
     }
-
 
     static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
         return [
             ("testExample", testExample),
         ]
     }
+    
 }

@@ -26,24 +26,19 @@ import Foundation
 
 extension Network {
     
-    internal func parseDictionary(from data: Data) throws -> [AnyHashable : Any] {
-        do {
-            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            if let dictionary = json as? [AnyHashable : Any] {
-                return dictionary
-            } else {
-                throw NetworkError.parsingFailed
-            }
-        } catch {
-            throw error
-        }
+    internal func parseDictionary(with data: Data) throws -> [AnyHashable : Any] {
+        return try parse(data: data)
     }
     
-    internal func parseArray(from data: Data) throws -> [Any] {
+    internal func parseArray(with data: Data) throws -> [Any] {
+        return try parse(data: data)
+    }
+    
+    private func parse<T>(data: Data) throws -> T {
         do {
             let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            if let array = json as? [Any] {
-                return array
+            if let json = json as? T {
+                return json
             } else {
                 throw NetworkError.parsingFailed
             }

@@ -33,7 +33,6 @@ public extension Network {
     // MARK: - API
     
     public func fetchData(with request: URLRequest, completion: @escaping ThrowDataWithInnerBlock) {
-        
         if let cachedResponse = getCachedResponse(for: request) {
             completion {
                 return cachedResponse.data
@@ -41,16 +40,15 @@ public extension Network {
         } else {
             sendRequest(request, completion: completion)
         }
-        
     }
     
     public func fetchDictionary(with request: URLRequest, completion: @escaping ThrowDictionaryWithInnerBlock) {
-        fetchData(with: request) { (data) -> Void in
+        fetchData(with: request) { (dataBlock) -> Void in
             do {
-                let data = try data()
-                let dict = try self.parseDictionary(from: data)
+                let data = try dataBlock()
+                let dictionary = try self.parseDictionary(with: data)
                 completion {
-                    return dict
+                    return dictionary
                 }
             } catch {
                 completion {
@@ -61,10 +59,10 @@ public extension Network {
     }
     
     public func fetchArray(with request: URLRequest, completion: @escaping ThrowArrayWithInnerBlock) {
-        fetchData(with: request) { (response) -> Void in
+        fetchData(with: request) { (dataBlock) -> Void in
             do {
-                let data = try response()
-                let array = try self.parseArray(from: data)
+                let data = try dataBlock()
+                let array = try self.parseArray(with: data)
                 completion {
                     return array
                 }

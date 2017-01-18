@@ -24,15 +24,15 @@
 
 import Foundation
 
-public typealias ThrowDataWithInnerBlock = (() throws -> Data) -> Void
-public typealias ThrowDictionaryWithInnerBlock = (() throws -> [AnyHashable : Any]) -> Void
-public typealias ThrowArrayWithInnerBlock = (() throws -> [Any]) -> Void
+public typealias ThrowDataInClosure = (() throws -> Data) -> Void
+public typealias ThrowDictionaryInClosure = (() throws -> [AnyHashable : Any]) -> Void
+public typealias ThrowArrayInClosure = (() throws -> [Any]) -> Void
 
 public extension Network {
     
     // MARK: - API
     
-    public func fetchData(with request: URLRequest, completion: @escaping ThrowDataWithInnerBlock) {
+    public func fetchData(with request: URLRequest, completion: @escaping ThrowDataInClosure) {
         if let cachedResponse = getCachedResponse(for: request) {
             completion {
                 return cachedResponse.data
@@ -42,10 +42,10 @@ public extension Network {
         }
     }
     
-    public func fetchDictionary(with request: URLRequest, completion: @escaping ThrowDictionaryWithInnerBlock) {
-        fetchData(with: request) { (dataBlock) -> Void in
+    public func fetchDictionary(with request: URLRequest, completion: @escaping ThrowDictionaryInClosure) {
+        fetchData(with: request) { (closure) -> Void in
             do {
-                let data = try dataBlock()
+                let data = try closure()
                 let dictionary = try self.parseDictionary(with: data)
                 completion {
                     return dictionary
@@ -58,10 +58,10 @@ public extension Network {
         }
     }
     
-    public func fetchArray(with request: URLRequest, completion: @escaping ThrowArrayWithInnerBlock) {
-        fetchData(with: request) { (dataBlock) -> Void in
+    public func fetchArray(with request: URLRequest, completion: @escaping ThrowArrayInClosure) {
+        fetchData(with: request) { (closure) -> Void in
             do {
-                let data = try dataBlock()
+                let data = try closure()
                 let array = try self.parseArray(with: data)
                 completion {
                     return array

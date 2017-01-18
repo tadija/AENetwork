@@ -42,13 +42,17 @@ public class Network {
     
     public static let shared = Network()
     
+    // MARK: - Init
+    
+    public init() {}
+    
     // MARK: - Properties
     
     public weak var cacheDelegate: NetworkCacheDelegate?
     
     // MARK: - Request / Response
     
-    internal func sendRequest(_ request: URLRequest, completion: @escaping ThrowDataWithInnerBlock) {
+    internal func sendRequest(_ request: URLRequest, completion: @escaping ThrowDataInClosure) {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let
@@ -66,7 +70,7 @@ public class Network {
     private func handleResponse(_ response: HTTPURLResponse,
                                 with data: Data,
                                 from request: URLRequest,
-                                completion: ThrowDataWithInnerBlock) {
+                                completion: ThrowDataInClosure) {
         
         switch response.statusCode {
         case 200:
@@ -86,7 +90,7 @@ public class Network {
     
     private func handleResponseError(_ error: Error?,
                                      from request: URLRequest,
-                                     completion: @escaping ThrowDataWithInnerBlock) {
+                                     completion: @escaping ThrowDataInClosure) {
         
         if let responseError = error as NSError? {
             if responseError.domain == NSURLErrorDomain && responseError.code == NSURLErrorNetworkConnectionLost {

@@ -73,7 +73,7 @@ public class Network {
                                 completion: ThrowDataInClosure) {
         
         switch response.statusCode {
-        case 200:
+        case 200 ..< 300:
             if let delegate = self.cacheDelegate, delegate.shouldCacheResponse(from: request) {
                 self.cacheResponse(response, with: data, from: request)
             }

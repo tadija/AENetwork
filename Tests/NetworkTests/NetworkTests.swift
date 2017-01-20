@@ -10,12 +10,13 @@ class NetworkTests: XCTestCase {
         else { return }
         
         let request = URLRequest(url: url)
-        Network.shared.fetchDictionary(with: request) { (data) in
+        Network.shared.fetchDictionary(with: request) { (closure) in
             do {
-                let data = try data()
-                debugPrint(data)
+                let dictionary = try closure()
+                debugPrint(dictionary)
                 XCTAssert(true)
             } catch {
+                debugPrint(error)
                 XCTAssert(false)
             }
             fetchDictionary.fulfill()

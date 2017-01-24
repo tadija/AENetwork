@@ -28,7 +28,7 @@ public typealias ThrowDataInClosure = (() throws -> Data) -> Void
 public typealias ThrowDictionaryInClosure = (() throws -> [AnyHashable : Any]) -> Void
 public typealias ThrowArrayInClosure = (() throws -> [Any]) -> Void
 
-public extension Network {
+extension Network {
     
     // MARK: - API
     

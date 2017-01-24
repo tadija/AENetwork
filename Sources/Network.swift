@@ -52,7 +52,7 @@ public class Network {
     
     // MARK: - Request / Response
     
-    internal func sendRequest(_ request: URLRequest, completion: @escaping ThrowDataInClosure) {
+    func sendRequest(_ request: URLRequest, completion: @escaping ThrowDataInClosure) {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let

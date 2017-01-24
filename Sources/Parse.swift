@@ -26,11 +26,11 @@ import Foundation
 
 extension Network {
     
-    internal func parseDictionary(with data: Data) throws -> [AnyHashable : Any] {
+    func parseDictionary(with data: Data) throws -> [AnyHashable : Any] {
         return try parse(data: data)
     }
     
-    internal func parseArray(with data: Data) throws -> [Any] {
+    func parseArray(with data: Data) throws -> [Any] {
         return try parse(data: data)
     }
     

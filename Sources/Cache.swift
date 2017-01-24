@@ -26,12 +26,12 @@ import Foundation
 
 extension Network {
     
-    internal func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
+    func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
         let cache = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
         URLCache.shared.storeCachedResponse(cache, for: request)
     }
     
-    internal func getCachedResponse(for request: URLRequest) -> CachedURLResponse? {
+    func getCachedResponse(for request: URLRequest) -> CachedURLResponse? {
         guard
             let cache = URLCache.shared.cachedResponse(for: request),
             let delegate = cacheDelegate

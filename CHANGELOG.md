@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.1.4
+
+- Added URL extension with convenience methods for using query parameters
+
 ## Version 0.1.3
 
 - Minor improvements and refactoring

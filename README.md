@@ -2,6 +2,8 @@
 
 **Swift package for networking**
 
+> I made this for personal use, feel free to use it or contribute if you like.
+
 ## Include
 
 - [Swift Package Manager](https://swift.org/package-manager/):

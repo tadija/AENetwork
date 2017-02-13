@@ -24,7 +24,7 @@ extension URL {
             let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems,
             let value = queryItems.filter({ $0.name == key }).first?.value
-            else { return nil }
+        else { return nil }
         return value
     }
     

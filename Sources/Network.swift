@@ -30,11 +30,8 @@ public class Network {
     
     func sendRequest(_ request: URLRequest, completion: @escaping ThrowDataInClosure) {
         URLSession.shared.dataTask(with: request) { data, response, error in
-            if let
-                httpResponse = response as? HTTPURLResponse,
-                let responseData = data
-            {
-                self.handleResponse(httpResponse, with: responseData, from: request, completion: completion)
+            if let response = response as? HTTPURLResponse, let data = data, error == nil {
+                self.handleResponse(response, with: data, from: request, completion: completion)
             } else {
                 self.handleResponseError(error, from: request, completion: completion)
             }
@@ -63,13 +60,13 @@ public class Network {
     private func handleResponseError(_ error: Error?,
                                      from request: URLRequest,
                                      completion: @escaping ThrowDataInClosure) {
-        if let responseError = error as NSError? {
-            if responseError.domain == NSURLErrorDomain && responseError.code == NSURLErrorNetworkConnectionLost {
+        if let error = error as NSError? {
+            if error.domain == NSURLErrorDomain && error.code == NSURLErrorNetworkConnectionLost {
                 // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
                 fetchData(with: request, completion: completion)
             } else {
                 completion {
-                    throw responseError
+                    throw error
                 }
             }
         } else {

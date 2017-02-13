@@ -74,8 +74,8 @@ public class Network {
         
         switch response.statusCode {
         case 200 ..< 300:
-            if let delegate = self.cacheDelegate, delegate.shouldCacheResponse(from: request) {
-                self.cacheResponse(response, with: data, from: request)
+            if let delegate = cacheDelegate, delegate.shouldCacheResponse(from: request) {
+                cacheResponse(response, with: data, from: request)
             }
             completion {
                 return data
@@ -95,7 +95,7 @@ public class Network {
         if let responseError = error as NSError? {
             if responseError.domain == NSURLErrorDomain && responseError.code == NSURLErrorNetworkConnectionLost {
                 // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
-                self.fetchData(with: request, completion: completion)
+                fetchData(with: request, completion: completion)
             } else {
                 completion {
                     throw responseError

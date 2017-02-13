@@ -25,7 +25,7 @@
 import Foundation
 
 public typealias ThrowDataInClosure = (() throws -> Data) -> Void
-public typealias ThrowDictionaryInClosure = (() throws -> [AnyHashable : Any]) -> Void
+public typealias ThrowDictionaryInClosure = (() throws -> [String : Any]) -> Void
 public typealias ThrowArrayInClosure = (() throws -> [Any]) -> Void
 
 extension Network {
@@ -46,7 +46,7 @@ extension Network {
         fetchData(with: request) { (closure) -> Void in
             do {
                 let data = try closure()
-                let dictionary = try self.parseDictionary(with: data)
+                let dictionary = try self.parseJSONDictionary(with: data)
                 completion {
                     return dictionary
                 }
@@ -62,7 +62,7 @@ extension Network {
         fetchData(with: request) { (closure) -> Void in
             do {
                 let data = try closure()
-                let array = try self.parseArray(with: data)
+                let array = try self.parseJSONArray(with: data)
                 completion {
                     return array
                 }

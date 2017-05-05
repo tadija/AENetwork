@@ -16,6 +16,7 @@ public class Network {
     }
     
     public enum NetworkError: Error {
+        case badRequest
         case badResponse
         case parsingFailed
     }

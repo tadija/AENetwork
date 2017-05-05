@@ -1,14 +1,10 @@
 import Foundation
 
-public typealias ThrowDataInClosure = (() throws -> Data) -> Void
-public typealias ThrowDictionaryInClosure = (() throws -> [String : Any]) -> Void
-public typealias ThrowArrayInClosure = (() throws -> [Any]) -> Void
-
 extension Network {
     
     // MARK: - API
     
-    public func fetchData(with request: URLRequest, completion: @escaping ThrowDataInClosure) {
+    public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowData) {
         if let cachedResponse = getCachedResponse(for: request) {
             completion {
                 return cachedResponse.data
@@ -18,7 +14,7 @@ extension Network {
         }
     }
     
-    public func fetchDictionary(with request: URLRequest, completion: @escaping ThrowDictionaryInClosure) {
+    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowDictionary) {
         fetchData(with: request) { (closure) -> Void in
             do {
                 let data = try closure()
@@ -34,7 +30,7 @@ extension Network {
         }
     }
     
-    public func fetchArray(with request: URLRequest, completion: @escaping ThrowArrayInClosure) {
+    public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowArray) {
         fetchData(with: request) { (closure) -> Void in
             do {
                 let data = try closure()

@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.1.8
+
+- Moved all code into single source file
+- Minor refactoring
+
+## Version 0.1.7
+
+- Added badRequest case in NetworkError
+
 ## Version 0.1.6
 
 - Minor refactoring

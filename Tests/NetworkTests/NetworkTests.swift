@@ -24,10 +24,31 @@ class NetworkTests: XCTestCase {
         
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testParameters() {
+        guard let url = URL(string: "https://httpbin.org")
+        else { return }
+        
+        let parameters = [
+            "foo" : "bar",
+            "bar" : "foo"
+        ]
+        let urlWithParameters = url.addingParameters(parameters)
+        
+        let bar = urlWithParameters?.parameterValue(forKey: "foo")
+        let foo = urlWithParameters?.parameterValue(forKey: "bar")
+        
+        if bar == "bar" && foo == "foo" {
+            XCTAssert(true)
+        } else {
+            XCTAssert(false)
+        }
+    }
 
     static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
         return [
             ("testFetchDictionary", testFetchDictionary),
+            ("testParameters", testParameters)
         ]
     }
     

@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.2.0
+
+- Migrated to Swift 4 with Xcode 9.1
+
+## Version 0.1.9
+
+- Added support for Carthage
+
 ## Version 0.1.8
 
 - Moved all code into single source file

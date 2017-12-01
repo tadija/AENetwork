@@ -1,8 +1,14 @@
+/**
+ *  https://github.com/tadija/AENetwork
+ *  Copyright (c) Marko Tadić 2017
+ *  Licensed under the MIT license. See LICENSE file.
+ */
+
 import XCTest
 @testable import AENetwork
 
 class AENetworkTests: XCTestCase {
-    
+
     func testFetchDictionary() {
         let fetchDictionary = expectation(description: "Fetch Dictionary")
         

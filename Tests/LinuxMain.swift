@@ -1,6 +1,6 @@
 import XCTest
-@testable import NetworkTests
+@testable import AENetworkTests
 
 XCTMain([
-     testCase(NetworkTests.allTests),
+     testCase(AENetworkTests.allTests),
 ])

@@ -1,4 +1,4 @@
-# Network
+# AENetwork
 
 **Swift package for networking**
 
@@ -7,12 +7,12 @@
 ## Usage
 
 ```swift
-import Network
+import AENetwork
 
 let url = URL(string: "https://httpbin.org/get")!
 let request = URLRequest(url: url)
     
-Network.shared.fetchDictionary(with: request) { (closure) in
+AENetwork.shared.fetchDictionary(with: request) { (closure) in
     do {
         let dictionary = try closure()
         print(dictionary)

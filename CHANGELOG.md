@@ -15,7 +15,7 @@
 
 ## Version 0.1.7
 
-- Added badRequest case in NetworkError
+- Added badRequest case in AENetworkError
 
 ## Version 0.1.6
 

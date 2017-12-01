@@ -1,7 +1,7 @@
 import XCTest
-@testable import Network
+@testable import AENetwork
 
-class NetworkTests: XCTestCase {
+class AENetworkTests: XCTestCase {
     
     func testFetchDictionary() {
         let fetchDictionary = expectation(description: "Fetch Dictionary")
@@ -10,7 +10,7 @@ class NetworkTests: XCTestCase {
         else { return }
         
         let request = URLRequest(url: url)
-        Network.shared.fetchDictionary(with: request) { (closure) in
+        AENetwork.shared.fetchDictionary(with: request) { (closure) in
             do {
                 let dictionary = try closure()
                 debugPrint(dictionary)
@@ -45,7 +45,7 @@ class NetworkTests: XCTestCase {
         }
     }
 
-    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
+    static var allTests : [(String, (AENetworkTests) -> () throws -> Void)] {
         return [
             ("testFetchDictionary", testFetchDictionary),
             ("testParameters", testParameters)

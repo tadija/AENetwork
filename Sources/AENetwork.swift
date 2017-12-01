@@ -1,11 +1,11 @@
 import Foundation
 
-public protocol NetworkCacheDelegate: class {
+public protocol AENetworkCacheDelegate: class {
     func shouldCacheResponse(from request: URLRequest) -> Bool
     func isValidCache(_ cache: CachedURLResponse) -> Bool
 }
 
-open class Network {
+open class AENetwork {
     
     // MARK: Types
     
@@ -15,7 +15,7 @@ open class Network {
         public typealias ThrowArray = (() throws -> [Any]) -> Void
     }
     
-    public enum NetworkError: Error {
+    public enum AENetworkError: Error {
         case badRequest
         case badResponse
         case parsingFailed
@@ -23,7 +23,7 @@ open class Network {
     
     // MARK: Singleton
     
-    public static let shared = Network()
+    public static let shared = AENetwork()
     
     // MARK: Init
     
@@ -31,7 +31,7 @@ open class Network {
     
     // MARK: Properties
     
-    public weak var cacheDelegate: NetworkCacheDelegate?
+    public weak var cacheDelegate: AENetworkCacheDelegate?
     
     // MARK: API
     
@@ -81,7 +81,7 @@ open class Network {
 
 // MARK: - Request / Response
 
-extension Network {
+extension AENetwork {
     
     fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowData) {
         URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
@@ -107,7 +107,7 @@ extension Network {
             }
         default:
             completion {
-                throw NetworkError.badResponse
+                throw AENetworkError.badResponse
             }
         }
     }
@@ -126,7 +126,7 @@ extension Network {
             }
         } else {
             completion {
-                throw NetworkError.badResponse
+                throw AENetworkError.badResponse
             }
         }
     }
@@ -135,7 +135,7 @@ extension Network {
 
 // MARK: - Parse
 
-extension Network {
+extension AENetwork {
     
     fileprivate func parseJSONDictionary(with data: Data) throws -> [String : Any] {
         return try parseJSON(data: data)
@@ -151,7 +151,7 @@ extension Network {
             if let json = json as? T {
                 return json
             } else {
-                throw NetworkError.parsingFailed
+                throw AENetworkError.parsingFailed
             }
         } catch {
             throw error
@@ -162,7 +162,7 @@ extension Network {
 
 // MARK: - Cache
 
-extension Network {
+extension AENetwork {
     
     fileprivate func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
         let cache = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)

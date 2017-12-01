@@ -16,7 +16,7 @@ class AENetworkTests: XCTestCase {
         else { return }
         
         let request = URLRequest(url: url)
-        AENetwork.shared.fetchDictionary(with: request) { (closure) in
+        Network.shared.fetchDictionary(with: request) { (closure) in
             do {
                 let dictionary = try closure()
                 debugPrint(dictionary)

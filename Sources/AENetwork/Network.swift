@@ -6,12 +6,12 @@
 
 import Foundation
 
-public protocol AENetworkCacheDelegate: class {
+public protocol NetworkCacheDelegate: class {
     func shouldCacheResponse(from request: URLRequest) -> Bool
     func isValidCache(_ cache: CachedURLResponse) -> Bool
 }
 
-open class AENetwork {
+open class Network {
     
     // MARK: Types
     
@@ -29,7 +29,7 @@ open class AENetwork {
     
     // MARK: Singleton
     
-    public static let shared = AENetwork()
+    public static let shared = Network()
     
     // MARK: Init
     
@@ -37,7 +37,7 @@ open class AENetwork {
     
     // MARK: Properties
     
-    public weak var cacheDelegate: AENetworkCacheDelegate?
+    public weak var cacheDelegate: NetworkCacheDelegate?
     
     // MARK: API
     
@@ -87,7 +87,7 @@ open class AENetwork {
 
 // MARK: - Request / Response
 
-extension AENetwork {
+extension Network {
     
     fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowData) {
         URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
@@ -141,7 +141,7 @@ extension AENetwork {
 
 // MARK: - Parse
 
-extension AENetwork {
+extension Network {
     
     fileprivate func parseJSONDictionary(with data: Data) throws -> [String : Any] {
         return try parseJSON(data: data)
@@ -168,7 +168,7 @@ extension AENetwork {
 
 // MARK: - Cache
 
-extension AENetwork {
+extension Network {
     
     fileprivate func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
         let cache = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)

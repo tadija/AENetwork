@@ -6,7 +6,7 @@
 
 import Foundation
 
-public protocol AEDownloadManagerDelegate: class {
+public protocol DownloadManagerDelegate: class {
     func didStartDownloadTask(_ task: URLSessionDownloadTask)
     func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float)
     func didStopDownloadTask(_ task: URLSessionDownloadTask)
@@ -14,31 +14,31 @@ public protocol AEDownloadManagerDelegate: class {
     func didFailDownloadTask(_ task: URLSessionTask, with error: Error?)
 }
 
-public protocol Downloadable: AEDownloadManagerDelegate {
+public protocol Downloadable: DownloadManagerDelegate {
     var downloadURL: URL? { get }
 }
 
 extension Downloadable {
     public func startDownload() {
-        AEDownloadManager.shared.startDownload(with: self)
+        DownloadManager.shared.startDownload(with: self)
     }
     public func stopDownload() {
-        AEDownloadManager.shared.stopDownload(for: self)
+        DownloadManager.shared.stopDownload(for: self)
     }
 }
 
-open class AEDownloadManager: NSObject {
+open class DownloadManager: NSObject {
 
     // MARK: Singleton
 
-    public static let shared = AEDownloadManager()
+    public static let shared = DownloadManager()
 
     // MARK: Properties
 
-    public weak var delegate: AEDownloadManagerDelegate?
+    public weak var delegate: DownloadManagerDelegate?
 
     private lazy var session: URLSession = {
-        let identifier = "net.tadija.AEDownloadManager"
+        let identifier = "net.tadija.AENetwork.DownloadManager"
         let config = URLSessionConfiguration.background(withIdentifier: identifier)
         let session = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
         return session
@@ -123,7 +123,7 @@ open class AEDownloadManager: NSObject {
 
 }
 
-extension AEDownloadManager: URLSessionDelegate, URLSessionDownloadDelegate {
+extension DownloadManager: URLSessionDelegate, URLSessionDownloadDelegate {
 
     // MARK: URLSessionDownloadDelegate
 

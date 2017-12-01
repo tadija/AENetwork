@@ -6,11 +6,6 @@
 
 import Foundation
 
-public protocol NetworkCacheDelegate: class {
-    func shouldCacheResponse(from request: URLRequest) -> Bool
-    func isValidCache(_ cache: CachedURLResponse) -> Bool
-}
-
 open class Network {
     
     // MARK: Types
@@ -36,13 +31,14 @@ open class Network {
     public init() {}
     
     // MARK: Properties
-    
-    public weak var cacheDelegate: NetworkCacheDelegate?
+
+    public var download = Download()
+    public var cache = Cache()
     
     // MARK: API
     
     public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowData) {
-        if let cachedResponse = cachedResponse(for: request) {
+        if let cachedResponse = cache.loadResponse(for: request) {
             completion {
                 return cachedResponse.data
             }
@@ -105,8 +101,8 @@ extension Network {
                                 completion: Completion.ThrowData) {
         switch response.statusCode {
         case 200 ..< 300:
-            if let delegate = cacheDelegate, delegate.shouldCacheResponse(from: request) {
-                cacheResponse(response, with: data, from: request)
+            if let delegate = cache.delegate, delegate.shouldCacheResponse(from: request) {
+                cache.saveResponse(response, with: data, from: request)
             }
             completion {
                 return data
@@ -161,33 +157,6 @@ extension Network {
             }
         } catch {
             throw error
-        }
-    }
-    
-}
-
-// MARK: - Cache
-
-extension Network {
-    
-    fileprivate func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
-        let cache = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
-        URLCache.shared.storeCachedResponse(cache, for: request)
-    }
-    
-    fileprivate func cachedResponse(for request: URLRequest) -> CachedURLResponse? {
-        guard
-            let cache = URLCache.shared.cachedResponse(for: request),
-            let delegate = cacheDelegate
-        else {
-            return nil
-        }
-
-        if delegate.isValidCache(cache) {
-            return cache
-        } else {
-            URLCache.shared.removeCachedResponse(for: request)
-            return nil
         }
     }
     

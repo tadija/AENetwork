@@ -6,21 +6,21 @@
 
 import Foundation
 
-class Parser {
+open class Parser {
 
     // MARK: Type
 
-    enum ParserError: Error {
+    public enum ParserError: Error {
         case parsingFailed
     }
 
     // MARK: API
 
-    func jsonDictionary(from data: Data) throws -> [String : Any] {
+    open func jsonDictionary(from data: Data) throws -> [String : Any] {
         return try parseJSON(data: data)
     }
 
-    func jsonArray(from data: Data) throws -> [Any] {
+    open func jsonArray(from data: Data) throws -> [Any] {
         return try parseJSON(data: data)
     }
 

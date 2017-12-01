@@ -24,17 +24,20 @@ open class Network {
     // MARK: Singleton
     
     public static let shared = Network()
-    
-    // MARK: Init
-    
-    public init() {}
-    
+
     // MARK: Properties
 
-    public var download = Download()
-    public var cache = Cache()
+    public let session: URLSession
 
-    private var parser = Parser()
+    public var parser = Parser()
+    public var cache = Cache()
+    public var download = Download()
+
+    // MARK: Init
+    
+    public init(with session: URLSession = .shared) {
+        self.session = session
+    }
     
     // MARK: API
     
@@ -87,7 +90,7 @@ open class Network {
 extension Network {
     
     fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowData) {
-        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+        session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)
             } else {

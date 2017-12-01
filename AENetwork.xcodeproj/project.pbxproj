@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8B6CA48C1FD2018400162360 /* Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48B1FD2018400162360 /* Download.swift */; };
 		8B6CA48E1FD210B000162360 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48D1FD210B000162360 /* Cache.swift */; };
+		8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */; };
 		8BE0C4FF1EF47B0E00E6F95F /* AENetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BE0C4FE1EF47B0E00E6F95F /* AENetwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		OBJ_28 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Network.swift */; };
 		OBJ_37 /* AENetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* AENetworkTests.swift */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		8B6CA48B1FD2018400162360 /* Download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Download.swift; path = AENetwork/Download.swift; sourceTree = "<group>"; };
 		8B6CA48D1FD210B000162360 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cache.swift; path = AENetwork/Cache.swift; sourceTree = "<group>"; };
+		8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "URL+Parameters.swift"; path = "AENetwork/URL+Parameters.swift"; sourceTree = "<group>"; };
 		8BE0C4F71EF473B100E6F95F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		8BE0C4F81EF473B100E6F95F /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		8BE0C4F91EF473B100E6F95F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				OBJ_11 /* Network.swift */,
 				8B6CA48B1FD2018400162360 /* Download.swift */,
 				8B6CA48D1FD210B000162360 /* Cache.swift */,
+				8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */,
 				OBJ_8 /* Supporting Files */,
 			);
 			path = Sources;
@@ -229,6 +232,7 @@
 			buildActionMask = 0;
 			files = (
 				OBJ_28 /* Network.swift in Sources */,
+				8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */,
 				8B6CA48E1FD210B000162360 /* Cache.swift in Sources */,
 				8B6CA48C1FD2018400162360 /* Download.swift in Sources */,
 			);

@@ -19,7 +19,6 @@ open class Network {
     public enum Error: Swift.Error {
         case badRequest
         case badResponse
-        case parsingFailed
     }
     
     // MARK: Singleton
@@ -34,6 +33,8 @@ open class Network {
 
     public var download = Download()
     public var cache = Cache()
+
+    private var parser = Parser()
     
     // MARK: API
     
@@ -51,7 +52,7 @@ open class Network {
         fetchData(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
-                let dictionary = try self?.parseJSONDictionary(with: data) ?? [String : Any]()
+                let dictionary = try self?.parser.jsonDictionary(from: data) ?? [String : Any]()
                 completion {
                     return dictionary
                 }
@@ -67,7 +68,7 @@ open class Network {
         fetchData(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
-                let array = try self?.parseJSONArray(with: data) ?? [Any]()
+                let array = try self?.parser.jsonArray(from: data) ?? [Any]()
                 completion {
                     return array
                 }
@@ -130,33 +131,6 @@ extension Network {
             completion {
                 throw Error.badResponse
             }
-        }
-    }
-    
-}
-
-// MARK: - Parse
-
-extension Network {
-    
-    fileprivate func parseJSONDictionary(with data: Data) throws -> [String : Any] {
-        return try parseJSON(data: data)
-    }
-    
-    fileprivate func parseJSONArray(with data: Data) throws -> [Any] {
-        return try parseJSON(data: data)
-    }
-    
-    private func parseJSON<T>(data: Data) throws -> T {
-        do {
-            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            if let json = json as? T {
-                return json
-            } else {
-                throw Error.parsingFailed
-            }
-        } catch {
-            throw error
         }
     }
     

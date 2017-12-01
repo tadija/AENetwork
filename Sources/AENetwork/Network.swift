@@ -21,7 +21,7 @@ open class Network {
         public typealias ThrowArray = (() throws -> [Any]) -> Void
     }
     
-    public enum AENetworkError: Error {
+    public enum Error: Swift.Error {
         case badRequest
         case badResponse
         case parsingFailed
@@ -94,7 +94,7 @@ extension Network {
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)
             } else {
-                self?.handleResponseError(error, from: request, completion: completion)
+                self?.handleResponseError(error as? Network.Error, from: request, completion: completion)
             }
         }.resume()
     }
@@ -113,7 +113,7 @@ extension Network {
             }
         default:
             completion {
-                throw AENetworkError.badResponse
+                throw Error.badResponse
             }
         }
     }
@@ -132,7 +132,7 @@ extension Network {
             }
         } else {
             completion {
-                throw AENetworkError.badResponse
+                throw Error.badResponse
             }
         }
     }
@@ -157,7 +157,7 @@ extension Network {
             if let json = json as? T {
                 return json
             } else {
-                throw AENetworkError.parsingFailed
+                throw Error.parsingFailed
             }
         } catch {
             throw error

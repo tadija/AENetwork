@@ -6,36 +6,36 @@
 
 import Foundation
 
-public protocol DownloadManagerDelegate: class {
-    func didStartDownloadTask(_ task: URLSessionDownloadTask)
-    func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float)
-    func didStopDownloadTask(_ task: URLSessionDownloadTask)
-    func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL)
-    func didFailDownloadTask(_ task: URLSessionTask, with error: Error?)
+public protocol NetworkDownloadDelegate: class {
+    func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Download)
+    func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Download)
+    func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Download)
+    func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Download)
+    func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Download)
 }
 
-public protocol Downloadable: DownloadManagerDelegate {
+public protocol Downloadable: NetworkDownloadDelegate {
     var downloadURL: URL? { get }
 }
 
 extension Downloadable {
     public func startDownload() {
-        DownloadManager.shared.startDownload(with: self)
+        Download.shared.start(with: self)
     }
     public func stopDownload() {
-        DownloadManager.shared.stopDownload(for: self)
+        Download.shared.stop(for: self)
     }
 }
 
-open class DownloadManager: NSObject {
+open class Download: NSObject {
 
     // MARK: Singleton
 
-    public static let shared = DownloadManager()
+    public static let shared = Download()
 
     // MARK: Properties
 
-    public weak var delegate: DownloadManagerDelegate?
+    public weak var delegate: NetworkDownloadDelegate?
 
     private lazy var session: URLSession = {
         let identifier = "net.tadija.AENetwork.DownloadManager"
@@ -50,23 +50,23 @@ open class DownloadManager: NSObject {
 
     // MARK: API / URL
 
-    public func startDownload(with url: URL) {
+    public func start(with url: URL) {
         let task = session.downloadTask(with: url)
         tasks.append(task)
         task.resume()
 
-        delegate?.didStartDownloadTask(task)
+        delegate?.didStartDownloadTask(task, sender: self)
         if let item = item(with: url) {
-            item.didStartDownloadTask(task)
+            item.didStartDownloadTask(task, sender: self)
         }
     }
 
-    public func stopDownload(with url: URL) {
+    public func stop(for url: URL) {
         if let task = task(with: url) {
             task.cancel()
-            delegate?.didStopDownloadTask(task)
+            delegate?.didStopDownloadTask(task, sender: self)
             if let item = item(with: task) {
-                item.didStopDownloadTask(task)
+                item.didStopDownloadTask(task, sender: self)
             }
             performCleanup(for: task)
         }
@@ -74,16 +74,16 @@ open class DownloadManager: NSObject {
 
     // MARK: API / Downloadable
 
-    public func startDownload(with item: Downloadable) {
+    public func start(with item: Downloadable) {
         if let url = item.downloadURL {
             items.append(item)
-            startDownload(with: url)
+            start(with: url)
         }
     }
 
-    public func stopDownload(for item: Downloadable) {
+    public func stop(for item: Downloadable) {
         if let url = item.downloadURL {
-            stopDownload(with: url)
+            stop(for: url)
         }
     }
 
@@ -123,7 +123,7 @@ open class DownloadManager: NSObject {
 
 }
 
-extension DownloadManager: URLSessionDelegate, URLSessionDownloadDelegate {
+extension Download: URLSessionDelegate, URLSessionDownloadDelegate {
 
     // MARK: URLSessionDownloadDelegate
 
@@ -133,18 +133,18 @@ extension DownloadManager: URLSessionDelegate, URLSessionDownloadDelegate {
                            totalBytesExpectedToWrite: Int64) {
         if totalBytesExpectedToWrite > 0 {
             let progress = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite)
-            delegate?.didUpdateDownloadTask(downloadTask, progress: progress)
+            delegate?.didUpdateDownloadTask(downloadTask, progress: progress, sender: self)
             if let item = item(with: downloadTask) {
-                item.didUpdateDownloadTask(downloadTask, progress: progress)
+                item.didUpdateDownloadTask(downloadTask, progress: progress, sender: self)
             }
         }
     }
 
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
                            didFinishDownloadingTo location: URL) {
-        delegate?.didFinishDownloadTask(downloadTask, to: location)
+        delegate?.didFinishDownloadTask(downloadTask, to: location, sender: self)
         if let item = item(with: downloadTask) {
-            item.didFinishDownloadTask(downloadTask, to: location)
+            item.didFinishDownloadTask(downloadTask, to: location, sender: self)
         }
         performCleanup(for: downloadTask)
     }
@@ -152,9 +152,9 @@ extension DownloadManager: URLSessionDelegate, URLSessionDownloadDelegate {
     // MARK: URLSessionTaskDelegate
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        delegate?.didFailDownloadTask(task, with: error)
+        delegate?.didFailDownloadTask(task, with: error, sender: self)
         if let item = item(with: task) {
-            item.didFailDownloadTask(task, with: error)
+            item.didFailDownloadTask(task, with: error, sender: self)
         }
         performCleanup(for: task)
     }

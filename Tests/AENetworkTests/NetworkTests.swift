@@ -7,7 +7,7 @@
 import XCTest
 @testable import AENetwork
 
-class AENetworkTests: XCTestCase {
+class NetworkTests: XCTestCase {
 
     func testFetchDictionary() {
         let fetchDictionary = expectation(description: "Fetch Dictionary")
@@ -51,7 +51,7 @@ class AENetworkTests: XCTestCase {
         }
     }
 
-    static var allTests : [(String, (AENetworkTests) -> () throws -> Void)] {
+    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
         return [
             ("testFetchDictionary", testFetchDictionary),
             ("testParameters", testParameters)

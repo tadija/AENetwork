@@ -8,5 +8,6 @@ import XCTest
 @testable import AENetworkTests
 
 XCTMain([
-     testCase(AENetworkTests.allTests),
+     testCase(NetworkTests.allTests),
+     testCase(ParserTests.allTests),
 ])

@@ -12,9 +12,10 @@
 		8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */; };
 		8B6CA4921FD216F000162360 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA4911FD216F000162360 /* Parser.swift */; };
 		8B6CA4941FD2270E00162360 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA4931FD2270E00162360 /* Router.swift */; };
+		8B6CA4971FD2DFB500162360 /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA4951FD2DFAE00162360 /* ParserTests.swift */; };
 		8BE0C4FF1EF47B0E00E6F95F /* AENetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BE0C4FE1EF47B0E00E6F95F /* AENetwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		OBJ_28 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Network.swift */; };
-		OBJ_37 /* AENetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* AENetworkTests.swift */; };
+		OBJ_37 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* NetworkTests.swift */; };
 		OBJ_40 /* AENetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* AENetwork.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +35,7 @@
 		8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Parameters.swift"; sourceTree = "<group>"; };
 		8B6CA4911FD216F000162360 /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		8B6CA4931FD2270E00162360 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		8B6CA4951FD2DFAE00162360 /* ParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ParserTests.swift; path = AENetworkTests/ParserTests.swift; sourceTree = "<group>"; };
 		8BE0C4F71EF473B100E6F95F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		8BE0C4F81EF473B100E6F95F /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		8BE0C4F91EF473B100E6F95F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -42,7 +44,7 @@
 		8BE0C5011EF47F8500E6F95F /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		8BE0C5021EF47F8F00E6F95F /* AENetworkTests_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = AENetworkTests_Info.plist; path = AENetwork.xcodeproj/AENetworkTests_Info.plist; sourceTree = SOURCE_ROOT; };
 		OBJ_11 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
-		OBJ_16 /* AENetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AENetworkTests.swift; path = AENetworkTests/AENetworkTests.swift; sourceTree = "<group>"; };
+		OBJ_16 /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTests.swift; path = AENetworkTests/NetworkTests.swift; sourceTree = "<group>"; };
 		OBJ_19 /* AENetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AENetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_20 /* AENetworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = AENetworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
@@ -89,7 +91,8 @@
 		OBJ_14 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_16 /* AENetworkTests.swift */,
+				OBJ_16 /* NetworkTests.swift */,
+				8B6CA4951FD2DFAE00162360 /* ParserTests.swift */,
 				8BE0C5031EF47F9600E6F95F /* Supporting Files */,
 			);
 			path = Tests;
@@ -250,7 +253,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_37 /* AENetworkTests.swift in Sources */,
+				8B6CA4971FD2DFB500162360 /* ParserTests.swift in Sources */,
+				OBJ_37 /* NetworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

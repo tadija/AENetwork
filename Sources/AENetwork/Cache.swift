@@ -19,22 +19,25 @@ open class Cache {
 
     // MARK: Properties
 
+    let manager: URLCache
     weak var delegate: NetworkCacheDelegate?
 
     // MARK: Init
 
-    public init() {}
+    public init(manager: URLCache = .shared) {
+        self.manager = manager
+    }
 
     // MARK: API
 
     open func saveResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
         let cache = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
-        URLCache.shared.storeCachedResponse(cache, for: request)
+        manager.storeCachedResponse(cache, for: request)
     }
 
     open func loadResponse(for request: URLRequest) -> CachedURLResponse? {
         guard
-            let cache = URLCache.shared.cachedResponse(for: request),
+            let cache = manager.cachedResponse(for: request),
             let delegate = delegate
             else {
                 return nil
@@ -43,7 +46,7 @@ open class Cache {
         if delegate.isValidCache(cache) {
             return cache
         } else {
-            URLCache.shared.removeCachedResponse(for: request)
+            manager.removeCachedResponse(for: request)
             return nil
         }
     }

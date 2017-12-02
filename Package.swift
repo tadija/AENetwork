@@ -13,12 +13,14 @@ let package = Package(
     products: [
         .library(name: "AENetwork", targets: ["AENetwork"])
     ],
-    dependencies: [],
     targets: [
         .target(
-            name: "AENetwork"),
+            name: "AENetwork",
+            path: "Sources"
+        ),
         .testTarget(
             name: "AENetworkTests",
-            dependencies: ["AENetwork"])
+            dependencies: ["AENetwork"]
+        )
     ]
 )

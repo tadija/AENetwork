@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.2.1
+
+- Renamed module (Network -> AENetwork)
+- Major refactoring
+
 ## Version 0.2.0
 
 - Migrated to Swift 4 with Xcode 9.1

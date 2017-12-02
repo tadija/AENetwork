@@ -11,8 +11,9 @@ import AENetwork
 
 let url = URL(string: "https://httpbin.org/get")!
 let request = URLRequest(url: url)
+let network = Network()
     
-AENetwork.shared.fetchDictionary(with: request) { (closure) in
+network.router.fetchDictionary(with: request) { (closure) in
     do {
         let dictionary = try closure()
         print(dictionary)
@@ -29,7 +30,7 @@ AENetwork.shared.fetchDictionary(with: request) { (closure) in
 - [Swift Package Manager](https://swift.org/package-manager/):
 
 ```swift
-.Package(url: "https://github.com/tadija/network.git", majorVersion: 0)
+.Package(url: "https://github.com/tadija/AENetwork.git", majorVersion: 0)
 ```
 
 ## License

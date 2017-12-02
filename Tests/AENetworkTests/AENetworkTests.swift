@@ -1,8 +1,14 @@
-import XCTest
-@testable import Network
+/**
+ *  https://github.com/tadija/AENetwork
+ *  Copyright (c) Marko Tadić 2017
+ *  Licensed under the MIT license. See LICENSE file.
+ */
 
-class NetworkTests: XCTestCase {
-    
+import XCTest
+@testable import AENetwork
+
+class AENetworkTests: XCTestCase {
+
     func testFetchDictionary() {
         let fetchDictionary = expectation(description: "Fetch Dictionary")
         
@@ -10,7 +16,7 @@ class NetworkTests: XCTestCase {
         else { return }
         
         let request = URLRequest(url: url)
-        Network.shared.fetchDictionary(with: request) { (closure) in
+        Network.shared.router.fetchDictionary(with: request) { (closure) in
             do {
                 let dictionary = try closure()
                 debugPrint(dictionary)
@@ -45,7 +51,7 @@ class NetworkTests: XCTestCase {
         }
     }
 
-    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
+    static var allTests : [(String, (AENetworkTests) -> () throws -> Void)] {
         return [
             ("testFetchDictionary", testFetchDictionary),
             ("testParameters", testParameters)

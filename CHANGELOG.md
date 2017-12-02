@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.2.1
+
+- Renamed module (Network -> AENetwork)
+- Major refactoring
+
 ## Version 0.2.0
 
 - Migrated to Swift 4 with Xcode 9.1
@@ -15,7 +20,7 @@
 
 ## Version 0.1.7
 
-- Added badRequest case in NetworkError
+- Added badRequest case in AENetworkError
 
 ## Version 0.1.6
 

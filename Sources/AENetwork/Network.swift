@@ -23,21 +23,34 @@ open class Network {
     
     // MARK: Singleton
     
-    public static let shared = Network()
+    public static let shared = Network(session: .shared, parser: .shared, cache: .shared, downloader: .shared)
 
     // MARK: Properties
 
     public let session: URLSession
 
-    public var parser = Parser()
-    public var cache = Cache()
-    public var download = Download()
+    public let parser: Parser
+    public let cache: Cache
+    
+    public let downloader: Downloader
 
     // MARK: Init
     
-    public init(with session: URLSession = .shared) {
+    public init(session: URLSession = .shared,
+                parser: Parser = .init(),
+                cache: Cache = .init(),
+                downloader: Downloader = .init()) {
         self.session = session
+        self.parser = parser
+        self.cache = cache
+        self.downloader = downloader
     }
+
+}
+
+// MARK: - Fetch
+
+public extension Network {
     
     // MARK: API
     

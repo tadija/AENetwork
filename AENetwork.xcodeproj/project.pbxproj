@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B6CA48C1FD2018400162360 /* Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48B1FD2018400162360 /* Download.swift */; };
+		8B6CA48C1FD2018400162360 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48B1FD2018400162360 /* Downloader.swift */; };
 		8B6CA48E1FD210B000162360 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48D1FD210B000162360 /* Cache.swift */; };
 		8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */; };
 		8B6CA4921FD216F000162360 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA4911FD216F000162360 /* Parser.swift */; };
@@ -28,7 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8B6CA48B1FD2018400162360 /* Download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Download.swift; path = AENetwork/Download.swift; sourceTree = "<group>"; };
+		8B6CA48B1FD2018400162360 /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Downloader.swift; path = AENetwork/Downloader.swift; sourceTree = "<group>"; };
 		8B6CA48D1FD210B000162360 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Cache.swift; path = AENetwork/Cache.swift; sourceTree = "<group>"; };
 		8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "URL+Parameters.swift"; path = "AENetwork/URL+Parameters.swift"; sourceTree = "<group>"; };
 		8B6CA4911FD216F000162360 /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Parser.swift; path = AENetwork/Parser.swift; sourceTree = "<group>"; };
@@ -117,9 +117,9 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_11 /* Network.swift */,
-				8B6CA48D1FD210B000162360 /* Cache.swift */,
 				8B6CA4911FD216F000162360 /* Parser.swift */,
-				8B6CA48B1FD2018400162360 /* Download.swift */,
+				8B6CA48D1FD210B000162360 /* Cache.swift */,
+				8B6CA48B1FD2018400162360 /* Downloader.swift */,
 				8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */,
 				OBJ_8 /* Supporting Files */,
 			);
@@ -238,7 +238,7 @@
 				8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */,
 				8B6CA4921FD216F000162360 /* Parser.swift in Sources */,
 				8B6CA48E1FD210B000162360 /* Cache.swift in Sources */,
-				8B6CA48C1FD2018400162360 /* Download.swift in Sources */,
+				8B6CA48C1FD2018400162360 /* Downloader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

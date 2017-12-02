@@ -14,6 +14,14 @@ open class Parser {
         case parsingFailed
     }
 
+    // MARK: Singleton
+
+    static let shared = Parser()
+
+    // MARK: Init
+
+    public init() {}
+
     // MARK: API
 
     open func jsonDictionary(from data: Data) throws -> [String : Any] {

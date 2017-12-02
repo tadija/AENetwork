@@ -6,36 +6,36 @@
 
 import Foundation
 
-public protocol NetworkDownloadDelegate: class {
-    func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Download)
-    func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Download)
-    func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Download)
-    func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Download)
-    func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Download)
+public protocol NetworkDownloaderDelegate: class {
+    func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader)
+    func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader)
+    func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader)
+    func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader)
+    func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader)
 }
 
-public protocol Downloadable: NetworkDownloadDelegate {
+public protocol Downloadable: NetworkDownloaderDelegate {
     var downloadURL: URL? { get }
 }
 
 extension Downloadable {
     public func startDownload() {
-        Download.shared.start(with: self)
+        Downloader.shared.start(with: self)
     }
     public func stopDownload() {
-        Download.shared.stop(for: self)
+        Downloader.shared.stop(for: self)
     }
 }
 
-open class Download: NSObject {
+open class Downloader: NSObject {
 
     // MARK: Singleton
 
-    public static let shared = Download()
+    public static let shared = Downloader()
 
     // MARK: Properties
 
-    public weak var delegate: NetworkDownloadDelegate?
+    public weak var delegate: NetworkDownloaderDelegate?
 
     private lazy var session: URLSession = {
         let identifier = "net.tadija.AENetwork.DownloadManager"
@@ -123,7 +123,7 @@ open class Download: NSObject {
 
 }
 
-extension Download: URLSessionDelegate, URLSessionDownloadDelegate {
+extension Downloader: URLSessionDelegate, URLSessionDownloadDelegate {
 
     // MARK: URLSessionDownloadDelegate
 

@@ -13,9 +13,17 @@ public protocol NetworkCacheDelegate: class {
 
 open class Cache {
 
+    // MARK: Singleton
+
+    static let shared = Cache()
+
     // MARK: Properties
 
     weak var delegate: NetworkCacheDelegate?
+
+    // MARK: Init
+
+    public init() {}
 
     // MARK: API
 

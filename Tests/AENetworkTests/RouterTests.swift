@@ -7,12 +7,28 @@
 import XCTest
 @testable import AENetwork
 
-class RouterTests: XCTestCase {
+class RouterTests: XCTestCase, NetworkCacheDelegate {
 
     // MARK: Properties
 
     let network = Network()
     let request = URLRequest(url: URL(string: "https://httpbin.org/get")!)
+
+    override func setUp() {
+        network.router.cache.delegate = self
+    }
+
+    // MARK: NetworkCacheDelegate
+
+    /// - TODO: enable custom cache by default?
+
+    func shouldCacheResponse(from request: URLRequest) -> Bool {
+        return true
+    }
+
+    func isValidCache(_ cache: CachedURLResponse) -> Bool {
+        return true
+    }
 
     // MARK: Tests
 
@@ -49,10 +65,50 @@ class RouterTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
+    func testFetchArray() {
+        /// - TODO: find some url which returns array
+    }
+
+    func testFetchArrayError() {
+        let fetchArray = expectation(description: "Fetch Array With Error")
+
+        network.router.fetchArray(with: request) { (closure) in
+            do {
+                let _ = try closure()
+                XCTAssert(false, "Should not be able to parse array from: \(String(describing: self.request.url))")
+            } catch {
+                XCTAssert(true, "Should throw error: \(error.localizedDescription)")
+            }
+            fetchArray.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testFetchError() {
+        let fetchDictionary = expectation(description: "Fetch Error")
+
+        let request = URLRequest(url: URL(string: "https://test.test")!)
+        network.router.fetchDictionary(with: request) { (closure) in
+            do {
+                let _ = try closure()
+                XCTAssert(false, "Should not be able to parse dictionary from: \(String(describing: request.url))")
+            } catch {
+                XCTAssert(true, "Should throw error: \(error.localizedDescription)")
+            }
+            fetchDictionary.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
     static var allTests : [(String, (RouterTests) -> () throws -> Void)] {
         return [
             ("testFetchDictionary", testFetchDictionary),
-            ("testFetchDictionaryError", testFetchDictionaryError)
+            ("testFetchDictionaryError", testFetchDictionaryError),
+            ("testFetchArray", testFetchArray),
+            ("testFetchArrayError", testFetchArrayError),
+            ("testFetchError", testFetchError),
         ]
     }
 

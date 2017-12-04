@@ -12,7 +12,6 @@ extension URL {
     ///
     /// - Parameter parameters: Parameters to be added.
     /// - Returns: URL with added parameters.
-
     public func addingParameters(_ parameters: [String : String]) -> URL? {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
             return nil
@@ -25,14 +24,13 @@ extension URL {
     ///
     /// - Parameter key: Parameter name.
     /// - Returns: Parameter value.
-
     public func parameterValue(forKey key: String) -> String? {
         guard
             let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems,
             let value = queryItems.filter({ $0.name == key }).first?.value
-            else {
-                return nil
+        else {
+            return nil
         }
         return value
     }

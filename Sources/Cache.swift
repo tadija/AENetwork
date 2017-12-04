@@ -15,12 +15,12 @@ open class Cache {
 
     // MARK: Singleton
 
-    static let shared = Cache()
+    public static let shared = Cache()
 
     // MARK: Properties
 
-    let manager: URLCache
-    weak var delegate: NetworkCacheDelegate?
+    public let manager: URLCache
+    public weak var delegate: NetworkCacheDelegate?
 
     // MARK: Init
 
@@ -39,8 +39,8 @@ open class Cache {
         guard
             let cache = manager.cachedResponse(for: request),
             let delegate = delegate
-            else {
-                return nil
+        else {
+            return nil
         }
 
         if delegate.isValidCache(cache) {

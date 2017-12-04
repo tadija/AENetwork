@@ -11,9 +11,9 @@ open class Router {
     // MARK: Types
 
     public struct Completion {
-        public typealias ThrowData = (() throws -> Data) -> Void
-        public typealias ThrowDictionary = (() throws -> [String : Any]) -> Void
-        public typealias ThrowArray = (() throws -> [Any]) -> Void
+        public typealias ThrowableData = (() throws -> Data) -> Void
+        public typealias ThrowableDictionary = (() throws -> [String : Any]) -> Void
+        public typealias ThrowableArray = (() throws -> [Any]) -> Void
     }
 
     public enum RouterError: Error {
@@ -47,7 +47,7 @@ public extension Router {
 
     // MARK: API
 
-    public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowData) {
+    public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
         if let cachedResponse = cache.loadResponse(for: request) {
             completion {
                 return cachedResponse.data
@@ -57,7 +57,7 @@ public extension Router {
         }
     }
 
-    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowDictionary) {
+    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
         fetchData(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
@@ -73,7 +73,7 @@ public extension Router {
         }
     }
 
-    public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowArray) {
+    public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
         fetchData(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
@@ -95,20 +95,20 @@ extension Router {
 
     // MARK: Request / Response
 
-    fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowData) {
+    fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableData) {
         session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)
             } else {
                 self?.handleResponseError(error as? RouterError, from: request, completion: completion)
             }
-            }.resume()
+        }.resume()
     }
 
     private func handleResponse(_ response: HTTPURLResponse,
                                 with data: Data,
                                 from request: URLRequest,
-                                completion: Completion.ThrowData) {
+                                completion: Completion.ThrowableData) {
         switch response.statusCode {
         case 200 ..< 300:
             if let delegate = cache.delegate, delegate.shouldCacheResponse(from: request) {
@@ -126,7 +126,7 @@ extension Router {
 
     private func handleResponseError(_ error: Error?,
                                      from request: URLRequest,
-                                     completion: @escaping Completion.ThrowData) {
+                                     completion: @escaping Completion.ThrowableData) {
         if let error = error as NSError? {
             if error.domain == NSURLErrorDomain && error.code == NSURLErrorNetworkConnectionLost {
                 // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314

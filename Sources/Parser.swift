@@ -16,7 +16,7 @@ open class Parser {
 
     // MARK: Singleton
 
-    static let shared = Parser()
+    public static let shared = Parser()
 
     // MARK: Init
 

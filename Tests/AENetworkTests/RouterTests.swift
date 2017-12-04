@@ -7,28 +7,12 @@
 import XCTest
 @testable import AENetwork
 
-class RouterTests: XCTestCase, NetworkCacheDelegate {
+class RouterTests: XCTestCase {
 
     // MARK: Properties
 
     let network = Network()
     let request = URLRequest(url: URL(string: "https://httpbin.org/get")!)
-
-    override func setUp() {
-        network.router.cache.delegate = self
-    }
-
-    // MARK: NetworkCacheDelegate
-
-    /// - TODO: enable custom cache by default?
-
-    func shouldCacheResponse(from request: URLRequest) -> Bool {
-        return true
-    }
-
-    func isValidCache(_ cache: CachedURLResponse) -> Bool {
-        return true
-    }
 
     // MARK: Tests
 

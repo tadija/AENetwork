@@ -111,9 +111,7 @@ extension Router {
                                 completion: Completion.ThrowableData) {
         switch response.statusCode {
         case 200 ..< 300:
-            if let delegate = cache.delegate, delegate.shouldCacheResponse(from: request) {
-                cache.saveResponse(response, with: data, from: request)
-            }
+            cache.saveResponse(response, with: data, from: request)
             completion {
                 return data
             }

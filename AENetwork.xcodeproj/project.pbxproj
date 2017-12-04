@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8B4D06F71FD5CEDC000B4ADB /* ParametersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */; };
+		8B4D06F91FD5D4E2000B4ADB /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */; };
 		8B6CA48C1FD2018400162360 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48B1FD2018400162360 /* Downloader.swift */; };
 		8B6CA48E1FD210B000162360 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48D1FD210B000162360 /* Cache.swift */; };
 		8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */; };
@@ -32,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ParametersTest.swift; path = AENetworkTests/ParametersTest.swift; sourceTree = "<group>"; };
+		8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CacheTests.swift; path = AENetworkTests/CacheTests.swift; sourceTree = "<group>"; };
 		8B6CA48B1FD2018400162360 /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		8B6CA48D1FD210B000162360 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Parameters.swift"; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 			children = (
 				OBJ_16 /* NetworkTests.swift */,
 				8B6CA4951FD2DFAE00162360 /* ParserTests.swift */,
+				8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */,
 				8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */,
 				8BE0C5031EF47F9600E6F95F /* Supporting Files */,
 			);
@@ -258,6 +261,7 @@
 			files = (
 				8B6CA4971FD2DFB500162360 /* ParserTests.swift in Sources */,
 				8B4D06F71FD5CEDC000B4ADB /* ParametersTest.swift in Sources */,
+				8B4D06F91FD5D4E2000B4ADB /* CacheTests.swift in Sources */,
 				OBJ_37 /* NetworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

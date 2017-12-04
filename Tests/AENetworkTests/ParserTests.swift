@@ -1,9 +1,8 @@
-//
-//  ParserTests.swift
-//  AENetwork
-//
-//  Created by Marko Tadić on 12/2/17.
-//
+/**
+ *  https://github.com/tadija/AENetwork
+ *  Copyright (c) Marko Tadić 2017
+ *  Licensed under the MIT license. See LICENSE file.
+ */
 
 import XCTest
 @testable import AENetwork

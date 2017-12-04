@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8B4D06F71FD5CEDC000B4ADB /* ParametersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */; };
 		8B4D06F91FD5D4E2000B4ADB /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */; };
+		8B4D06FB1FD5F459000B4ADB /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FA1FD5F459000B4ADB /* RouterTests.swift */; };
 		8B6CA48C1FD2018400162360 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48B1FD2018400162360 /* Downloader.swift */; };
 		8B6CA48E1FD210B000162360 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48D1FD210B000162360 /* Cache.swift */; };
 		8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */; };
@@ -17,7 +18,6 @@
 		8B6CA4971FD2DFB500162360 /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA4951FD2DFAE00162360 /* ParserTests.swift */; };
 		8BE0C4FF1EF47B0E00E6F95F /* AENetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BE0C4FE1EF47B0E00E6F95F /* AENetwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		OBJ_28 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Network.swift */; };
-		OBJ_37 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* NetworkTests.swift */; };
 		OBJ_40 /* AENetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* AENetwork.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +34,7 @@
 /* Begin PBXFileReference section */
 		8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ParametersTest.swift; path = AENetworkTests/ParametersTest.swift; sourceTree = "<group>"; };
 		8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CacheTests.swift; path = AENetworkTests/CacheTests.swift; sourceTree = "<group>"; };
+		8B4D06FA1FD5F459000B4ADB /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RouterTests.swift; path = AENetworkTests/RouterTests.swift; sourceTree = "<group>"; };
 		8B6CA48B1FD2018400162360 /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		8B6CA48D1FD210B000162360 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Parameters.swift"; sourceTree = "<group>"; };
@@ -48,7 +49,6 @@
 		8BE0C5011EF47F8500E6F95F /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		8BE0C5021EF47F8F00E6F95F /* AENetworkTests_Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = AENetworkTests_Info.plist; path = AENetwork.xcodeproj/AENetworkTests_Info.plist; sourceTree = SOURCE_ROOT; };
 		OBJ_11 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
-		OBJ_16 /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTests.swift; path = AENetworkTests/NetworkTests.swift; sourceTree = "<group>"; };
 		OBJ_19 /* AENetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AENetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_20 /* AENetworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = AENetworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 		OBJ_14 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_16 /* NetworkTests.swift */,
+				8B4D06FA1FD5F459000B4ADB /* RouterTests.swift */,
 				8B6CA4951FD2DFAE00162360 /* ParserTests.swift */,
 				8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */,
 				8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */,
@@ -259,10 +259,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				8B4D06FB1FD5F459000B4ADB /* RouterTests.swift in Sources */,
 				8B6CA4971FD2DFB500162360 /* ParserTests.swift in Sources */,
 				8B4D06F71FD5CEDC000B4ADB /* ParametersTest.swift in Sources */,
 				8B4D06F91FD5D4E2000B4ADB /* CacheTests.swift in Sources */,
-				OBJ_37 /* NetworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

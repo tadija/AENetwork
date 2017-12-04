@@ -7,7 +7,7 @@
 import XCTest
 @testable import AENetwork
 
-class NetworkTests: XCTestCase {
+class RouterTests: XCTestCase {
 
     // MARK: Properties
 
@@ -17,7 +17,7 @@ class NetworkTests: XCTestCase {
 
     func testFetchDictionary() {
         let fetchDictionary = expectation(description: "Fetch Dictionary")
-        
+
         let request = URLRequest(url: url)
         Network.shared.router.fetchDictionary(with: request) { (closure) in
             do {
@@ -30,14 +30,14 @@ class NetworkTests: XCTestCase {
             }
             fetchDictionary.fulfill()
         }
-        
+
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
+    static var allTests : [(String, (RouterTests) -> () throws -> Void)] {
         return [
             ("testFetchDictionary", testFetchDictionary)
         ]
     }
-    
+
 }

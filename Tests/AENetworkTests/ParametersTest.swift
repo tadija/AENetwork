@@ -9,25 +9,24 @@ import XCTest
 
 class ParametersTests: XCTestCase {
 
+    var url = URL(string: "https://httpbin.org")
+
+    let parameters = [
+        "foo" : "bar",
+        "bar" : "foo"
+    ]
+
     func testParameters() {
-        guard let url = URL(string: "https://httpbin.org") else {
-            return
-        }
+        let urlWithParameters = url?.addingParameters(parameters)
 
-        let parameters = [
-            "foo" : "bar",
-            "bar" : "foo"
-        ]
-        let urlWithParameters = url.addingParameters(parameters)
+        XCTAssertEqual(urlWithParameters?.parameterValue(forKey: "foo"), "bar",
+                       "Should be able to read parameter value.")
 
-        let bar = urlWithParameters?.parameterValue(forKey: "foo")
-        let foo = urlWithParameters?.parameterValue(forKey: "bar")
+        XCTAssertEqual(urlWithParameters?.parameterValue(forKey: "bar"), "foo",
+                       "Should be able to read parameter value.")
 
-        if bar == "bar" && foo == "foo" {
-            XCTAssert(true)
-        } else {
-            XCTAssert(false)
-        }
+        XCTAssertNil(urlWithParameters?.parameterValue(forKey: "undefined"),
+                     "Should return nil for not existing parameter.")
     }
 
     static var allTests : [(String, (ParametersTests) -> () throws -> Void)] {

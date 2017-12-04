@@ -11,22 +11,37 @@ class RouterTests: XCTestCase {
 
     // MARK: Properties
 
-    var url = URL(string: "https://httpbin.org/get")!
+    let network = Network()
+    let request = URLRequest(url: URL(string: "https://httpbin.org/get")!)
 
     // MARK: Tests
 
     func testFetchDictionary() {
         let fetchDictionary = expectation(description: "Fetch Dictionary")
 
-        let request = URLRequest(url: url)
-        Network.shared.router.fetchDictionary(with: request) { (closure) in
+        network.router.fetchDictionary(with: request) { (closure) in
             do {
-                let dictionary = try closure()
-                debugPrint(dictionary)
-                XCTAssert(true)
+                let _ = try closure()
+                XCTAssert(true, "Should be able to parse dictionary from: \(String(describing: self.request.url))")
             } catch {
-                debugPrint(error)
-                XCTAssert(false)
+                XCTAssert(false, "Should be able to fetch dictionary without error: \(error.localizedDescription)")
+            }
+            fetchDictionary.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testFetchDictionaryError() {
+        let fetchDictionary = expectation(description: "Fetch Dictionary With Error")
+        
+        let request = URLRequest(url: URL(string: "https://httpbin.org")!)
+        network.router.fetchDictionary(with: request) { (closure) in
+            do {
+                let _ = try closure()
+                XCTAssert(false, "Should not be able to parse dictionary from: \(String(describing: request.url))")
+            } catch {
+                XCTAssert(true, "Should throw error from: \(String(describing: request.url))")
             }
             fetchDictionary.fulfill()
         }
@@ -36,7 +51,8 @@ class RouterTests: XCTestCase {
 
     static var allTests : [(String, (RouterTests) -> () throws -> Void)] {
         return [
-            ("testFetchDictionary", testFetchDictionary)
+            ("testFetchDictionary", testFetchDictionary),
+            ("testFetchDictionaryError", testFetchDictionaryError)
         ]
     }
 

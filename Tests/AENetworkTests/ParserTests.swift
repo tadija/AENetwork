@@ -9,7 +9,11 @@ import XCTest
 
 class ParserTests: XCTestCase {
 
+    // MARK: Properties
+
     let parser = Parser()
+
+    // MARK: Tests
 
     func testParsingDictionary() {
         let dict = ["hello" : "world"]

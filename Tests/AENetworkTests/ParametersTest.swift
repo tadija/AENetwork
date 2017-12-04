@@ -9,15 +9,19 @@ import XCTest
 
 class ParametersTests: XCTestCase {
 
-    var url = URL(string: "https://httpbin.org")
+    // MARK: Properties
+
+    var url = URL(string: "https://httpbin.org")!
 
     let parameters = [
         "foo" : "bar",
         "bar" : "foo"
     ]
 
+    // MARK: Tests
+
     func testParameters() {
-        let urlWithParameters = url?.addingParameters(parameters)
+        let urlWithParameters = url.addingParameters(parameters)
 
         XCTAssertEqual(urlWithParameters?.parameterValue(forKey: "foo"), "bar",
                        "Should be able to read parameter value.")

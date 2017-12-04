@@ -9,11 +9,14 @@ import XCTest
 
 class NetworkTests: XCTestCase {
 
+    // MARK: Properties
+
+    var url = URL(string: "https://httpbin.org/get")!
+
+    // MARK: Tests
+
     func testFetchDictionary() {
         let fetchDictionary = expectation(description: "Fetch Dictionary")
-        
-        guard let url = URL(string: "https://httpbin.org/get")
-        else { return }
         
         let request = URLRequest(url: url)
         Network.shared.router.fetchDictionary(with: request) { (closure) in

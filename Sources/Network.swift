@@ -23,7 +23,7 @@ open class Network {
         }
     }
 
-    public var isCacheEnabled: Bool = true
+    public var isCacheEnabled: Bool = false
     public var shouldCacheRequestBlock: ((URLRequest) -> Bool)?
     public var validateCachedResponseBlock: ((CachedURLResponse) -> Bool)?
 

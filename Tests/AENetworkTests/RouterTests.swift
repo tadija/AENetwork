@@ -14,6 +14,12 @@ class RouterTests: XCTestCase {
     let network = Network()
     let request = URLRequest(url: URL(string: "https://httpbin.org/get")!)
 
+    // MARK: Setup
+
+    override func setUp() {
+        network.isCacheEnabled = true
+    }
+
     // MARK: Tests
 
     func testFetchDictionary() {

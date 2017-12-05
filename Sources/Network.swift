@@ -36,13 +36,11 @@ open class Network {
         self.router.cache.delegate = self
     }
 
-    // MARK: API
-
-    /// - Idea: network.get("\(url)") { data in #closure }
-
 }
 
 extension Network: NetworkCacheDelegate {
+
+    // MARK: NetworkCacheDelegate
 
     public func shouldCacheResponse(from request: URLRequest) -> Bool {
         return shouldCacheRequestBlock?(request) ?? isCacheEnabled

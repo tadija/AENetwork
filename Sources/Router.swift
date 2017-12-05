@@ -100,7 +100,7 @@ extension Router {
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)
             } else {
-                self?.handleResponseError(error as? RouterError, from: request, completion: completion)
+                self?.handleResponseError(error, from: request, completion: completion)
             }
         }.resume()
     }

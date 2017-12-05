@@ -56,7 +56,20 @@ class RouterTests: XCTestCase {
     }
 
     func testFetchArray() {
-        /// - TODO: find some url which returns array
+        let fetchArray = expectation(description: "Fetch Array")
+
+        let request = URLRequest(url: URL(string: "https://jsonplaceholder.typicode.com/posts")!)
+        network.router.fetchArray(with: request) { (closure) in
+            do {
+                let _ = try closure()
+                XCTAssert(true, "Should be able to parse array from: \(String(describing: self.request.url))")
+            } catch {
+                XCTAssert(false, "Should be able to parse array without error: \(error.localizedDescription)")
+            }
+            fetchArray.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
     func testFetchArrayError() {
@@ -79,6 +92,23 @@ class RouterTests: XCTestCase {
         let fetchDictionary = expectation(description: "Fetch Error")
 
         let request = URLRequest(url: URL(string: "https://test.test")!)
+        network.router.fetchDictionary(with: request) { (closure) in
+            do {
+                let _ = try closure()
+                XCTAssert(false, "Should not be able to parse dictionary from: \(String(describing: request.url))")
+            } catch {
+                XCTAssert(true, "Should throw error: \(error.localizedDescription)")
+            }
+            fetchDictionary.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testResponseError() {
+        let fetchDictionary = expectation(description: "Fetch Error")
+
+        let request = URLRequest(url: URL(string: "https://httpbin.org/test")!)
         network.router.fetchDictionary(with: request) { (closure) in
             do {
                 let _ = try closure()

@@ -13,11 +13,9 @@ extension URL {
     /// - Parameter parameters: Parameters to be added.
     /// - Returns: URL with added parameters.
     public func addingParameters(_ parameters: [String : String]) -> URL? {
-        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-        components.queryItems = parameters.map { URLQueryItem(name: $0.0, value: $0.1) }
-        return components.url
+        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
+        components?.queryItems = parameters.map { URLQueryItem(name: $0.0, value: $0.1) }
+        return components?.url
     }
 
     /// Convenience method for getting parameter value.

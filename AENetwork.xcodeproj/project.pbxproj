@@ -111,7 +111,7 @@
 				OBJ_20 /* AENetworkTests.xctest */,
 			);
 			name = Products;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			sourceTree = "<group>";
 		};
 		OBJ_5 = {
 			isa = PBXGroup;

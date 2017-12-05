@@ -12,7 +12,6 @@ class RouterTests: XCTestCase {
     // MARK: Properties
 
     let network = Network()
-    let request = URLRequest(url: URL(string: "https://httpbin.org/get")!)
 
     // MARK: Setup
 
@@ -23,103 +22,33 @@ class RouterTests: XCTestCase {
     // MARK: Tests
 
     func testFetchDictionary() {
-        let fetchDictionary = expectation(description: "Fetch Dictionary")
-
-        network.router.fetchDictionary(with: request) { (closure) in
-            do {
-                let _ = try closure()
-                XCTAssert(true, "Should be able to parse dictionary from: \(String(describing: self.request.url))")
-            } catch {
-                XCTAssert(false, "Should be able to fetch dictionary without error: \(error.localizedDescription)")
-            }
-            fetchDictionary.fulfill()
-        }
-
-        waitForExpectations(timeout: 5, handler: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        performDictionaryRequest(with: url)
     }
 
     func testFetchDictionaryError() {
-        let fetchDictionary = expectation(description: "Fetch Dictionary With Error")
-        
-        let request = URLRequest(url: URL(string: "https://httpbin.org")!)
-        network.router.fetchDictionary(with: request) { (closure) in
-            do {
-                let _ = try closure()
-                XCTAssert(false, "Should not be able to parse dictionary from: \(String(describing: request.url))")
-            } catch {
-                XCTAssert(true, "Should throw error from: \(String(describing: request.url))")
-            }
-            fetchDictionary.fulfill()
-        }
-
-        waitForExpectations(timeout: 5, handler: nil)
+        let url = URL(string: "https://httpbin.org")!
+        performDictionaryRequest(with: url, shouldFail: true)
     }
 
     func testFetchArray() {
-        let fetchArray = expectation(description: "Fetch Array")
-
-        let request = URLRequest(url: URL(string: "https://jsonplaceholder.typicode.com/posts")!)
-        network.router.fetchArray(with: request) { (closure) in
-            do {
-                let _ = try closure()
-                XCTAssert(true, "Should be able to parse array from: \(String(describing: self.request.url))")
-            } catch {
-                XCTAssert(false, "Should be able to parse array without error: \(error.localizedDescription)")
-            }
-            fetchArray.fulfill()
-        }
-
-        waitForExpectations(timeout: 5, handler: nil)
+        let url = URL(string: "https://jsonplaceholder.typicode.com/posts")!
+        performArrayRequest(with: url)
     }
 
     func testFetchArrayError() {
-        let fetchArray = expectation(description: "Fetch Array With Error")
-
-        network.router.fetchArray(with: request) { (closure) in
-            do {
-                let _ = try closure()
-                XCTAssert(false, "Should not be able to parse array from: \(String(describing: self.request.url))")
-            } catch {
-                XCTAssert(true, "Should throw error: \(error.localizedDescription)")
-            }
-            fetchArray.fulfill()
-        }
-
-        waitForExpectations(timeout: 5, handler: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        performArrayRequest(with: url, shouldFail: true)
     }
 
     func testFetchError() {
-        let fetchDictionary = expectation(description: "Fetch Error")
-
-        let request = URLRequest(url: URL(string: "https://test.test")!)
-        network.router.fetchDictionary(with: request) { (closure) in
-            do {
-                let _ = try closure()
-                XCTAssert(false, "Should not be able to parse dictionary from: \(String(describing: request.url))")
-            } catch {
-                XCTAssert(true, "Should throw error: \(error.localizedDescription)")
-            }
-            fetchDictionary.fulfill()
-        }
-
-        waitForExpectations(timeout: 5, handler: nil)
+        let url = URL(string: "https://test.test")!
+        performDictionaryRequest(with: url, shouldFail: true)
     }
 
     func testResponseError() {
-        let fetchDictionary = expectation(description: "Fetch Error")
-
-        let request = URLRequest(url: URL(string: "https://httpbin.org/test")!)
-        network.router.fetchDictionary(with: request) { (closure) in
-            do {
-                let _ = try closure()
-                XCTAssert(false, "Should not be able to parse dictionary from: \(String(describing: request.url))")
-            } catch {
-                XCTAssert(true, "Should throw error: \(error.localizedDescription)")
-            }
-            fetchDictionary.fulfill()
-        }
-
-        waitForExpectations(timeout: 5, handler: nil)
+        let url = URL(string: "https://httpbin.org/test")!
+        performDictionaryRequest(with: url, shouldFail: true)
     }
 
     static var allTests : [(String, (RouterTests) -> () throws -> Void)] {
@@ -129,7 +58,44 @@ class RouterTests: XCTestCase {
             ("testFetchArray", testFetchArray),
             ("testFetchArrayError", testFetchArrayError),
             ("testFetchError", testFetchError),
+            ("testResponseError", testResponseError),
         ]
+    }
+
+    // MARK: Helpers
+
+    private func performDictionaryRequest(with url: URL, shouldFail: Bool = false) {
+        let requestExpectation = expectation(description: "Request")
+
+        let request = URLRequest(url: url)
+        network.router.fetchDictionary(with: request) { (closure) in
+            do {
+                let _ = try closure()
+                XCTAssert(!shouldFail, "Should be able to parse dictionary from: \(String(describing: request.url))")
+            } catch {
+                XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")
+            }
+            requestExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    private func performArrayRequest(with url: URL, shouldFail: Bool = false) {
+        let requestExpectation = expectation(description: "Request")
+
+        let request = URLRequest(url: url)
+        network.router.fetchArray(with: request) { (closure) in
+            do {
+                let _ = try closure()
+                XCTAssert(!shouldFail, "Should be able to parse array from: \(String(describing: request.url))")
+            } catch {
+                XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")
+            }
+            requestExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
     }
 
 }

@@ -16,7 +16,7 @@ open class Parser {
 
     // MARK: Singleton
 
-    static let shared = Parser()
+    public static let shared = Parser()
 
     // MARK: Init
 
@@ -35,15 +35,11 @@ open class Parser {
     // MARK: Helpers
 
     private func parseJSON<T>(data: Data) throws -> T {
-        do {
-            let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-            if let json = json as? T {
-                return json
-            } else {
-                throw ParserError.parsingFailed
-            }
-        } catch {
-            throw error
+        let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+        if let json = json as? T {
+            return json
+        } else {
+            throw ParserError.parsingFailed
         }
     }
 

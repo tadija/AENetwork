@@ -44,7 +44,7 @@ open class Downloader: NSObject {
         return session
     }()
 
-    private var tasks = [URLSessionDownloadTask]()
+    public private(set) var tasks = [URLSessionDownloadTask]()
 
     public private(set) var items = [Downloadable]()
 

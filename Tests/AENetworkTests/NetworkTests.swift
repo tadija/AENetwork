@@ -11,7 +11,7 @@ class NetworkTests: XCTestCase {
 
     // MARK: Tests
 
-    static var allTests : [(String, (ParametersTests) -> () throws -> Void)] {
+    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
         return [
 
         ]

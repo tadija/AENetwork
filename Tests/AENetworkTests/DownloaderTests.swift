@@ -17,10 +17,11 @@ class DownloaderTests: XCTestCase {
 
     // MARK: Properties
 
-    let downloader = Downloader(sessionID: "net.tadija.AENetworkTests.Downloader")
+    let downloader = Downloader(configuration: .default)
 
     let url1 = URL(string: "https://httpbin.org/image/png")!
     let url2 = URL(string: "https://httpbin.org/image/jpeg")!
+    let url3 = URL(string: "https://httpbin.org/image/svg")!
 
     // MARK: Setup
 
@@ -71,10 +72,19 @@ class DownloaderTests: XCTestCase {
         XCTAssertEqual(downloader.items.count, 0, "Should have 0 download items.")
     }
 
+    var downloadFinishedExpectation: XCTestExpectation?
+
+    func testDownloadFinishedDelegateCallback() {
+        downloadFinishedExpectation = expectation(description: "Download Finished")
+        downloader.start(with: url3)
+        wait(for: [downloadFinishedExpectation!], timeout: 5)
+    }
+
     static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
         return [
             ("testStartAndStopDownloadWithURL", testStartAndStopDownloadWithURL),
-            ("testStartAndStopDownloadWithItem", testStartAndStopDownloadWithItem)
+            ("testStartAndStopDownloadWithItem", testStartAndStopDownloadWithItem),
+            ("testDownloadFinishedDelegateCallback", testDownloadFinishedDelegateCallback)
         ]
     }
 
@@ -87,7 +97,8 @@ extension DownloaderTests: NetworkDownloaderDelegate {
     }
 
     func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {
-
+        XCTAssertGreaterThanOrEqual(progress, 0)
+        XCTAssertLessThanOrEqual(progress, 1)
     }
 
     func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
@@ -95,7 +106,7 @@ extension DownloaderTests: NetworkDownloaderDelegate {
     }
 
     func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {
-
+        downloadFinishedExpectation?.fulfill()
     }
 
     func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {

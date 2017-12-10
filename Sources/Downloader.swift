@@ -37,9 +37,11 @@ extension Downloadable {
 
 open class Downloader: NSObject {
 
-    // MARK: Singleton
+    private static let sharedSessionID = "net.tadija.AENetwork.Downloader.shared"
 
-    public static let shared = Downloader(sessionID: "net.tadija.AENetwork.Downloader.shared")
+    // MARK: Singleton
+    
+    public static let shared = Downloader(configuration: .background(withIdentifier: sharedSessionID))
 
     // MARK: Properties
 
@@ -51,10 +53,9 @@ open class Downloader: NSObject {
 
     // MARK: Init
 
-    public init(sessionID: String) {
+    public init(configuration: URLSessionConfiguration) {
         super.init()
-        self.session = URLSession(configuration: .background(withIdentifier: sessionID),
-                                  delegate: self, delegateQueue: .main)
+        self.session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
     }
 
     deinit {

@@ -22,6 +22,7 @@ class DownloaderTests: XCTestCase {
     let url1 = URL(string: "https://httpbin.org/image/png")!
     let url2 = URL(string: "https://httpbin.org/image/jpeg")!
     let url3 = URL(string: "https://httpbin.org/image/svg")!
+    let url4 = URL(string: "https://test.test")!
 
     // MARK: Setup
 
@@ -80,11 +81,20 @@ class DownloaderTests: XCTestCase {
         wait(for: [downloadFinishedExpectation!], timeout: 5)
     }
 
+    var downloadErrorExpectation: XCTestExpectation?
+
+    func testDownloadErrorDelegateCallback() {
+        downloadErrorExpectation = expectation(description: "Download Error")
+        downloader.start(with: url4)
+        wait(for: [downloadErrorExpectation!], timeout: 5)
+    }
+
     static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
         return [
             ("testStartAndStopDownloadWithURL", testStartAndStopDownloadWithURL),
             ("testStartAndStopDownloadWithItem", testStartAndStopDownloadWithItem),
-            ("testDownloadFinishedDelegateCallback", testDownloadFinishedDelegateCallback)
+            ("testDownloadFinishedDelegateCallback", testDownloadFinishedDelegateCallback),
+            ("testDownloadErrorDelegateCallback", testDownloadErrorDelegateCallback)
         ]
     }
 
@@ -97,8 +107,9 @@ extension DownloaderTests: NetworkDownloaderDelegate {
     }
 
     func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {
-        XCTAssertGreaterThanOrEqual(progress, 0)
-        XCTAssertLessThanOrEqual(progress, 1)
+        let message = "Progress should be between 0 and 1."
+        XCTAssertGreaterThanOrEqual(progress, 0, message)
+        XCTAssertLessThanOrEqual(progress, 1, message)
     }
 
     func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
@@ -106,11 +117,16 @@ extension DownloaderTests: NetworkDownloaderDelegate {
     }
 
     func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {
+        let isDownloaded = FileManager.default.fileExists(atPath: location.path)
+        XCTAssertTrue(isDownloaded, "Should have downloaded file at location: \(location).")
         downloadFinishedExpectation?.fulfill()
     }
 
     func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {
-
+        if task.originalRequest?.url == url4 {
+            XCTAssertNotNil(error, "Should have error: \(String(describing: error?.localizedDescription))")
+            downloadErrorExpectation?.fulfill()
+        }
     }
 
 }

@@ -6,7 +6,7 @@
 
 import Foundation
 
-public protocol NetworkDownloaderDelegate: class {
+public protocol DownloadStatusDelegate {
     func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader)
     func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader)
     func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader)
@@ -14,7 +14,9 @@ public protocol NetworkDownloaderDelegate: class {
     func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader)
 }
 
-public protocol Downloadable: NetworkDownloaderDelegate {
+public protocol NetworkDownloaderDelegate: class, DownloadStatusDelegate { }
+
+public protocol Downloadable: DownloadStatusDelegate {
     var downloadURL: URL? { get }
 }
 
@@ -25,6 +27,12 @@ extension Downloadable {
     public func stopDownload() {
         Downloader.shared.stop(for: self)
     }
+    
+    func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}
+    func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {}
+    func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}
+    func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {}
+    func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {}
 }
 
 open class Downloader: NSObject {
@@ -38,13 +46,13 @@ open class Downloader: NSObject {
     public weak var delegate: NetworkDownloaderDelegate?
 
     private lazy var session: URLSession = {
-        let identifier = "net.tadija.AENetwork.DownloadManager"
+        let identifier = "net.tadija.AENetwork.Downloader"
         let config = URLSessionConfiguration.background(withIdentifier: identifier)
         let session = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
         return session
     }()
 
-    private var tasks = [URLSessionDownloadTask]()
+    public private(set) var tasks = [URLSessionDownloadTask]()
 
     public private(set) var items = [Downloadable]()
 

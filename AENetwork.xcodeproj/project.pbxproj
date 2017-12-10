@@ -10,6 +10,8 @@
 		8B4D06F71FD5CEDC000B4ADB /* ParametersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */; };
 		8B4D06F91FD5D4E2000B4ADB /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */; };
 		8B4D06FB1FD5F459000B4ADB /* RouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FA1FD5F459000B4ADB /* RouterTests.swift */; };
+		8B4D06FD1FD747FE000B4ADB /* DownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */; };
+		8B4D06FF1FD74863000B4ADB /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */; };
 		8B6CA48C1FD2018400162360 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48B1FD2018400162360 /* Downloader.swift */; };
 		8B6CA48E1FD210B000162360 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48D1FD210B000162360 /* Cache.swift */; };
 		8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */; };
@@ -35,6 +37,8 @@
 		8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ParametersTest.swift; path = AENetworkTests/ParametersTest.swift; sourceTree = "<group>"; };
 		8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CacheTests.swift; path = AENetworkTests/CacheTests.swift; sourceTree = "<group>"; };
 		8B4D06FA1FD5F459000B4ADB /* RouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RouterTests.swift; path = AENetworkTests/RouterTests.swift; sourceTree = "<group>"; };
+		8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DownloaderTests.swift; path = AENetworkTests/DownloaderTests.swift; sourceTree = "<group>"; };
+		8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTests.swift; path = AENetworkTests/NetworkTests.swift; sourceTree = "<group>"; };
 		8B6CA48B1FD2018400162360 /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		8B6CA48D1FD210B000162360 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Parameters.swift"; sourceTree = "<group>"; };
@@ -95,9 +99,11 @@
 		OBJ_14 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */,
 				8B4D06FA1FD5F459000B4ADB /* RouterTests.swift */,
 				8B6CA4951FD2DFAE00162360 /* ParserTests.swift */,
 				8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */,
+				8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */,
 				8B4D06F61FD5CEDC000B4ADB /* ParametersTest.swift */,
 				8BE0C5031EF47F9600E6F95F /* Supporting Files */,
 			);
@@ -111,7 +117,7 @@
 				OBJ_20 /* AENetworkTests.xctest */,
 			);
 			name = Products;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			sourceTree = "<group>";
 		};
 		OBJ_5 = {
 			isa = PBXGroup;
@@ -203,7 +209,7 @@
 		OBJ_1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 9999;
+				LastUpgradeCheck = 0920;
 				TargetAttributes = {
 					OBJ_21 = {
 						LastSwiftMigration = 0910;
@@ -259,6 +265,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
+				8B4D06FF1FD74863000B4ADB /* NetworkTests.swift in Sources */,
+				8B4D06FD1FD747FE000B4ADB /* DownloaderTests.swift in Sources */,
 				8B4D06FB1FD5F459000B4ADB /* RouterTests.swift in Sources */,
 				8B6CA4971FD2DFB500162360 /* ParserTests.swift in Sources */,
 				8B4D06F71FD5CEDC000B4ADB /* ParametersTest.swift in Sources */,
@@ -323,7 +331,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -331,7 +341,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -341,6 +355,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -395,7 +410,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -403,7 +420,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -412,6 +433,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;

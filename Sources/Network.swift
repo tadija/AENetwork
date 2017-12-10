@@ -29,8 +29,8 @@ open class Network {
 
     // MARK: Init
     
-    public init(router: Router = .init(),
-                downloader: Downloader = .init()) {
+    public init(router: Router = .shared,
+                downloader: Downloader = .shared) {
         self.router = router
         self.downloader = downloader
         self.router.cache.delegate = self

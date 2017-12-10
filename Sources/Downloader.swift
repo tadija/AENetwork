@@ -39,22 +39,28 @@ open class Downloader: NSObject {
 
     // MARK: Singleton
 
-    public static let shared = Downloader()
+    public static let shared = Downloader(sessionID: "net.tadija.AENetwork.Downloader.shared")
 
     // MARK: Properties
 
     public weak var delegate: NetworkDownloaderDelegate?
 
-    private lazy var session: URLSession = {
-        let identifier = "net.tadija.AENetwork.Downloader"
-        let config = URLSessionConfiguration.background(withIdentifier: identifier)
-        let session = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
-        return session
-    }()
-
+    public private(set) var session: URLSession!
     public private(set) var tasks = [URLSessionDownloadTask]()
-
     public private(set) var items = [Downloadable]()
+
+    // MARK: Init
+
+    public init(sessionID: String) {
+        super.init()
+        self.session = URLSession(configuration: .background(withIdentifier: sessionID),
+                                  delegate: self, delegateQueue: .main)
+    }
+
+    deinit {
+        session.finishTasksAndInvalidate()
+        session = nil
+    }
 
     // MARK: API / URL
 

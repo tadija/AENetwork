@@ -23,7 +23,7 @@ open class Router {
 
     // MARK: Singleton
 
-    public static let shared = Router(session: .shared, parser: .shared, cache: .shared)
+    public static let shared = Router()
 
     // MARK: Properties
 
@@ -34,8 +34,8 @@ open class Router {
     // MARK: Init
 
     public init(session: URLSession = .shared,
-                parser: Parser = .init(),
-                cache: Cache = .init()) {
+                parser: Parser = .shared,
+                cache: Cache = .shared) {
         self.session = session
         self.parser = parser
         self.cache = cache

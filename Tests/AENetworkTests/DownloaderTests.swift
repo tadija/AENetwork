@@ -17,7 +17,7 @@ class DownloaderTests: XCTestCase {
 
     // MARK: Properties
 
-    let downloader = Downloader()
+    let downloader = Downloader(sessionID: "net.tadija.AENetworkTests.Downloader")
 
     let url1 = URL(string: "https://httpbin.org/image/png")!
     let url2 = URL(string: "https://httpbin.org/image/jpeg")!

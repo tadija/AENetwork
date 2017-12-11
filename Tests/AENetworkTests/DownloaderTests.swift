@@ -101,7 +101,7 @@ class DownloaderTests: XCTestCase {
 
     var downloadFinishedExpectation: XCTestExpectation?
 
-    func testDownloadFinishedDelegateCallback() {
+    func testDownloadFinishedWithURL() {
         downloadFinishedExpectation = expectation(description: "Download Finished")
         downloader.start(with: url3)
         wait(for: [downloadFinishedExpectation!], timeout: 5)
@@ -109,7 +109,7 @@ class DownloaderTests: XCTestCase {
 
     var downloadErrorExpectation: XCTestExpectation?
 
-    func testDownloadErrorDelegateCallback() {
+    func testDownloadFailedWithURL() {
         downloadErrorExpectation = expectation(description: "Download Error")
         downloader.start(with: url4)
         wait(for: [downloadErrorExpectation!], timeout: 5)
@@ -126,7 +126,7 @@ class DownloaderTests: XCTestCase {
         wait(for: expectations, timeout: 5)
     }
 
-    func testDownloadFailWithItem() {
+    func testDownloadFailedWithItem() {
         var item = Item(url: url4)
         item.didStartExpectation = expectation(description: "Item Started Download")
         item.didFailExpectation = expectation(description: "Item Failed Download")
@@ -173,10 +173,10 @@ class DownloaderTests: XCTestCase {
         return [
             ("testStartAndStopDownloadWithURL", testStartAndStopDownloadWithURL),
             ("testStartAndStopDownloadWithItem", testStartAndStopDownloadWithItem),
-            ("testDownloadFinishedDelegateCallback", testDownloadFinishedDelegateCallback),
-            ("testDownloadErrorDelegateCallback", testDownloadErrorDelegateCallback),
+            ("testDownloadFinishedWithURL", testDownloadFinishedWithURL),
+            ("testDownloadFailedWithURL", testDownloadFailedWithURL),
             ("testDownloadFinishedWithItem", testDownloadFinishedWithItem),
-            ("testDownloadFailWithItem", testDownloadFailWithItem),
+            ("testDownloadFailedWithItem", testDownloadFailedWithItem),
             ("testReplaceItem", testReplaceItem),
             ("testCleanup", testCleanup)
         ]

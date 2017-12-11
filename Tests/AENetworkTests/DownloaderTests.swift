@@ -134,6 +134,41 @@ class DownloaderTests: XCTestCase {
         wait(for: [item.didStartExpectation!, item.didFailExpectation!], timeout: 5)
     }
 
+    func testReplaceItem() {
+        let item1 = Item(url: url1)
+        downloader.start(with: item1)
+
+        let item2 = Item(url: url2)
+        downloader.replaceItem(at: 0, with: item2)
+
+        XCTAssertNil(downloader.item(with: url1), "Should not be able to find item with url.")
+        XCTAssertNotNil(downloader.item(with: url2), "Should be able to find item with url.")
+        XCTAssertEqual(downloader.items.count, 1, "Should have 1 download item.")
+    }
+
+    func testCleanup() {
+        class ClassUnderTest: Downloader {
+            var deinitCalled: (() -> Void)?
+            deinit { deinitCalled?() }
+        }
+
+        let deinitExpectation = expectation(description: "Deinit Called")
+
+        var instance: ClassUnderTest? = ClassUnderTest(configuration: .default)
+        instance?.deinitCalled = {
+            deinitExpectation.fulfill()
+        }
+
+        DispatchQueue.global(qos: .background).async {
+            /// - Note: In order for `Downloader` instance to be released `cleanup` must be called.
+            /// That's because its `URLSession` has strong reference to it as its delegate.
+            instance?.cleanup()
+            instance = nil
+        }
+
+        wait(for: [deinitExpectation], timeout: 5)
+    }
+
     static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
         return [
             ("testStartAndStopDownloadWithURL", testStartAndStopDownloadWithURL),
@@ -141,7 +176,9 @@ class DownloaderTests: XCTestCase {
             ("testDownloadFinishedDelegateCallback", testDownloadFinishedDelegateCallback),
             ("testDownloadErrorDelegateCallback", testDownloadErrorDelegateCallback),
             ("testDownloadFinishedWithItem", testDownloadFinishedWithItem),
-            ("testDownloadFailWithItem", testDownloadFailWithItem)
+            ("testDownloadFailWithItem", testDownloadFailWithItem),
+            ("testReplaceItem", testReplaceItem),
+            ("testCleanup", testCleanup)
         ]
     }
 

@@ -49,6 +49,7 @@ open class Downloader: NSObject {
 
     public private(set) var session: URLSession!
     public private(set) var tasks = [URLSessionDownloadTask]()
+
     public private(set) var items = [Downloadable]()
 
     // MARK: Init
@@ -58,9 +59,8 @@ open class Downloader: NSObject {
         self.session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
     }
 
-    deinit {
+    public func cleanup() {
         session.finishTasksAndInvalidate()
-        session = nil
     }
 
     // MARK: API / URL

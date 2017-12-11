@@ -21,11 +21,11 @@ public protocol Downloadable: DownloadStatusDelegate {
 }
 
 extension Downloadable {
-    public func startDownload() {
-        Downloader.shared.start(with: self)
+    public func startDownload(with downloader: Downloader = .shared) {
+        downloader.start(with: self)
     }
-    public func stopDownload() {
-        Downloader.shared.stop(for: self)
+    public func stopDownload(with downloader: Downloader = .shared) {
+        downloader.stop(for: self)
     }
     
     func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}
@@ -37,24 +37,31 @@ extension Downloadable {
 
 open class Downloader: NSObject {
 
-    // MARK: Singleton
+    private static let sharedSessionID = "net.tadija.AENetwork.Downloader.shared"
 
-    public static let shared = Downloader()
+    // MARK: Singleton
+    
+    public static let shared = Downloader(configuration: .background(withIdentifier: sharedSessionID))
 
     // MARK: Properties
 
     public weak var delegate: NetworkDownloaderDelegate?
 
-    private lazy var session: URLSession = {
-        let identifier = "net.tadija.AENetwork.Downloader"
-        let config = URLSessionConfiguration.background(withIdentifier: identifier)
-        let session = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
-        return session
-    }()
-
+    public private(set) var session: URLSession!
     public private(set) var tasks = [URLSessionDownloadTask]()
 
     public private(set) var items = [Downloadable]()
+
+    // MARK: Init
+
+    public init(configuration: URLSessionConfiguration) {
+        super.init()
+        self.session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
+    }
+
+    public func cleanup() {
+        session.finishTasksAndInvalidate()
+    }
 
     // MARK: API / URL
 

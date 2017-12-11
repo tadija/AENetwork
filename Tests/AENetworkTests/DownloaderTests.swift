@@ -13,14 +13,42 @@ class DownloaderTests: XCTestCase {
 
     struct Item: Downloadable {
         let downloadURL: URL?
+
+        var didStartExpectation: XCTestExpectation?
+        var didUpdateExpectation: XCTestExpectation?
+        var didStopExpectation: XCTestExpectation?
+        var didFinishExpectation: XCTestExpectation?
+        var didFailExpectation: XCTestExpectation?
+
+        init(url: URL) {
+            self.downloadURL = url
+        }
+
+        func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
+            didStartExpectation?.fulfill()
+        }
+        func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {
+            didUpdateExpectation?.fulfill()
+        }
+        func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
+            didStopExpectation?.fulfill()
+        }
+        func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {
+            didFinishExpectation?.fulfill()
+        }
+        func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {
+            didFailExpectation?.fulfill()
+        }
     }
 
     // MARK: Properties
 
-    let downloader = Downloader()
+    let downloader = Downloader(configuration: .default)
 
     let url1 = URL(string: "https://httpbin.org/image/png")!
     let url2 = URL(string: "https://httpbin.org/image/jpeg")!
+    let url3 = URL(string: "https://httpbin.org/image/svg")!
+    let url4 = URL(string: "https://test.test")!
 
     // MARK: Setup
 
@@ -49,8 +77,8 @@ class DownloaderTests: XCTestCase {
     }
 
     func testStartAndStopDownloadWithItem() {
-        let item1 = Item(downloadURL: url1)
-        let item2 = Item(downloadURL: url2)
+        let item1 = Item(url: url1)
+        let item2 = Item(url: url2)
 
         let downloader = Downloader.shared
 
@@ -71,10 +99,86 @@ class DownloaderTests: XCTestCase {
         XCTAssertEqual(downloader.items.count, 0, "Should have 0 download items.")
     }
 
+    var downloadFinishedExpectation: XCTestExpectation?
+
+    func testDownloadFinishedWithURL() {
+        downloadFinishedExpectation = expectation(description: "Download Finished")
+        downloader.start(with: url3)
+        wait(for: [downloadFinishedExpectation!], timeout: 5)
+    }
+
+    var downloadErrorExpectation: XCTestExpectation?
+
+    func testDownloadFailedWithURL() {
+        downloadErrorExpectation = expectation(description: "Download Error")
+        downloader.start(with: url4)
+        wait(for: [downloadErrorExpectation!], timeout: 5)
+    }
+
+    func testDownloadFinishedWithItem() {
+        var item = Item(url: url3)
+        item.didStartExpectation = expectation(description: "Item Started Download")
+        item.didUpdateExpectation = expectation(description: "Item Updated Download")
+        item.didUpdateExpectation?.assertForOverFulfill = false
+        item.didFinishExpectation = expectation(description: "Item Finished Download")
+        item.startDownload(with: downloader)
+        let expectations = [item.didStartExpectation!, item.didUpdateExpectation!, item.didFinishExpectation!]
+        wait(for: expectations, timeout: 5)
+    }
+
+    func testDownloadFailedWithItem() {
+        var item = Item(url: url4)
+        item.didStartExpectation = expectation(description: "Item Started Download")
+        item.didFailExpectation = expectation(description: "Item Failed Download")
+        item.startDownload(with: downloader)
+        wait(for: [item.didStartExpectation!, item.didFailExpectation!], timeout: 5)
+    }
+
+    func testReplaceItem() {
+        let item1 = Item(url: url1)
+        downloader.start(with: item1)
+
+        let item2 = Item(url: url2)
+        downloader.replaceItem(at: 0, with: item2)
+
+        XCTAssertNil(downloader.item(with: url1), "Should not be able to find item with url.")
+        XCTAssertNotNil(downloader.item(with: url2), "Should be able to find item with url.")
+        XCTAssertEqual(downloader.items.count, 1, "Should have 1 download item.")
+    }
+
+    func testCleanup() {
+        class ClassUnderTest: Downloader {
+            var deinitCalled: (() -> Void)?
+            deinit { deinitCalled?() }
+        }
+
+        let deinitExpectation = expectation(description: "Deinit Called")
+
+        var instance: ClassUnderTest? = ClassUnderTest(configuration: .default)
+        instance?.deinitCalled = {
+            deinitExpectation.fulfill()
+        }
+
+        DispatchQueue.global(qos: .background).async {
+            /// - Note: In order for `Downloader` instance to be released `cleanup` must be called.
+            /// That's because its `URLSession` has strong reference to it as its delegate.
+            instance?.cleanup()
+            instance = nil
+        }
+
+        wait(for: [deinitExpectation], timeout: 5)
+    }
+
     static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
         return [
             ("testStartAndStopDownloadWithURL", testStartAndStopDownloadWithURL),
-            ("testStartAndStopDownloadWithItem", testStartAndStopDownloadWithItem)
+            ("testStartAndStopDownloadWithItem", testStartAndStopDownloadWithItem),
+            ("testDownloadFinishedWithURL", testDownloadFinishedWithURL),
+            ("testDownloadFailedWithURL", testDownloadFailedWithURL),
+            ("testDownloadFinishedWithItem", testDownloadFinishedWithItem),
+            ("testDownloadFailedWithItem", testDownloadFailedWithItem),
+            ("testReplaceItem", testReplaceItem),
+            ("testCleanup", testCleanup)
         ]
     }
 
@@ -87,7 +191,9 @@ extension DownloaderTests: NetworkDownloaderDelegate {
     }
 
     func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {
-
+        let message = "Progress should be between 0 and 1."
+        XCTAssertGreaterThanOrEqual(progress, 0, message)
+        XCTAssertLessThanOrEqual(progress, 1, message)
     }
 
     func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
@@ -95,11 +201,16 @@ extension DownloaderTests: NetworkDownloaderDelegate {
     }
 
     func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {
-
+        let isDownloaded = FileManager.default.fileExists(atPath: location.path)
+        XCTAssertTrue(isDownloaded, "Should have downloaded file at location: \(location).")
+        downloadFinishedExpectation?.fulfill()
     }
 
     func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {
-
+        if task.originalRequest?.url == url4 {
+            XCTAssertNotNil(error, "Should have error: \(String(describing: error?.localizedDescription))")
+            downloadErrorExpectation?.fulfill()
+        }
     }
 
 }

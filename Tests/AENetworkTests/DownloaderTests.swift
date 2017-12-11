@@ -13,6 +13,32 @@ class DownloaderTests: XCTestCase {
 
     struct Item: Downloadable {
         let downloadURL: URL?
+
+        var didStartExpectation: XCTestExpectation?
+        var didUpdateExpectation: XCTestExpectation?
+        var didStopExpectation: XCTestExpectation?
+        var didFinishExpectation: XCTestExpectation?
+        var didFailExpectation: XCTestExpectation?
+
+        init(url: URL) {
+            self.downloadURL = url
+        }
+
+        func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
+            didStartExpectation?.fulfill()
+        }
+        func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {
+            didUpdateExpectation?.fulfill()
+        }
+        func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
+            didStopExpectation?.fulfill()
+        }
+        func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {
+            didFinishExpectation?.fulfill()
+        }
+        func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {
+            didFailExpectation?.fulfill()
+        }
     }
 
     // MARK: Properties
@@ -51,8 +77,8 @@ class DownloaderTests: XCTestCase {
     }
 
     func testStartAndStopDownloadWithItem() {
-        let item1 = Item(downloadURL: url1)
-        let item2 = Item(downloadURL: url2)
+        let item1 = Item(url: url1)
+        let item2 = Item(url: url2)
 
         let downloader = Downloader.shared
 
@@ -89,12 +115,33 @@ class DownloaderTests: XCTestCase {
         wait(for: [downloadErrorExpectation!], timeout: 5)
     }
 
+    func testDownloadFinishedWithItem() {
+        var item = Item(url: url3)
+        item.didStartExpectation = expectation(description: "Item Started Download")
+        item.didUpdateExpectation = expectation(description: "Item Updated Download")
+        item.didUpdateExpectation?.assertForOverFulfill = false
+        item.didFinishExpectation = expectation(description: "Item Finished Download")
+        item.startDownload(with: downloader)
+        let expectations = [item.didStartExpectation!, item.didUpdateExpectation!, item.didFinishExpectation!]
+        wait(for: expectations, timeout: 5)
+    }
+
+    func testDownloadFailWithItem() {
+        var item = Item(url: url4)
+        item.didStartExpectation = expectation(description: "Item Started Download")
+        item.didFailExpectation = expectation(description: "Item Failed Download")
+        item.startDownload(with: downloader)
+        wait(for: [item.didStartExpectation!, item.didFailExpectation!], timeout: 5)
+    }
+
     static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
         return [
             ("testStartAndStopDownloadWithURL", testStartAndStopDownloadWithURL),
             ("testStartAndStopDownloadWithItem", testStartAndStopDownloadWithItem),
             ("testDownloadFinishedDelegateCallback", testDownloadFinishedDelegateCallback),
-            ("testDownloadErrorDelegateCallback", testDownloadErrorDelegateCallback)
+            ("testDownloadErrorDelegateCallback", testDownloadErrorDelegateCallback),
+            ("testDownloadFinishedWithItem", testDownloadFinishedWithItem),
+            ("testDownloadFailWithItem", testDownloadFailWithItem)
         ]
     }
 

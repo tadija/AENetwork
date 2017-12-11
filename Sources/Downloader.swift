@@ -21,11 +21,11 @@ public protocol Downloadable: DownloadStatusDelegate {
 }
 
 extension Downloadable {
-    public func startDownload() {
-        Downloader.shared.start(with: self)
+    public func startDownload(with downloader: Downloader = .shared) {
+        downloader.start(with: self)
     }
-    public func stopDownload() {
-        Downloader.shared.stop(for: self)
+    public func stopDownload(with downloader: Downloader = .shared) {
+        downloader.stop(for: self)
     }
     
     func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}

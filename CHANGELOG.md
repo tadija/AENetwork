@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.2.4
+
+- Improvements and refactoring
+- Added more unit tests
+
 ## Version 0.2.3
 
 - Improvements and refactoring

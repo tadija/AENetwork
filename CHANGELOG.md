@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.2.6
+
+- Added initial facade API to Network
+- Added convenience API to URLRequest
+- Improvements and refactoring
+
 ## Version 0.2.5
 
 - Downloader improvements

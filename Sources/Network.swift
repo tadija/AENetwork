@@ -6,6 +6,12 @@
 
 import Foundation
 
+public struct Completion {
+    public typealias ThrowableData = (() throws -> Data) -> Void
+    public typealias ThrowableDictionary = (() throws -> [String : Any]) -> Void
+    public typealias ThrowableArray = (() throws -> [Any]) -> Void
+}
+
 open class Network {
     
     // MARK: Singleton
@@ -34,6 +40,20 @@ open class Network {
         self.fetcher = fetcher
         self.downloader = downloader
         self.fetcher.cache.delegate = self
+    }
+
+    // MARK: API
+
+    public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
+        fetcher.data(with: request, completion: completion)
+    }
+
+    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
+        fetcher.dictionary(with: request, completion: completion)
+    }
+
+    public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
+        fetcher.array(with: request, completion: completion)
     }
 
 }

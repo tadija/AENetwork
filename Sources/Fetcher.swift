@@ -10,12 +10,6 @@ open class Fetcher {
 
     // MARK: Types
 
-    public struct Completion {
-        public typealias ThrowableData = (() throws -> Data) -> Void
-        public typealias ThrowableDictionary = (() throws -> [String : Any]) -> Void
-        public typealias ThrowableArray = (() throws -> [Any]) -> Void
-    }
-
     public enum RouterError: Error {
         case badRequest
         case badResponse

@@ -1,9 +1,8 @@
-//
-//  URLRequest+Helpers.swift
-//  AENetwork
-//
-//  Created by Marko Tadić on 12/12/17.
-//
+/**
+ *  https://github.com/tadija/AENetwork
+ *  Copyright (c) Marko Tadić 2017
+ *  Licensed under the MIT license. See LICENSE file.
+ */
 
 import Foundation
 

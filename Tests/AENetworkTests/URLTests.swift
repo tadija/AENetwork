@@ -7,11 +7,11 @@
 import XCTest
 @testable import AENetwork
 
-class ParametersTests: XCTestCase {
+class URLTests: XCTestCase {
 
     // MARK: Properties
 
-    var url = URL(string: "https://httpbin.org")!
+    var url: URL = "https://httpbin.org"
 
     let parameters = [
         "foo" : "bar",
@@ -33,7 +33,7 @@ class ParametersTests: XCTestCase {
                      "Should return nil for not existing parameter.")
     }
 
-    static var allTests : [(String, (ParametersTests) -> () throws -> Void)] {
+    static var allTests : [(String, (URLTests) -> () throws -> Void)] {
         return [
             ("testParameters", testParameters)
         ]

@@ -12,6 +12,10 @@ public struct Completion {
     public typealias ThrowableArray = (() throws -> [Any]) -> Void
 }
 
+public protocol NetworkDelegate: class {
+    func didSendRequest(_ request: URLRequest, sender: Network)
+}
+
 open class Network {
     
     // MARK: Singleton
@@ -19,6 +23,8 @@ open class Network {
     public static let shared = Network(fetcher: .shared, downloader: .shared)
 
     // MARK: Properties
+
+    public weak var delegate: NetworkDelegate?
 
     public let fetcher: Fetcher
     public let downloader: Downloader
@@ -46,14 +52,17 @@ open class Network {
 
     public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
         fetcher.data(with: request, completion: completion)
+        delegate?.didSendRequest(request, sender: self)
     }
 
     public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
         fetcher.dictionary(with: request, completion: completion)
+        delegate?.didSendRequest(request, sender: self)
     }
 
     public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
         fetcher.array(with: request, completion: completion)
+        delegate?.didSendRequest(request, sender: self)
     }
 
 }

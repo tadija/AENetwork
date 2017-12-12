@@ -9,11 +9,22 @@
 ```swift
 import AENetwork
 
-let url = URL(string: "https://httpbin.org/get")!
-let request = URLRequest(url: url)
+/// - Note: Convenient creation of request
+let request = URLRequest(url: "https://httpbin.org/get")
+
+/// - Note: Fetching with throwable completion closure
 let network = Network()
-    
-network.router.fetchDictionary(with: request) { (closure) in
+network.fetchDictionary(with: request) { (closure) in
+    do {
+        let dictionary = try closure()
+        print(dictionary)
+    } catch {
+        print(error)
+    }
+}
+
+/// - Note: Fetching directly from request (using shared instance)
+request.fetchDictionary { (closure) in
     do {
         let dictionary = try closure()
         print(dictionary)

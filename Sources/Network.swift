@@ -10,16 +10,16 @@ open class Network {
     
     // MARK: Singleton
     
-    public static let shared = Network(router: .shared, downloader: .shared)
+    public static let shared = Network(fetcher: .shared, downloader: .shared)
 
     // MARK: Properties
 
-    public let router: Router
+    public let fetcher: Fetcher
     public let downloader: Downloader
 
     public weak var cacheDelegate: NetworkCacheDelegate? {
         didSet {
-            router.cache.delegate = cacheDelegate
+            fetcher.cache.delegate = cacheDelegate
         }
     }
 
@@ -29,11 +29,11 @@ open class Network {
 
     // MARK: Init
     
-    public init(router: Router = .shared,
+    public init(fetcher: Fetcher = .shared,
                 downloader: Downloader = .shared) {
-        self.router = router
+        self.fetcher = fetcher
         self.downloader = downloader
-        self.router.cache.delegate = self
+        self.fetcher.cache.delegate = self
     }
 
 }

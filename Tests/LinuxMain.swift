@@ -9,7 +9,7 @@ import XCTest
 
 XCTMain([
     testCase(NetworkTests.allTests),
-    testCase(RouterTests.allTests),
+    testCase(FetcherTests.allTests),
     testCase(ParserTests.allTests),
     testCase(CacheTests.allTests),
     testCase(DownloaderTests.allTests),

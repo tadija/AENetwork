@@ -10,7 +10,7 @@ open class Parser {
 
     // MARK: Type
 
-    public enum ParserError: Error {
+    public enum Error: Swift.Error {
         case parsingFailed
     }
 
@@ -39,7 +39,7 @@ open class Parser {
         if let json = json as? T {
             return json
         } else {
-            throw ParserError.parsingFailed
+            throw Error.parsingFailed
         }
     }
 

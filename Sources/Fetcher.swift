@@ -10,7 +10,7 @@ open class Fetcher {
 
     // MARK: Types
 
-    public enum RouterError: Error {
+    public enum Error: Swift.Error {
         case badRequest
         case badResponse
     }
@@ -111,12 +111,12 @@ extension Fetcher {
             }
         default:
             completion {
-                throw RouterError.badResponse
+                throw Error.badResponse
             }
         }
     }
 
-    private func handleResponseError(_ error: Error?,
+    private func handleResponseError(_ error: Swift.Error?,
                                      from request: URLRequest,
                                      completion: @escaping Completion.ThrowableData) {
         if let error = error as NSError? {
@@ -130,7 +130,7 @@ extension Fetcher {
             }
         } else {
             completion {
-                throw RouterError.badResponse
+                throw Error.badResponse
             }
         }
     }

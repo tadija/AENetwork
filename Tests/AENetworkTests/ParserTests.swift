@@ -43,7 +43,7 @@ class ParserTests: XCTestCase {
             let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
             let _ = try parser.array(fromJSON: data)
         } catch {
-            let test = error is Parser.ParserError
+            let test = error is Parser.Error
             XCTAssert(test, "Should throw \(error) when parsing JSON data of wrong type.")
         }
     }

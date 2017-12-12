@@ -32,7 +32,7 @@ class FetcherTests: XCTestCase {
     }
 
     func testFetchArray() {
-        let url = URL(string: "https://jsonplaceholder.typicode.com/posts")!
+        let url = URL(string: "http://www.mocky.io/v2/5a304e1f2d0000c239a83dc5")!
         performArrayRequest(with: url)
     }
 

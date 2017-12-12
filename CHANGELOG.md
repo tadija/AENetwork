@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.2.7
+- Added initial NetworkDelegate
+- Added URL+ExpressibleByStringLiteral helper
+- Improvements and refactoring
+
 ## Version 0.2.6
 
 - Added initial facade API to Network

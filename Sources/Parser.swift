@@ -24,11 +24,11 @@ open class Parser {
 
     // MARK: API
 
-    open func jsonDictionary(from data: Data) throws -> [String : Any] {
+    open func dictionary(fromJSON data: Data) throws -> [String : Any] {
         return try parseJSON(data: data)
     }
 
-    open func jsonArray(from data: Data) throws -> [Any] {
+    open func array(fromJSON data: Data) throws -> [Any] {
         return try parseJSON(data: data)
     }
 

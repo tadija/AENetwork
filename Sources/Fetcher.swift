@@ -61,7 +61,7 @@ public extension Fetcher {
         data(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
-                let dictionary = try self?.parser.jsonDictionary(from: data) ?? [String : Any]()
+                let dictionary = try self?.parser.dictionary(fromJSON: data) ?? [String : Any]()
                 completion {
                     return dictionary
                 }
@@ -77,7 +77,7 @@ public extension Fetcher {
         data(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
-                let array = try self?.parser.jsonArray(from: data) ?? [Any]()
+                let array = try self?.parser.array(fromJSON: data) ?? [Any]()
                 completion {
                     return array
                 }

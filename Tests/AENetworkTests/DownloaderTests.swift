@@ -45,9 +45,9 @@ class DownloaderTests: XCTestCase {
 
     let downloader = Downloader(configuration: .default)
 
-    let url1 = URL(string: "https://httpbin.org/image/png")!
-    let url2 = URL(string: "https://httpbin.org/image/jpeg")!
-    let url3 = URL(string: "https://test.test")!
+    let url1: URL = "https://httpbin.org/image/png"
+    let url2: URL = "https://httpbin.org/image/jpeg"
+    let url3: URL = "https://test.test"
 
     // MARK: Setup
 

@@ -12,7 +12,7 @@ class CacheTests: XCTestCase, NetworkCacheDelegate {
     // MARK: Properties
 
     let cache = Cache(storage: URLCache())
-    let request = URLRequest(url: URL(string: "https://httpbin.org/get")!)
+    let request = URLRequest(url: "https://httpbin.org/get")
 
     var useCache = false
     var validateCache = false

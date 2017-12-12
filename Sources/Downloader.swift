@@ -117,11 +117,11 @@ open class Downloader: NSObject {
     private func stop(for url: URL) {
         if let task = task(with: url) {
             task.cancel()
-            delegate?.didStopDownloadTask(task, sender: self)
-            if let item = item(with: task) {
-                item.didStopDownloadTask(task, sender: self)
-            }
+            let stoppedItem = item(with: task)
             performCleanup(for: task)
+            
+            delegate?.didStopDownloadTask(task, sender: self)
+            stoppedItem?.didStopDownloadTask(task, sender: self)
         }
     }
 
@@ -160,21 +160,21 @@ extension Downloader: URLSessionDelegate, URLSessionDownloadDelegate {
 
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
                            didFinishDownloadingTo location: URL) {
-        delegate?.didFinishDownloadTask(downloadTask, to: location, sender: self)
-        if let item = item(with: downloadTask) {
-            item.didFinishDownloadTask(downloadTask, to: location, sender: self)
-        }
+        let finishedItem = item(with: downloadTask)
         performCleanup(for: downloadTask)
+
+        delegate?.didFinishDownloadTask(downloadTask, to: location, sender: self)
+        finishedItem?.didFinishDownloadTask(downloadTask, to: location, sender: self)
     }
 
     // MARK: URLSessionTaskDelegate
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        delegate?.didFailDownloadTask(task, with: error, sender: self)
-        if let item = item(with: task) {
-            item.didFailDownloadTask(task, with: error, sender: self)
-        }
+        let failedItem = item(with: task)
         performCleanup(for: task)
+
+        delegate?.didFailDownloadTask(task, with: error, sender: self)
+        failedItem?.didFailDownloadTask(task, with: error, sender: self)
     }
 
 }

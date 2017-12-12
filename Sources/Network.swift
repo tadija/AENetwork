@@ -6,20 +6,26 @@
 
 import Foundation
 
+public struct Completion {
+    public typealias ThrowableData = (() throws -> Data) -> Void
+    public typealias ThrowableDictionary = (() throws -> [String : Any]) -> Void
+    public typealias ThrowableArray = (() throws -> [Any]) -> Void
+}
+
 open class Network {
     
     // MARK: Singleton
     
-    public static let shared = Network(router: .shared, downloader: .shared)
+    public static let shared = Network(fetcher: .shared, downloader: .shared)
 
     // MARK: Properties
 
-    public let router: Router
+    public let fetcher: Fetcher
     public let downloader: Downloader
 
     public weak var cacheDelegate: NetworkCacheDelegate? {
         didSet {
-            router.cache.delegate = cacheDelegate
+            fetcher.cache.delegate = cacheDelegate
         }
     }
 
@@ -29,11 +35,25 @@ open class Network {
 
     // MARK: Init
     
-    public init(router: Router = .shared,
+    public init(fetcher: Fetcher = .shared,
                 downloader: Downloader = .shared) {
-        self.router = router
+        self.fetcher = fetcher
         self.downloader = downloader
-        self.router.cache.delegate = self
+        self.fetcher.cache.delegate = self
+    }
+
+    // MARK: API
+
+    public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
+        fetcher.data(with: request, completion: completion)
+    }
+
+    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
+        fetcher.dictionary(with: request, completion: completion)
+    }
+
+    public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
+        fetcher.array(with: request, completion: completion)
     }
 
 }

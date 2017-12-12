@@ -7,7 +7,7 @@
 import XCTest
 @testable import AENetwork
 
-class RouterTests: XCTestCase {
+class FetcherTests: XCTestCase {
 
     // MARK: Properties
 
@@ -32,7 +32,7 @@ class RouterTests: XCTestCase {
     }
 
     func testFetchArray() {
-        let url = URL(string: "https://jsonplaceholder.typicode.com/posts")!
+        let url = URL(string: "http://www.mocky.io/v2/5a304e1f2d0000c239a83dc5")!
         performArrayRequest(with: url)
     }
 
@@ -51,7 +51,7 @@ class RouterTests: XCTestCase {
         performDictionaryRequest(with: url, shouldFail: true)
     }
 
-    static var allTests : [(String, (RouterTests) -> () throws -> Void)] {
+    static var allTests : [(String, (FetcherTests) -> () throws -> Void)] {
         return [
             ("testFetchDictionary", testFetchDictionary),
             ("testFetchDictionaryError", testFetchDictionaryError),
@@ -68,7 +68,7 @@ class RouterTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        network.router.fetchDictionary(with: request) { (closure) in
+        network.fetcher.dictionary(with: request) { (closure) in
             do {
                 let _ = try closure()
                 XCTAssert(!shouldFail, "Should be able to parse dictionary from: \(String(describing: request.url))")
@@ -85,7 +85,7 @@ class RouterTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        network.router.fetchArray(with: request) { (closure) in
+        network.fetcher.array(with: request) { (closure) in
             do {
                 let _ = try closure()
                 XCTAssert(!shouldFail, "Should be able to parse array from: \(String(describing: request.url))")

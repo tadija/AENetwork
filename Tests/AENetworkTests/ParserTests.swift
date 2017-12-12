@@ -19,7 +19,7 @@ class ParserTests: XCTestCase {
         let dict = ["hello" : "world"]
         do {
             let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-            let parsed = try parser.jsonDictionary(from: data)
+            let parsed = try parser.dictionary(fromJSON: data)
             XCTAssertEqual(parsed["hello"] as? String, "world")
         } catch {
             XCTAssert(false, "Should be able to parse dictionary from JSON data.")
@@ -30,7 +30,7 @@ class ParserTests: XCTestCase {
         let array = ["hello", "world"]
         do {
             let data = try JSONSerialization.data(withJSONObject: array, options: .prettyPrinted)
-            let parsed = try parser.jsonArray(from: data)
+            let parsed = try parser.array(fromJSON: data)
             XCTAssertEqual(parsed.last as? String, "world")
         } catch {
             XCTAssert(false, "Should be able to parse array from JSON data.")
@@ -41,9 +41,9 @@ class ParserTests: XCTestCase {
         let dict = ["hello" : "world"]
         do {
             let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-            let _ = try parser.jsonArray(from: data)
+            let _ = try parser.array(fromJSON: data)
         } catch {
-            let test = error is Parser.ParserError
+            let test = error is Parser.Error
             XCTAssert(test, "Should throw \(error) when parsing JSON data of wrong type.")
         }
     }

@@ -10,7 +10,7 @@ open class Parser {
 
     // MARK: Type
 
-    public enum ParserError: Error {
+    public enum Error: Swift.Error {
         case parsingFailed
     }
 
@@ -24,11 +24,11 @@ open class Parser {
 
     // MARK: API
 
-    open func jsonDictionary(from data: Data) throws -> [String : Any] {
+    open func dictionary(fromJSON data: Data) throws -> [String : Any] {
         return try parseJSON(data: data)
     }
 
-    open func jsonArray(from data: Data) throws -> [Any] {
+    open func array(fromJSON data: Data) throws -> [Any] {
         return try parseJSON(data: data)
     }
 
@@ -39,7 +39,7 @@ open class Parser {
         if let json = json as? T {
             return json
         } else {
-            throw ParserError.parsingFailed
+            throw Error.parsingFailed
         }
     }
 

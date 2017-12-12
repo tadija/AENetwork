@@ -6,24 +6,18 @@
 
 import Foundation
 
-open class Router {
+open class Fetcher {
 
     // MARK: Types
 
-    public struct Completion {
-        public typealias ThrowableData = (() throws -> Data) -> Void
-        public typealias ThrowableDictionary = (() throws -> [String : Any]) -> Void
-        public typealias ThrowableArray = (() throws -> [Any]) -> Void
-    }
-
-    public enum RouterError: Error {
+    public enum Error: Swift.Error {
         case badRequest
         case badResponse
     }
 
     // MARK: Singleton
 
-    public static let shared = Router()
+    public static let shared = Fetcher()
 
     // MARK: Properties
 
@@ -43,11 +37,11 @@ open class Router {
 
 }
 
-public extension Router {
+public extension Fetcher {
 
     // MARK: API
 
-    public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
+    public func data(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
         if let cachedResponse = cache.loadResponse(for: request) {
             completion {
                 return cachedResponse.data
@@ -57,11 +51,11 @@ public extension Router {
         }
     }
 
-    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
-        fetchData(with: request) { [weak self] (closure) -> Void in
+    public func dictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
+        data(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
-                let dictionary = try self?.parser.jsonDictionary(from: data) ?? [String : Any]()
+                let dictionary = try self?.parser.dictionary(fromJSON: data) ?? [String : Any]()
                 completion {
                     return dictionary
                 }
@@ -73,11 +67,11 @@ public extension Router {
         }
     }
 
-    public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
-        fetchData(with: request) { [weak self] (closure) -> Void in
+    public func array(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
+        data(with: request) { [weak self] (closure) -> Void in
             do {
                 let data = try closure()
-                let array = try self?.parser.jsonArray(from: data) ?? [Any]()
+                let array = try self?.parser.array(fromJSON: data) ?? [Any]()
                 completion {
                     return array
                 }
@@ -91,7 +85,7 @@ public extension Router {
 
 }
 
-extension Router {
+extension Fetcher {
 
     // MARK: Request / Response
 
@@ -117,18 +111,18 @@ extension Router {
             }
         default:
             completion {
-                throw RouterError.badResponse
+                throw Error.badResponse
             }
         }
     }
 
-    private func handleResponseError(_ error: Error?,
+    private func handleResponseError(_ error: Swift.Error?,
                                      from request: URLRequest,
                                      completion: @escaping Completion.ThrowableData) {
         if let error = error as NSError? {
             if error.domain == NSURLErrorDomain && error.code == NSURLErrorNetworkConnectionLost {
                 // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
-                fetchData(with: request, completion: completion)
+                data(with: request, completion: completion)
             } else {
                 completion {
                     throw error
@@ -136,7 +130,7 @@ extension Router {
             }
         } else {
             completion {
-                throw RouterError.badResponse
+                throw Error.badResponse
             }
         }
     }

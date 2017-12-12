@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.2.5
+
+- Downloader improvements
+
 ## Version 0.2.4
 
 - Improvements and refactoring

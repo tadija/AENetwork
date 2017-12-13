@@ -10,6 +10,10 @@ public struct Completion {
     public typealias ThrowableData = (() throws -> Data) -> Void
     public typealias ThrowableDictionary = (() throws -> [String : Any]) -> Void
     public typealias ThrowableArray = (() throws -> [Any]) -> Void
+
+    public typealias FailableData = (Data?, Error?) -> Void
+    public typealias FailableDictionary = ([String : Any]?, Error?) -> Void
+    public typealias FailableArray = ([Any]?, Error?) -> Void
 }
 
 public protocol NetworkDelegate: class {
@@ -55,13 +59,49 @@ open class Network {
         delegate?.didSendRequest(request, sender: self)
     }
 
+    public func fetchData(with request: URLRequest, completion: @escaping Completion.FailableData) {
+        fetcher.data(with: request) { (closure) in
+            do {
+                let result = try closure()
+                completion(result, nil)
+            } catch {
+                completion(nil, error)
+            }
+        }
+        delegate?.didSendRequest(request, sender: self)
+    }
+
     public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
         fetcher.dictionary(with: request, completion: completion)
         delegate?.didSendRequest(request, sender: self)
     }
 
+    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.FailableDictionary) {
+        fetcher.dictionary(with: request) { (closure) in
+            do {
+                let result = try closure()
+                completion(result, nil)
+            } catch {
+                completion(nil, error)
+            }
+        }
+        delegate?.didSendRequest(request, sender: self)
+    }
+
     public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
         fetcher.array(with: request, completion: completion)
+        delegate?.didSendRequest(request, sender: self)
+    }
+
+    public func fetchArray(with request: URLRequest, completion: @escaping Completion.FailableArray) {
+        fetcher.array(with: request) { (closure) in
+            do {
+                let result = try closure()
+                completion(result, nil)
+            } catch {
+                completion(nil, error)
+            }
+        }
         delegate?.didSendRequest(request, sender: self)
     }
 

@@ -56,11 +56,23 @@ extension URLRequest {
         network.fetchData(with: self, completion: completion)
     }
 
+    public func fetchData(with network: Network = .shared, completion: @escaping Completion.FailableData) {
+        network.fetchData(with: self, completion: completion)
+    }
+
     public func fetchDictionary(with network: Network = .shared, completion: @escaping Completion.ThrowableDictionary) {
         network.fetchDictionary(with: self, completion: completion)
     }
 
+    public func fetchDictionary(with network: Network = .shared, completion: @escaping Completion.FailableDictionary) {
+        network.fetchDictionary(with: self, completion: completion)
+    }
+
     public func fetchArray(with network: Network = .shared, completion: @escaping Completion.ThrowableArray) {
+        network.fetchArray(with: self, completion: completion)
+    }
+
+    public func fetchArray(with network: Network = .shared, completion: @escaping Completion.FailableArray) {
         network.fetchArray(with: self, completion: completion)
     }
 

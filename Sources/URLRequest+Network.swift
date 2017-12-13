@@ -32,7 +32,25 @@ extension URLRequest {
         httpBody = httpBody(with: body)
     }
 
-    // MARK: API
+    // MARK: API / Factory
+
+    static func get(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+        return URLRequest(url: url, method: .get, headers: headers, urlParameters: parameters)
+    }
+
+    static func post(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+        return URLRequest(url: url, method: .post, headers: headers, body: parameters)
+    }
+
+    static func put(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+        return URLRequest(url: url, method: .post, headers: headers, body: parameters)
+    }
+
+    static func delete(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+        return URLRequest(url: url, method: .post, headers: headers, body: parameters)
+    }
+
+    // MARK: API / Fetch
 
     public func fetchData(with network: Network = .shared, completion: @escaping Completion.ThrowableData) {
         network.fetchData(with: self, completion: completion)

@@ -15,12 +15,16 @@ class URLTests: XCTestCase {
 
     let parameters = [
         "foo" : "bar",
-        "bar" : "foo"
+        "bar" : "foo",
+        "true" : "true",
+        "false" : "false",
+        "int" : "21",
+        "double" : "8.0"
     ]
 
     // MARK: Tests
 
-    func testParameters() {
+    func testReadingParameters() {
         let urlWithParameters = url.addingParameters(parameters)
 
         XCTAssertEqual(urlWithParameters?.parameterValue(forKey: "foo"), "bar",
@@ -33,9 +37,33 @@ class URLTests: XCTestCase {
                      "Should return nil for not existing parameter.")
     }
 
+    func testParameterTypes() {
+        let urlWithParameters = url.addingParameters(parameters)
+
+        XCTAssertEqual(urlWithParameters?.stringValue(forParameterKey: "foo"), "bar",
+                       "Should be able to parse String parameter.")
+        XCTAssertEqual(urlWithParameters?.stringValue(forParameterKey: "undefined"), "",
+                       "Should be able to return empty String.")
+        
+        XCTAssertEqual(urlWithParameters?.boolValue(forParameterKey: "true"), true,
+                       "Should be able to parse Bool parameter.")
+        XCTAssertEqual(urlWithParameters?.boolValue(forParameterKey: "false"), false,
+                       "Should be able to parse Bool parameter.")
+        XCTAssertEqual(urlWithParameters?.intValue(forParameterKey: "int"), 21,
+                       "Should be able to parse Int parameter.")
+        XCTAssertEqual(urlWithParameters?.doubleValue(forParameterKey: "double"), 8.0, "Should be able to parse Double parameter.")
+
+        XCTAssertNil(urlWithParameters?.boolValue(forParameterKey: "foo"),
+                     "Should not be able to parse Bool parameter.")
+        XCTAssertNil(urlWithParameters?.intValue(forParameterKey: "foo"),
+                     "Should not be able to parse Int parameter.")
+        XCTAssertNil(urlWithParameters?.doubleValue(forParameterKey: "foo"),
+                     "Should not be able to parse Double parameter.")
+    }
+
     static var allTests : [(String, (URLTests) -> () throws -> Void)] {
         return [
-            ("testParameters", testParameters)
+            ("testReadingParameters", testReadingParameters)
         ]
     }
 

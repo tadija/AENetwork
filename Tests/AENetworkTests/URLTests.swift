@@ -61,6 +61,17 @@ class URLTests: XCTestCase {
                      "Should not be able to parse Double parameter.")
     }
 
+    func testURLInit() {
+        let url: URL = "example.com"
+        XCTAssertEqual(url, URL(string: "example.com"), "")
+        XCTAssertEqual(url, "example.com".url, "")
+
+        let badURL = URL(string: "https://invalid.url")
+        let testBadURL: URL = ""
+        XCTAssertEqual(badURL, testBadURL, "")
+        XCTAssertEqual(badURL, "".url, "")
+    }
+
     static var allTests : [(String, (URLTests) -> () throws -> Void)] {
         return [
             ("testReadingParameters", testReadingParameters)

@@ -13,5 +13,6 @@ XCTMain([
     testCase(ParserTests.allTests),
     testCase(CacheTests.allTests),
     testCase(DownloaderTests.allTests),
-    testCase(URLTests.allTests)
+    testCase(URLTests.allTests),
+    testCase(URLRequestTests.allTests)
 ])

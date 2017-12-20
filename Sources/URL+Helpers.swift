@@ -15,7 +15,7 @@ extension URL: ExpressibleByStringLiteral {
 }
 
 extension String {
-    var url: URL {
+    public var url: URL {
         return URL(string: self) ?? invalidURL
     }
 }

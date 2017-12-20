@@ -35,12 +35,11 @@ open class Parser {
     // MARK: Helpers
 
     private func parseJSON<T>(data: Data) throws -> T {
-        let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-        if let json = json as? T {
-            return json
-        } else {
+        let jsonObject = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+        guard let parsed = jsonObject as? T else {
             throw Error.parsingFailed
         }
+        return parsed
     }
 
 }

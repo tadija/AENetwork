@@ -45,11 +45,11 @@ extension URLRequest {
     }
 
     static func put(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
-        return URLRequest(url: url, method: .post, headers: headers, body: parameters)
+        return URLRequest(url: url, method: .put, headers: headers, body: parameters)
     }
 
     static func delete(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
-        return URLRequest(url: url, method: .post, headers: headers, body: parameters)
+        return URLRequest(url: url, method: .delete, headers: headers, body: parameters)
     }
 
     // MARK: API / Fetch

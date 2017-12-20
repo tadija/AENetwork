@@ -49,33 +49,17 @@ public extension Fetcher {
     }
 
     public func dictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
-        data(with: request) { (closure) -> Void in
-            do {
-                let data = try closure()
-                let dictionary = try data.toDictionary()
-                completion {
-                    return dictionary
-                }
-            } catch {
-                completion {
-                    throw error
-                }
+        data(with: request) { (throwableData) -> Void in
+            completion {
+                return try throwableData().toDictionary()
             }
         }
     }
 
     public func array(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
-        data(with: request) { (closure) -> Void in
-            do {
-                let data = try closure()
-                let array = try data.toArray()
-                completion {
-                    return array
-                }
-            } catch {
-                completion {
-                    throw error
-                }
+        data(with: request) { (throwableData) -> Void in
+            completion {
+                return try throwableData().toArray()
             }
         }
     }

@@ -7,15 +7,32 @@
 import Foundation
 
 extension URL {
+    
+    public mutating func addParameters(_ parameters: [String : String]) {
+        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
+        components?.queryItems = parameters.map { URLQueryItem(name: $0.0, value: $0.1) }
+        self = components?.url ?? self
+    }
 
     /// Convenience method for adding parameters to URL.
     ///
     /// - Parameter parameters: Parameters to be added.
     /// - Returns: URL with added parameters.
     public func addingParameters(_ parameters: [String : String]) -> URL? {
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
-        components?.queryItems = parameters.map { URLQueryItem(name: $0.0, value: $0.1) }
-        return components?.url
+        var copy = self
+        copy.addParameters(parameters)
+        return copy
+    }
+    
+    public var parameters: [String : String]? {
+        guard
+            let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
+            let queryItems = components.queryItems
+        else { return nil }
+        
+        var params = [String : String]()
+        queryItems.forEach { params[$0.name] = $0.value }
+        return params
     }
 
     /// Convenience method for getting parameter value.
@@ -23,13 +40,30 @@ extension URL {
     /// - Parameter key: Parameter name.
     /// - Returns: Parameter value.
     public func parameterValue(forKey key: String) -> String? {
-        guard
-            let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
-            let queryItems = components.queryItems,
-            let value = queryItems.filter({ $0.name == key }).first?.value
-        else {
-            return nil
-        }
+        let value = parameters?[key]
+        return value
+    }
+    
+    public func stringValue(forParameterKey key: String) -> String {
+        let value = parameterValue(forKey: key) ?? String()
+        return value
+    }
+    
+    public func boolValue(forParameterKey key: String) -> Bool? {
+        let string = stringValue(forParameterKey: key)
+        let value = Bool(string)
+        return value
+    }
+    
+    public func intValue(forParameterKey key: String) -> Int? {
+        let string = stringValue(forParameterKey: key)
+        let value = Int(string)
+        return value
+    }
+    
+    public func doubleValue(forParameterKey key: String) -> Double? {
+        let string = stringValue(forParameterKey: key)
+        let value = Double(string)
         return value
     }
 

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8B3335E41FE0862B004F4AC6 /* URLRequest+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3335E31FE0862B004F4AC6 /* URLRequest+Network.swift */; };
-		8B3335E61FE08FBC004F4AC6 /* URL+ExpressibleByStringLiteral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3335E51FE08FBC004F4AC6 /* URL+ExpressibleByStringLiteral.swift */; };
+		8B3335E61FE08FBC004F4AC6 /* URL+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3335E51FE08FBC004F4AC6 /* URL+Helpers.swift */; };
 		8B4D06F71FD5CEDC000B4ADB /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */; };
 		8B4D06F91FD5D4E2000B4ADB /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */; };
 		8B4D06FB1FD5F459000B4ADB /* FetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */; };
@@ -37,7 +37,7 @@
 
 /* Begin PBXFileReference section */
 		8B3335E31FE0862B004F4AC6 /* URLRequest+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Network.swift"; sourceTree = "<group>"; };
-		8B3335E51FE08FBC004F4AC6 /* URL+ExpressibleByStringLiteral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+ExpressibleByStringLiteral.swift"; sourceTree = "<group>"; };
+		8B3335E51FE08FBC004F4AC6 /* URL+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Helpers.swift"; sourceTree = "<group>"; };
 		8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLTests.swift; path = AENetworkTests/URLTests.swift; sourceTree = "<group>"; };
 		8B4D06F81FD5D4E2000B4ADB /* CacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CacheTests.swift; path = AENetworkTests/CacheTests.swift; sourceTree = "<group>"; };
 		8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FetcherTests.swift; path = AENetworkTests/FetcherTests.swift; sourceTree = "<group>"; };
@@ -142,8 +142,8 @@
 				8B6CA4911FD216F000162360 /* Parser.swift */,
 				8B6CA48D1FD210B000162360 /* Cache.swift */,
 				8B6CA48B1FD2018400162360 /* Downloader.swift */,
+				8B3335E51FE08FBC004F4AC6 /* URL+Helpers.swift */,
 				8B6CA48F1FD2154C00162360 /* URL+Parameters.swift */,
-				8B3335E51FE08FBC004F4AC6 /* URL+ExpressibleByStringLiteral.swift */,
 				8B3335E31FE0862B004F4AC6 /* URLRequest+Network.swift */,
 				OBJ_8 /* Supporting Files */,
 			);
@@ -260,7 +260,7 @@
 			files = (
 				8B3335E41FE0862B004F4AC6 /* URLRequest+Network.swift in Sources */,
 				OBJ_28 /* Network.swift in Sources */,
-				8B3335E61FE08FBC004F4AC6 /* URL+ExpressibleByStringLiteral.swift in Sources */,
+				8B3335E61FE08FBC004F4AC6 /* URL+Helpers.swift in Sources */,
 				8B6CA4901FD2154C00162360 /* URL+Parameters.swift in Sources */,
 				8B6CA4921FD216F000162360 /* Parser.swift in Sources */,
 				8B6CA48E1FD210B000162360 /* Cache.swift in Sources */,

@@ -10,8 +10,9 @@ import XCTest
 XCTMain([
     testCase(NetworkTests.allTests),
     testCase(FetcherTests.allTests),
-    testCase(ParserTests.allTests),
     testCase(CacheTests.allTests),
     testCase(DownloaderTests.allTests),
-    testCase(URLTests.allTests)
+    testCase(URLTests.allTests),
+    testCase(URLRequestTests.allTests),
+    testCase(SerializationTests.allTests)
 ])

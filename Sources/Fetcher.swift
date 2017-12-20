@@ -22,16 +22,13 @@ open class Fetcher {
     // MARK: Properties
 
     public let session: URLSession
-    public let parser: Parser
     public let cache: Cache
 
     // MARK: Init
 
     public init(session: URLSession = .shared,
-                parser: Parser = .shared,
                 cache: Cache = .shared) {
         self.session = session
-        self.parser = parser
         self.cache = cache
     }
 
@@ -52,10 +49,10 @@ public extension Fetcher {
     }
 
     public func dictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
-        data(with: request) { [weak self] (closure) -> Void in
+        data(with: request) { (closure) -> Void in
             do {
                 let data = try closure()
-                let dictionary = try self?.parser.dictionary(fromJSON: data) ?? [String : Any]()
+                let dictionary = try data.toDictionary()
                 completion {
                     return dictionary
                 }
@@ -68,10 +65,10 @@ public extension Fetcher {
     }
 
     public func array(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
-        data(with: request) { [weak self] (closure) -> Void in
+        data(with: request) { (closure) -> Void in
             do {
                 let data = try closure()
-                let array = try self?.parser.array(fromJSON: data) ?? [Any]()
+                let array = try data.toArray()
                 completion {
                     return array
                 }

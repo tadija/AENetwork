@@ -20,7 +20,7 @@ extension URLRequest {
          method: Method,
          headers: [String : String]? = nil,
          urlParameters: [String : String]? = nil,
-         body: Any? = nil)
+         body: [String : String]? = nil)
     {
         if let urlParameters = urlParameters, let urlWithParameters = url.addingParameters(urlParameters) {
             self.init(url: urlWithParameters)
@@ -29,7 +29,9 @@ extension URLRequest {
         }
         httpMethod = method.rawValue.capitalized
         allHTTPHeaderFields = headers
-        httpBody = httpBody(with: body)
+        if let body = body {
+            httpBody = try? Data(jsonWith: body)
+        }
     }
 
     // MARK: API / Factory
@@ -43,11 +45,11 @@ extension URLRequest {
     }
 
     static func put(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
-        return URLRequest(url: url, method: .post, headers: headers, body: parameters)
+        return URLRequest(url: url, method: .put, headers: headers, body: parameters)
     }
 
     static func delete(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
-        return URLRequest(url: url, method: .post, headers: headers, body: parameters)
+        return URLRequest(url: url, method: .delete, headers: headers, body: parameters)
     }
 
     // MARK: API / Fetch
@@ -74,18 +76,6 @@ extension URLRequest {
 
     public func fetchArray(with network: Network = .shared, completion: @escaping Completion.FailableArray) {
         network.fetchArray(with: self, completion: completion)
-    }
-
-    // MARK: Helpers
-
-    private func httpBody(with any: Any?) -> Data? {
-        guard
-            let any = any,
-            let jsonData = try? JSONSerialization.data(withJSONObject: any, options: .prettyPrinted)
-        else {
-            return nil
-        }
-        return jsonData
     }
 
 }

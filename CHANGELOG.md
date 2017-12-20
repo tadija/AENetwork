@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.2.9
+- Refactored Parser into Data+Serialization extension
+- Improvements and bug fixes
+
 ## Version 0.2.8
 - Added more helpers to URLRequest extension
 - Added Failable alternatives to Completion

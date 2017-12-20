@@ -7,16 +7,26 @@
 import XCTest
 @testable import AENetwork
 
-class FetcherTests: XCTestCase {
+class FetcherTests: XCTestCase, NetworkCacheDelegate {
 
     // MARK: Properties
 
-    let network = Network()
+    let fetcher = Fetcher.shared
 
     // MARK: Setup
 
     override func setUp() {
-        network.isCacheEnabled = true
+        fetcher.cache.delegate = self
+    }
+
+    // MARK: NetworkCacheDelegate
+
+    func shouldCacheResponse(from request: URLRequest) -> Bool {
+        return true
+    }
+
+    func isValidCache(_ cache: CachedURLResponse) -> Bool {
+        return true
     }
 
     // MARK: Tests
@@ -62,7 +72,7 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        network.fetcher.dictionary(with: request) { (closure) in
+        fetcher.dictionary(with: request) { (closure) in
             do {
                 let _ = try closure()
                 XCTAssert(!shouldFail, "Should be able to parse dictionary from: \(String(describing: request.url))")
@@ -79,7 +89,7 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        network.fetcher.array(with: request) { (closure) in
+        fetcher.array(with: request) { (closure) in
             do {
                 let _ = try closure()
                 XCTAssert(!shouldFail, "Should be able to parse array from: \(String(describing: request.url))")

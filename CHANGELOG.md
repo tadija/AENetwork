@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.2.8
+- Added more helpers to URLRequest extension
+- Added Failable alternatives to Completion
+- Improvements and refactoring
+- Added more unit tests
+
 ## Version 0.2.7
 - Added initial NetworkDelegate
 - Added URL+ExpressibleByStringLiteral helper

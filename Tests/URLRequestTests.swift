@@ -54,16 +54,12 @@ class URLRequestTests: XCTestCase {
         case .url:
             XCTAssertEqual(request.url?.parameterValue(forKey: "foo"), "bar", "Should add parameters to URL.")
         case .body:
-            XCTAssertEqual(request.httpBody, paramsBody, "Should add parameters to body.")
+            XCTAssertEqual(request.httpBody, try? Data(jsonWith: params), "Should add parameters to body.")
         }
     }
 
     private enum ParametersType {
         case url, body
-    }
-
-    private var paramsBody: Data? {
-        return try? JSONSerialization.data(withJSONObject: params, options: .prettyPrinted)
     }
 
 }

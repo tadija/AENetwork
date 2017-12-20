@@ -16,17 +16,21 @@ extension Data {
 
     // MARK: API
 
+    public init(jsonWith any: Any) throws {
+        self = try JSONSerialization.data(withJSONObject: any, options: .prettyPrinted)
+    }
+
     public func toDictionary() throws -> [String : Any] {
-        return try parseJSON()
+        return try serializeJSON()
     }
 
     public func toArray() throws -> [Any] {
-        return try parseJSON()
+        return try serializeJSON()
     }
 
     // MARK: Helpers
 
-    private func parseJSON<T>() throws -> T {
+    private func serializeJSON<T>() throws -> T {
         let jsonObject = try JSONSerialization.jsonObject(with: self, options: .allowFragments)
         guard let parsed = jsonObject as? T else {
             throw SerializationError.parsingFailed

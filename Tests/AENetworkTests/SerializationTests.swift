@@ -14,7 +14,7 @@ class SerializationTests: XCTestCase {
     func testSerializingJsonDataToDictionary() {
         let dict = ["hello" : "world"]
         do {
-            let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+            let data = try Data(jsonWith: dict)
             let parsed = try data.toDictionary()
             XCTAssertEqual(parsed["hello"] as? String, "world")
         } catch {
@@ -25,7 +25,7 @@ class SerializationTests: XCTestCase {
     func testSerializingJsonDataToArray() {
         let array = ["hello", "world"]
         do {
-            let data = try JSONSerialization.data(withJSONObject: array, options: .prettyPrinted)
+            let data = try Data(jsonWith: array)
             let parsed = try data.toArray()
             XCTAssertEqual(parsed.last as? String, "world")
         } catch {
@@ -36,7 +36,7 @@ class SerializationTests: XCTestCase {
     func testSerializationError() {
         let dict = ["hello" : "world"]
         do {
-            let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+            let data = try Data(jsonWith: dict)
             let _ = try data.toArray()
         } catch {
             let test = error is Data.SerializationError

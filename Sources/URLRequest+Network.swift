@@ -30,7 +30,7 @@ extension URLRequest {
         httpMethod = method.rawValue.capitalized
         allHTTPHeaderFields = headers
         if let body = body {
-            httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+            httpBody = try? Data(jsonWith: body)
         }
     }
 

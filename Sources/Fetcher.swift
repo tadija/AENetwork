@@ -15,6 +15,23 @@ open class Fetcher {
 
     // MARK: Types
 
+    public struct Result {
+        let response: URLResponse
+        let data: Data
+
+        func dictionary() throws -> [String : Any] {
+            return try data.toDictionary()
+        }
+
+        func array() throws -> [Any] {
+            return try data.toArray()
+        }
+    }
+
+    public struct Completion {
+        public typealias ThrowableResult = (() throws -> Result) -> Void
+    }
+
     public enum Error: Swift.Error {
         case badRequest
         case badResponse
@@ -35,68 +52,15 @@ open class Fetcher {
         self.session = session
     }
 
-}
-
-public extension Fetcher {
-
     // MARK: API
 
-    public func data(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
+    public func performRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
         if let cachedResponse = delegate?.loadCachedResponse(for: request) {
             completion {
-                return cachedResponse.data
+                return Result(response: cachedResponse.response, data: cachedResponse.data)
             }
         } else {
             sendRequest(request, completion: completion)
-        }
-    }
-
-    public func data(with request: URLRequest, completion: @escaping Completion.FailableData) {
-        data(with: request) { (throwableData) in
-            do {
-                let data = try throwableData()
-                completion(data, nil)
-            } catch {
-                completion(nil, error)
-            }
-        }
-    }
-
-    public func dictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
-        data(with: request) { (throwableData) -> Void in
-            completion {
-                return try throwableData().toDictionary()
-            }
-        }
-    }
-
-    public func dictionary(with request: URLRequest, completion: @escaping Completion.FailableDictionary) {
-        dictionary(with: request) { (throwableDictionary) in
-            do {
-                let dictionary = try throwableDictionary()
-                completion(dictionary, nil)
-            } catch {
-                completion(nil, error)
-            }
-        }
-    }
-
-    public func array(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
-        data(with: request) { (throwableData) -> Void in
-            completion {
-                return try throwableData().toArray()
-            }
-        }
-    }
-
-    public func array(with request: URLRequest, completion: @escaping Completion.FailableArray) {
-        array(with: request) { (throwableArray) in
-            do {
-                let array = try throwableArray()
-                completion(array, nil)
-            } catch {
-                completion(nil, error)
-            }
         }
     }
 
@@ -106,7 +70,7 @@ extension Fetcher {
 
     // MARK: Request / Response
 
-    fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableData) {
+    fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
         session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)
@@ -119,12 +83,12 @@ extension Fetcher {
     private func handleResponse(_ response: HTTPURLResponse,
                                 with data: Data,
                                 from request: URLRequest,
-                                completion: Completion.ThrowableData) {
+                                completion: Completion.ThrowableResult) {
         switch response.statusCode {
         case 200 ..< 300:
             delegate?.cacheResponse(response, with: data, from: request)
             completion {
-                return data
+                return Result(response: response, data: data)
             }
         default:
             completion {
@@ -135,11 +99,11 @@ extension Fetcher {
 
     private func handleResponseError(_ error: Swift.Error?,
                                      from request: URLRequest,
-                                     completion: @escaping Completion.ThrowableData) {
+                                     completion: @escaping Completion.ThrowableResult) {
         if let error = error as NSError? {
             if error.domain == NSURLErrorDomain && error.code == NSURLErrorNetworkConnectionLost {
                 // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
-                data(with: request, completion: completion)
+                performRequest(request, completion: completion)
             } else {
                 completion {
                     throw error

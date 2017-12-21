@@ -6,16 +6,6 @@
 
 import Foundation
 
-public struct Completion {
-    public typealias ThrowableData = (() throws -> Data) -> Void
-    public typealias ThrowableDictionary = (() throws -> [String : Any]) -> Void
-    public typealias ThrowableArray = (() throws -> [Any]) -> Void
-
-    public typealias FailableData = (Data?, Error?) -> Void
-    public typealias FailableDictionary = ([String : Any]?, Error?) -> Void
-    public typealias FailableArray = ([Any]?, Error?) -> Void
-}
-
 public protocol NetworkDelegate: class {
     func didSendRequest(_ request: URLRequest, sender: Network)
 }
@@ -53,33 +43,8 @@ open class Network {
 
     // MARK: API
 
-    public func fetchData(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
-        fetcher.data(with: request, completion: completion)
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    public func fetchData(with request: URLRequest, completion: @escaping Completion.FailableData) {
-        fetcher.data(with: request, completion: completion)
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
-        fetcher.dictionary(with: request, completion: completion)
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.FailableDictionary) {
-        fetcher.dictionary(with: request, completion: completion)
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
-        fetcher.array(with: request, completion: completion)
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    public func fetchArray(with request: URLRequest, completion: @escaping Completion.FailableArray) {
-        fetcher.array(with: request, completion: completion)
+    public func performRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+        fetcher.performRequest(request, completion: completion)
         delegate?.didSendRequest(request, sender: self)
     }
 

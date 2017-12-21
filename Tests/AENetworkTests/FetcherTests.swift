@@ -56,9 +56,9 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.dictionary(with: request) { (closure) in
+        fetcher.performRequest(request) { (result) in
             do {
-                let _ = try closure()
+                let _ = try result().dictionary()
                 XCTAssert(!shouldFail, "Should be able to parse dictionary from: \(String(describing: request.url))")
             } catch {
                 XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")
@@ -73,9 +73,9 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.array(with: request) { (closure) in
+        fetcher.performRequest(request) { (result) in
             do {
-                let _ = try closure()
+                let _ = try result().array()
                 XCTAssert(!shouldFail, "Should be able to parse array from: \(String(describing: request.url))")
             } catch {
                 XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")

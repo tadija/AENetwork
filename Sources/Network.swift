@@ -59,14 +59,8 @@ open class Network {
     }
 
     public func fetchData(with request: URLRequest, completion: @escaping Completion.FailableData) {
-        fetchData(with: request) { (closure) in
-            do {
-                let result = try closure()
-                completion(result, nil)
-            } catch {
-                completion(nil, error)
-            }
-        }
+        fetcher.data(with: request, completion: completion)
+        delegate?.didSendRequest(request, sender: self)
     }
 
     public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
@@ -75,14 +69,8 @@ open class Network {
     }
 
     public func fetchDictionary(with request: URLRequest, completion: @escaping Completion.FailableDictionary) {
-        fetchDictionary(with: request) { (closure) in
-            do {
-                let result = try closure()
-                completion(result, nil)
-            } catch {
-                completion(nil, error)
-            }
-        }
+        fetcher.dictionary(with: request, completion: completion)
+        delegate?.didSendRequest(request, sender: self)
     }
 
     public func fetchArray(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
@@ -91,14 +79,8 @@ open class Network {
     }
 
     public func fetchArray(with request: URLRequest, completion: @escaping Completion.FailableArray) {
-        fetchArray(with: request) { (closure) in
-            do {
-                let result = try closure()
-                completion(result, nil)
-            } catch {
-                completion(nil, error)
-            }
-        }
+        fetcher.array(with: request, completion: completion)
+        delegate?.didSendRequest(request, sender: self)
     }
 
 }

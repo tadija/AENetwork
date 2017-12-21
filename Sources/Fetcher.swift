@@ -51,6 +51,17 @@ public extension Fetcher {
         }
     }
 
+    public func data(with request: URLRequest, completion: @escaping Completion.FailableData) {
+        data(with: request) { (throwableData) in
+            do {
+                let data = try throwableData()
+                completion(data, nil)
+            } catch {
+                completion(nil, error)
+            }
+        }
+    }
+
     public func dictionary(with request: URLRequest, completion: @escaping Completion.ThrowableDictionary) {
         data(with: request) { (throwableData) -> Void in
             completion {
@@ -59,10 +70,32 @@ public extension Fetcher {
         }
     }
 
+    public func dictionary(with request: URLRequest, completion: @escaping Completion.FailableDictionary) {
+        dictionary(with: request) { (throwableDictionary) in
+            do {
+                let dictionary = try throwableDictionary()
+                completion(dictionary, nil)
+            } catch {
+                completion(nil, error)
+            }
+        }
+    }
+
     public func array(with request: URLRequest, completion: @escaping Completion.ThrowableArray) {
         data(with: request) { (throwableData) -> Void in
             completion {
                 return try throwableData().toArray()
+            }
+        }
+    }
+
+    public func array(with request: URLRequest, completion: @escaping Completion.FailableArray) {
+        array(with: request) { (throwableArray) in
+            do {
+                let array = try throwableArray()
+                completion(array, nil)
+            } catch {
+                completion(nil, error)
             }
         }
     }

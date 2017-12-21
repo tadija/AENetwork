@@ -7,27 +7,11 @@
 import XCTest
 @testable import AENetwork
 
-class FetcherTests: XCTestCase, NetworkCacheDelegate {
+class FetcherTests: XCTestCase {
 
     // MARK: Properties
 
     let fetcher = Fetcher.shared
-
-    // MARK: Setup
-
-    override func setUp() {
-        fetcher.cache.delegate = self
-    }
-
-    // MARK: NetworkCacheDelegate
-
-    func shouldCacheResponse(from request: URLRequest) -> Bool {
-        return true
-    }
-
-    func isValidCache(_ cache: CachedURLResponse) -> Bool {
-        return true
-    }
 
     // MARK: Tests
 

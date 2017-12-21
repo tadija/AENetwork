@@ -20,6 +20,11 @@ public protocol NetworkDelegate: class {
     func didSendRequest(_ request: URLRequest, sender: Network)
 }
 
+public protocol NetworkCacheDelegate: class {
+    func shouldCacheResponse(from request: URLRequest) -> Bool
+    func isValidCache(_ cache: CachedURLResponse) -> Bool
+}
+
 open class Network {
     
     // MARK: Singleton
@@ -33,23 +38,17 @@ open class Network {
     public let fetcher: Fetcher
     public let downloader: Downloader
 
-    public weak var cacheDelegate: NetworkCacheDelegate? {
-        didSet {
-            fetcher.cache.delegate = cacheDelegate
-        }
-    }
-
-    public var isCacheEnabled: Bool = false
-    public var shouldCacheRequestBlock: ((URLRequest) -> Bool)?
-    public var validateCachedResponseBlock: ((CachedURLResponse) -> Bool)?
+    public let cache: URLCache
+    public weak var cacheDelegate: NetworkCacheDelegate?
 
     // MARK: Init
     
     public init(fetcher: Fetcher = .shared,
-                downloader: Downloader = .shared) {
+                downloader: Downloader = .shared,
+                cache: URLCache = .shared) {
         self.fetcher = fetcher
         self.downloader = downloader
-        self.fetcher.cache.delegate = self
+        self.cache = cache
     }
 
     // MARK: API
@@ -104,16 +103,29 @@ open class Network {
 
 }
 
-extension Network: NetworkCacheDelegate {
+extension Network: FetcherDelegate {
 
-    // MARK: NetworkCacheDelegate
-
-    public func shouldCacheResponse(from request: URLRequest) -> Bool {
-        return shouldCacheRequestBlock?(request) ?? isCacheEnabled
+    public func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
+        guard
+            let cacheDelegate = cacheDelegate,
+            cacheDelegate.shouldCacheResponse(from: request)
+        else {
+            return
+        }
+        let cachedResponse = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
+        cache.storeCachedResponse(cachedResponse, for: request)
     }
 
-    public func isValidCache(_ cache: CachedURLResponse) -> Bool {
-        return validateCachedResponseBlock?(cache) ?? isCacheEnabled
+    public func loadCachedResponse(for request: URLRequest) -> CachedURLResponse? {
+        guard
+            let cachedResponse = cache.cachedResponse(for: request),
+            let cacheDelegate = cacheDelegate,
+            cacheDelegate.isValidCache(cachedResponse)
+        else {
+            cache.removeCachedResponse(for: request)
+            return nil
+        }
+        return cachedResponse
     }
 
 }

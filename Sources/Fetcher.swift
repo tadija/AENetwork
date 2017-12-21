@@ -6,6 +6,11 @@
 
 import Foundation
 
+public protocol FetcherDelegate: class {
+    func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest)
+    func loadCachedResponse(for request: URLRequest) -> CachedURLResponse?
+}
+
 open class Fetcher {
 
     // MARK: Types
@@ -22,14 +27,12 @@ open class Fetcher {
     // MARK: Properties
 
     public let session: URLSession
-    public let cache: Cache
+    public weak var delegate: FetcherDelegate?
 
     // MARK: Init
 
-    public init(session: URLSession = .shared,
-                cache: Cache = .shared) {
+    public init(session: URLSession = .shared) {
         self.session = session
-        self.cache = cache
     }
 
 }
@@ -39,7 +42,7 @@ public extension Fetcher {
     // MARK: API
 
     public func data(with request: URLRequest, completion: @escaping Completion.ThrowableData) {
-        if let cachedResponse = cache.loadResponse(for: request) {
+        if let cachedResponse = delegate?.loadCachedResponse(for: request) {
             completion {
                 return cachedResponse.data
             }
@@ -86,7 +89,7 @@ extension Fetcher {
                                 completion: Completion.ThrowableData) {
         switch response.statusCode {
         case 200 ..< 300:
-            cache.saveResponse(response, with: data, from: request)
+            delegate?.cacheResponse(response, with: data, from: request)
             completion {
                 return data
             }

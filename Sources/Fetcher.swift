@@ -22,18 +22,18 @@ open class Fetcher {
     }
 
     public struct Result {
-        let response: URLResponse
-        let data: Data
+        public let response: URLResponse
+        public let data: Data
 
-        var httpResponse: HTTPURLResponse? {
+        public var httpResponse: HTTPURLResponse? {
             return response as? HTTPURLResponse
         }
 
-        func dictionary() throws -> [String : Any] {
+        public func dictionary() throws -> [String : Any] {
             return try data.toDictionary()
         }
 
-        func array() throws -> [Any] {
+        public func array() throws -> [Any] {
             return try data.toArray()
         }
     }

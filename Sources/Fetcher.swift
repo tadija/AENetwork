@@ -10,6 +10,7 @@ public protocol FetcherDelegate: class {
     func loadCachedResponse(for request: URLRequest) -> CachedURLResponse?
     func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest)
     func didSendRequest(_ request: URLRequest)
+    func didCompleteRequest(_ request: URLRequest)
 }
 
 open class Fetcher {
@@ -82,6 +83,7 @@ extension Fetcher {
             } else {
                 self?.handleResponseError(error, from: request, completion: completion)
             }
+            self?.delegate?.didCompleteRequest(request)
         }.resume()
     }
 

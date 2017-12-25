@@ -11,6 +11,7 @@ public protocol NetworkDelegate: class {
     func shouldSendRequest(_ request: URLRequest, sender: Network) -> Bool
     func didSendRequest(_ request: URLRequest, sender: Network)
     func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool
+    func didCompleteRequest(_ request: URLRequest, sender: Network)
 }
 
 public extension NetworkDelegate {
@@ -20,9 +21,11 @@ public extension NetworkDelegate {
     public func shouldSendRequest(_ request: URLRequest, sender: Network) -> Bool {
         return true
     }
+    public func didSendRequest(_ request: URLRequest, sender: Network) {}
     public func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool {
         return false
     }
+    public func didCompleteRequest(_ request: URLRequest, sender: Network) {}
 }
 
 open class Network {
@@ -92,6 +95,10 @@ extension Network: FetcherDelegate {
         }
         let cachedResponse = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
         cache.storeCachedResponse(cachedResponse, for: request)
+    }
+
+    public func didCompleteRequest(_ request: URLRequest) {
+        delegate?.didCompleteRequest(request, sender: self)
     }
 
 }

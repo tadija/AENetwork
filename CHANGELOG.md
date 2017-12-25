@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.0
+- Major refactoring of Caching logic
+- Major refactoring or request / response logic
+- Other improvements and refactoring
+
 ## Version 0.2.9
 - Refactored Parser into Data+Serialization extension
 - Improvements and bug fixes

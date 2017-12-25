@@ -11,7 +11,7 @@ extension Data {
     // MARK: Types
 
     public enum SerializationError: Swift.Error {
-        case parsingFailed
+        case jsonSerializationFailed
     }
 
     // MARK: API
@@ -33,7 +33,7 @@ extension Data {
     private func serializeJSON<T>() throws -> T {
         let jsonObject = try JSONSerialization.jsonObject(with: self, options: .allowFragments)
         guard let parsed = jsonObject as? T else {
-            throw SerializationError.parsingFailed
+            throw SerializationError.jsonSerializationFailed
         }
         return parsed
     }

@@ -7,27 +7,11 @@
 import XCTest
 @testable import AENetwork
 
-class FetcherTests: XCTestCase, NetworkCacheDelegate {
+class FetcherTests: XCTestCase {
 
     // MARK: Properties
 
     let fetcher = Fetcher.shared
-
-    // MARK: Setup
-
-    override func setUp() {
-        fetcher.cache.delegate = self
-    }
-
-    // MARK: NetworkCacheDelegate
-
-    func shouldCacheResponse(from request: URLRequest) -> Bool {
-        return true
-    }
-
-    func isValidCache(_ cache: CachedURLResponse) -> Bool {
-        return true
-    }
 
     // MARK: Tests
 
@@ -72,9 +56,9 @@ class FetcherTests: XCTestCase, NetworkCacheDelegate {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.dictionary(with: request) { (closure) in
+        fetcher.performRequest(request) { (result) in
             do {
-                let _ = try closure()
+                let _ = try result().dictionary()
                 XCTAssert(!shouldFail, "Should be able to parse dictionary from: \(String(describing: request.url))")
             } catch {
                 XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")
@@ -89,9 +73,9 @@ class FetcherTests: XCTestCase, NetworkCacheDelegate {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.array(with: request) { (closure) in
+        fetcher.performRequest(request) { (result) in
             do {
-                let _ = try closure()
+                let _ = try result().array()
                 XCTAssert(!shouldFail, "Should be able to parse array from: \(String(describing: request.url))")
             } catch {
                 XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")

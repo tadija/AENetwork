@@ -7,37 +7,39 @@
 import Foundation
 
 public protocol FetcherDelegate: class {
-    func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest)
     func loadCachedResponse(for request: URLRequest) -> CachedURLResponse?
+    func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest)
+    func didSendRequest(_ request: URLRequest)
+    func didCompleteRequest(_ request: URLRequest)
 }
 
 open class Fetcher {
 
     // MARK: Types
 
-    public struct Result {
-        let response: URLResponse
-        let data: Data
-
-        var httpResponse: HTTPURLResponse? {
-            return response as? HTTPURLResponse
-        }
-
-        func dictionary() throws -> [String : Any] {
-            return try data.toDictionary()
-        }
-
-        func array() throws -> [Any] {
-            return try data.toArray()
-        }
-    }
-
     public struct Completion {
         public typealias ThrowableResult = (() throws -> Result) -> Void
     }
 
+    public struct Result {
+        public let response: URLResponse
+        public let data: Data
+
+        public var httpResponse: HTTPURLResponse? {
+            return response as? HTTPURLResponse
+        }
+
+        public func dictionary() throws -> [String : Any] {
+            return try data.toDictionary()
+        }
+
+        public func array() throws -> [Any] {
+            return try data.toArray()
+        }
+    }
+
     public enum Error: Swift.Error {
-        case badResponse(_: HTTPURLResponse?)
+        case badResponse(HTTPURLResponse?)
     }
 
     // MARK: Singleton
@@ -64,6 +66,7 @@ open class Fetcher {
             }
         } else {
             sendRequest(request, completion: completion)
+            delegate?.didSendRequest(request)
         }
     }
 
@@ -80,6 +83,7 @@ extension Fetcher {
             } else {
                 self?.handleResponseError(error, from: request, completion: completion)
             }
+            self?.delegate?.didCompleteRequest(request)
         }.resume()
     }
 

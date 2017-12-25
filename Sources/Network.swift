@@ -26,6 +26,12 @@ public extension NetworkDelegate {
 }
 
 open class Network {
+
+    // MARK: Types
+
+    public enum Error: Swift.Error {
+        case requestDenied(URLRequest)
+    }
     
     // MARK: Singleton
     
@@ -52,7 +58,13 @@ open class Network {
     // MARK: API
 
     public func performRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
-        fetcher.performRequest(request, completion: completion)
+        if delegate?.shouldSendRequest(request, sender: self) ?? true {
+            fetcher.performRequest(request, completion: completion)
+        } else {
+            completion {
+                throw Error.requestDenied(request)
+            }
+        }
     }
 
 }
@@ -70,8 +82,8 @@ extension Network: FetcherDelegate {
         return cachedResponse
     }
 
-    public func shouldSendRequest(_ request: URLRequest) -> Bool {
-        return delegate?.shouldSendRequest(request, sender: self) ?? true
+    public func didSendRequest(_ request: URLRequest) {
+        delegate?.didSendRequest(request, sender: self)
     }
 
     public func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
@@ -80,10 +92,6 @@ extension Network: FetcherDelegate {
         }
         let cachedResponse = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
         cache.storeCachedResponse(cachedResponse, for: request)
-    }
-
-    public func didSendRequest(_ request: URLRequest) {
-        delegate?.didSendRequest(request, sender: self)
     }
 
 }

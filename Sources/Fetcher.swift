@@ -9,14 +9,7 @@ import Foundation
 public protocol FetcherDelegate: class {
     func loadCachedResponse(for request: URLRequest) -> CachedURLResponse?
     func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest)
-    func shouldSendRequest(_ request: URLRequest) -> Bool
     func didSendRequest(_ request: URLRequest)
-}
-
-public extension FetcherDelegate {
-    public func shouldSendRequest(_ request: URLRequest) -> Bool {
-        return true
-    }
 }
 
 open class Fetcher {
@@ -45,7 +38,6 @@ open class Fetcher {
     }
 
     public enum Error: Swift.Error {
-        case requestDenied(URLRequest)
         case badResponse(HTTPURLResponse?)
     }
 
@@ -72,14 +64,8 @@ open class Fetcher {
                 return Result(response: cachedResponse.response, data: cachedResponse.data)
             }
         } else {
-            if delegate?.shouldSendRequest(request) ?? true {
-                sendRequest(request, completion: completion)
-                delegate?.didSendRequest(request)
-            } else {
-                completion {
-                    throw Error.requestDenied(request)
-                }
-            }
+            sendRequest(request, completion: completion)
+            delegate?.didSendRequest(request)
         }
     }
 

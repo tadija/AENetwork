@@ -19,6 +19,10 @@ open class Fetcher {
         let response: URLResponse
         let data: Data
 
+        var httpResponse: HTTPURLResponse? {
+            return response as? HTTPURLResponse
+        }
+
         func dictionary() throws -> [String : Any] {
             return try data.toDictionary()
         }
@@ -33,8 +37,7 @@ open class Fetcher {
     }
 
     public enum Error: Swift.Error {
-        case badRequest
-        case badResponse
+        case badResponse(_: HTTPURLResponse?)
     }
 
     // MARK: Singleton
@@ -92,7 +95,7 @@ extension Fetcher {
             }
         default:
             completion {
-                throw Error.badResponse
+                throw Error.badResponse(response)
             }
         }
     }
@@ -111,7 +114,7 @@ extension Fetcher {
             }
         } else {
             completion {
-                throw Error.badResponse
+                throw Error.badResponse(nil)
             }
         }
     }

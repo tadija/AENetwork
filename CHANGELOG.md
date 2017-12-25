@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.1
+- Improvements of delegates logic
+- Minor fixes and refactoring
+- Added sample Playground
+
 ## Version 0.3.0
 - Major refactoring of Caching logic
 - Major refactoring or request / response logic

@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.3.2
+- Created initial version of Backend and BackendRequest protocols
+- Improvements and refactoring
+
 ## Version 0.3.1
 - Improvements of delegates logic
 - Minor fixes and refactoring

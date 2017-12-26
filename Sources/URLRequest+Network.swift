@@ -34,6 +34,20 @@ extension URLRequest {
         }
     }
 
+    public init(baseURL: URL, backendRequest request: BackendRequest) {
+        let url = baseURL.appendingPathComponent(request.endpoint)
+        switch request.method {
+        case .get:
+            self = URLRequest.get(url: url, headers: request.headers, parameters: request.parameters)
+        case .post:
+            self = URLRequest.post(url: url, headers: request.headers, parameters: request.parameters)
+        case .put:
+            self = URLRequest.put(url: url, headers: request.headers, parameters: request.parameters)
+        case .delete:
+            self = URLRequest.delete(url: url, headers: request.headers, parameters: request.parameters)
+        }
+    }
+
     // MARK: API / Factory
 
     public static func get(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {

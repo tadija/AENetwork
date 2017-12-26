@@ -8,9 +8,9 @@ import Foundation
 
 extension URL {
     
-    public mutating func addParameters(_ parameters: [String : String]) {
+    public mutating func addParameters(_ parameters: [String : Any]) {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
-        components?.queryItems = parameters.map { URLQueryItem(name: $0.0, value: $0.1) }
+        components?.queryItems = parameters.map { URLQueryItem(name: $0.0, value: "\($0.1)") }
         self = components?.url ?? self
     }
 
@@ -18,7 +18,7 @@ extension URL {
     ///
     /// - Parameter parameters: Parameters to be added.
     /// - Returns: URL with added parameters.
-    public func addingParameters(_ parameters: [String : String]) -> URL? {
+    public func addingParameters(_ parameters: [String : Any]) -> URL? {
         var copy = self
         copy.addParameters(parameters)
         return copy

@@ -19,8 +19,8 @@ extension URLRequest {
     public init(url: URL,
          method: Method,
          headers: [String : String]? = nil,
-         urlParameters: [String : String]? = nil,
-         body: [String : String]? = nil)
+         urlParameters: [String : Any]? = nil,
+         body: [String : Any]? = nil)
     {
         if let urlParameters = urlParameters, let urlWithParameters = url.addingParameters(urlParameters) {
             self.init(url: urlWithParameters)
@@ -36,19 +36,19 @@ extension URLRequest {
 
     // MARK: API / Factory
 
-    public static func get(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+    public static func get(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .get, headers: headers, urlParameters: parameters)
     }
 
-    public static func post(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+    public static func post(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .post, headers: headers, body: parameters)
     }
 
-    public static func put(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+    public static func put(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .put, headers: headers, body: parameters)
     }
 
-    public static func delete(url: URL, headers: [String : String]? = nil, parameters: [String : String]? = nil) -> URLRequest {
+    public static func delete(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .delete, headers: headers, body: parameters)
     }
 

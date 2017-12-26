@@ -59,13 +59,13 @@ open class Fetcher {
 
     // MARK: API
 
-    public func performRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
+    public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
         if let cachedResponse = delegate?.loadCachedResponse(for: request) {
             completion {
                 return Result(response: cachedResponse.response, data: cachedResponse.data)
             }
         } else {
-            sendRequest(request, completion: completion)
+            performRequest(request, completion: completion)
             delegate?.didSendRequest(request)
         }
     }
@@ -76,7 +76,7 @@ extension Fetcher {
 
     // MARK: Request / Response
 
-    fileprivate func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
+    fileprivate func performRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
         session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)

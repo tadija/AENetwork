@@ -60,9 +60,9 @@ open class Network {
 
     // MARK: API
 
-    public func performRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+    public func sendRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         if delegate?.shouldSendRequest(request, sender: self) ?? true {
-            fetcher.performRequest(request, completion: completion)
+            fetcher.sendRequest(request, completion: completion)
         } else {
             completion {
                 throw Error.requestDenied(request)

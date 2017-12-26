@@ -11,16 +11,16 @@ public protocol Backend {
     var network: Network { get }
     
     func createURLRequest(from backendRequest: BackendRequest) -> URLRequest
-    func performRequest(_ backendRequest: BackendRequest, completion: @escaping Fetcher.Completion.ThrowableResult)
+    func sendRequest(_ backendRequest: BackendRequest, completion: @escaping Fetcher.Completion.ThrowableResult)
 }
 
 public extension Backend {
     public func createURLRequest(from backendRequest: BackendRequest) -> URLRequest {
         return URLRequest(baseURL: baseURL, backendRequest: backendRequest)
     }
-    public func performRequest(_ backendRequest: BackendRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+    public func sendRequest(_ backendRequest: BackendRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         let request = createURLRequest(from: backendRequest)
-        network.performRequest(request, completion: completion)
+        network.sendRequest(request, completion: completion)
     }
 }
 

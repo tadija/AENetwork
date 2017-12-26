@@ -16,27 +16,27 @@ class FetcherTests: XCTestCase {
     // MARK: Tests
 
     func testFetchDictionary() {
-        performDictionaryRequest(withURL: "https://httpbin.org/get")
+        sendDictionaryRequest(withURL: "https://httpbin.org/get")
     }
 
     func testFetchDictionaryError() {
-        performDictionaryRequest(withURL: "https://httpbin.org", shouldFail: true)
+        sendDictionaryRequest(withURL: "https://httpbin.org", shouldFail: true)
     }
 
     func testFetchArray() {
-        performArrayRequest(withURL: "http://www.mocky.io/v2/5a304e1f2d0000c239a83dc5")
+        sendArrayRequest(withURL: "http://www.mocky.io/v2/5a304e1f2d0000c239a83dc5")
     }
 
     func testFetchArrayError() {
-        performArrayRequest(withURL: "https://httpbin.org/get", shouldFail: true)
+        sendArrayRequest(withURL: "https://httpbin.org/get", shouldFail: true)
     }
 
     func testFetchError() {
-        performDictionaryRequest(withURL: "https://test.test", shouldFail: true)
+        sendDictionaryRequest(withURL: "https://test.test", shouldFail: true)
     }
 
     func testResponseError() {
-        performDictionaryRequest(withURL: "https://httpbin.org/test", shouldFail: true)
+        sendDictionaryRequest(withURL: "https://httpbin.org/test", shouldFail: true)
     }
 
     static var allTests : [(String, (FetcherTests) -> () throws -> Void)] {
@@ -52,11 +52,11 @@ class FetcherTests: XCTestCase {
 
     // MARK: Helpers
 
-    private func performDictionaryRequest(withURL url: URL, shouldFail: Bool = false) {
+    private func sendDictionaryRequest(withURL url: URL, shouldFail: Bool = false) {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.performRequest(request) { (result) in
+        fetcher.sendRequest(request) { (result) in
             do {
                 let result = try result()
                 let _ = try result.dictionary()
@@ -71,11 +71,11 @@ class FetcherTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    private func performArrayRequest(withURL url: URL, shouldFail: Bool = false) {
+    private func sendArrayRequest(withURL url: URL, shouldFail: Bool = false) {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.performRequest(request) { (result) in
+        fetcher.sendRequest(request) { (result) in
             do {
                 let result = try result()
                 let _ = try result.array()

@@ -68,8 +68,8 @@ extension URLRequest {
 
     // MARK: API / Fetch
 
-    public func perform(with network: Network = .shared, completion: @escaping Fetcher.Completion.ThrowableResult) {
-        network.performRequest(self, completion: completion)
+    public func send(with network: Network = .shared, completion: @escaping Fetcher.Completion.ThrowableResult) {
+        network.sendRequest(self, completion: completion)
     }
 
 }

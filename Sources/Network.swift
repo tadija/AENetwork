@@ -8,8 +8,7 @@ import Foundation
 
 public protocol NetworkDelegate: class {
     func didSendRequest(_ request: URLRequest, sender: Network)
-    func didFinishRequest(_ request: URLRequest, sender: Network)
-    func didFailRequest(_ request: URLRequest, sender: Network)
+    func didFinishRequest(_ request: URLRequest, with result: Fetcher.Result, sender: Network)
 
     func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool
     func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool
@@ -17,8 +16,7 @@ public protocol NetworkDelegate: class {
 
 public extension NetworkDelegate {
     public func didSendRequest(_ request: URLRequest, sender: Network) {}
-    public func didFinishRequest(_ request: URLRequest, sender: Network) {}
-    public func didFailRequest(_ request: URLRequest, sender: Network) {}
+    public func didFinishRequest(_ request: URLRequest, with result: Fetcher.Result, sender: Network) {}
 
     public func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool {
         return true
@@ -29,12 +27,6 @@ public extension NetworkDelegate {
 }
 
 open class Network {
-
-    // MARK: Types
-
-    public enum Error: Swift.Error {
-        case requestFailed(URLRequest)
-    }
     
     // MARK: Singleton
     
@@ -84,27 +76,24 @@ open class Network {
 
     private func performNetworkRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         fetcher.sendRequest(request, completion: { [weak self] (result) in
-            if let weakSelf = self {
-                do {
-                    let result = try result()
-                    weakSelf.tryCachingResponse(result.response, with: result.data, from: request)
-                    weakSelf.delegate?.didFinishRequest(request, sender: weakSelf)
-                    completion {
-                        return result
-                    }
-                } catch {
-                    weakSelf.delegate?.didFailRequest(request, sender: weakSelf)
-                    completion {
-                        throw error
-                    }
-                }
-            } else {
+            do {
+                let result = try result()
+                self?.handleNetworkResponse(from: request, with: result)
                 completion {
-                    throw Error.requestFailed(request)
+                    return result
+                }
+            } catch {
+                completion {
+                    throw error
                 }
             }
         })
         delegate?.didSendRequest(request, sender: self)
+    }
+
+    private func handleNetworkResponse(from request: URLRequest, with result: Fetcher.Result) {
+        tryCachingResponse(result.response, with: result.data, from: request)
+        delegate?.didFinishRequest(request, with: result, sender: self)
     }
 
     private func tryCachingResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {

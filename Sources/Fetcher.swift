@@ -7,8 +7,7 @@
 import Foundation
 
 public protocol FetcherDelegate: class {
-    func loadCachedResponse(for request: URLRequest) -> CachedURLResponse?
-    func cacheResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest)
+    func willSendRequest(_ request: URLRequest)
     func didSendRequest(_ request: URLRequest)
     func didCompleteRequest(_ request: URLRequest)
 }
@@ -22,12 +21,8 @@ open class Fetcher {
     }
 
     public struct Result {
-        public let response: URLResponse
+        public let response: HTTPURLResponse
         public let data: Data
-
-        public var httpResponse: HTTPURLResponse? {
-            return response as? HTTPURLResponse
-        }
 
         public func dictionary() throws -> [String : Any] {
             return try data.toDictionary()
@@ -60,23 +55,7 @@ open class Fetcher {
     // MARK: API
 
     public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
-        if let cachedResponse = delegate?.loadCachedResponse(for: request) {
-            completion {
-                return Result(response: cachedResponse.response, data: cachedResponse.data)
-            }
-        } else {
-            performRequest(request, completion: completion)
-            delegate?.didSendRequest(request)
-        }
-    }
-
-}
-
-extension Fetcher {
-
-    // MARK: Request / Response
-
-    fileprivate func performRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
+        delegate?.willSendRequest(request)
         session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)
@@ -85,7 +64,10 @@ extension Fetcher {
             }
             self?.delegate?.didCompleteRequest(request)
         }.resume()
+        delegate?.didSendRequest(request)
     }
+
+    // MARK: Helpers
 
     private func handleResponse(_ response: HTTPURLResponse,
                                 with data: Data,
@@ -93,7 +75,6 @@ extension Fetcher {
                                 completion: Completion.ThrowableResult) {
         switch response.statusCode {
         case 200 ..< 300:
-            delegate?.cacheResponse(response, with: data, from: request)
             completion {
                 return Result(response: response, data: data)
             }
@@ -110,7 +91,7 @@ extension Fetcher {
         if let error = error as NSError? {
             if error.domain == NSURLErrorDomain && error.code == NSURLErrorNetworkConnectionLost {
                 // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
-                performRequest(request, completion: completion)
+                sendRequest(request, completion: completion)
             } else {
                 completion {
                     throw error

@@ -6,12 +6,6 @@
 
 import Foundation
 
-public protocol FetcherDelegate: class {
-    func willSendRequest(_ request: URLRequest)
-    func didSendRequest(_ request: URLRequest)
-    func didCompleteRequest(_ request: URLRequest)
-}
-
 open class Fetcher {
 
     // MARK: Types
@@ -44,7 +38,6 @@ open class Fetcher {
     // MARK: Properties
 
     public let session: URLSession
-    public weak var delegate: FetcherDelegate?
 
     // MARK: Init
 
@@ -55,16 +48,13 @@ open class Fetcher {
     // MARK: API
 
     public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
-        delegate?.willSendRequest(request)
         session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleResponse(response, with: data, from: request, completion: completion)
             } else {
                 self?.handleResponseError(error, from: request, completion: completion)
             }
-            self?.delegate?.didCompleteRequest(request)
         }.resume()
-        delegate?.didSendRequest(request)
     }
 
     // MARK: Helpers

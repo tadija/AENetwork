@@ -22,16 +22,16 @@ public extension NetworkDelegate {
         return true
     }
 
+    public func willSendRequest(_ request: URLRequest, sender: Network) {}
+    public func didSendRequest(_ request: URLRequest, sender: Network) {}
+    public func didCompleteRequest(_ request: URLRequest, sender: Network) {}
+
     public func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool {
         return true
     }
     public func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool {
         return false
     }
-
-    public func willSendRequest(_ request: URLRequest, sender: Network) {}
-    public func didSendRequest(_ request: URLRequest, sender: Network) {}
-    public func didCompleteRequest(_ request: URLRequest, sender: Network) {}
 }
 
 open class Network {
@@ -56,9 +56,7 @@ open class Network {
 
     // MARK: Init
     
-    public init(fetcher: Fetcher = .shared,
-                downloader: Downloader = .shared,
-                cache: URLCache = .shared) {
+    public init(fetcher: Fetcher = .shared, downloader: Downloader = .shared, cache: URLCache = .shared) {
         self.fetcher = fetcher
         self.downloader = downloader
         self.cache = cache
@@ -74,7 +72,13 @@ open class Network {
                     return Fetcher.Result(response: httpResponse, data: cachedResponse.data)
                 }
             } else {
+                delegate?.willSendRequest(request, sender: self)
                 fetcher.sendRequest(request, completion: { [weak self] (result) in
+                    defer {
+                        if let weakSelf = self {
+                            weakSelf.delegate?.didCompleteRequest(request, sender: weakSelf)
+                        }
+                    }
                     do {
                         let result = try result()
                         self?.cacheResponse(result.response, with: result.data, from: request)
@@ -87,6 +91,7 @@ open class Network {
                         }
                     }
                 })
+                delegate?.didSendRequest(request, sender: self)
             }
         } else {
             completion {
@@ -114,22 +119,6 @@ open class Network {
         }
         let cachedResponse = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
         cache.storeCachedResponse(cachedResponse, for: request)
-    }
-
-}
-
-extension Network: FetcherDelegate {
-
-    public func willSendRequest(_ request: URLRequest) {
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    public func didSendRequest(_ request: URLRequest) {
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    public func didCompleteRequest(_ request: URLRequest) {
-        delegate?.didCompleteRequest(request, sender: self)
     }
 
 }

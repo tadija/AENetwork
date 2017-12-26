@@ -72,26 +72,7 @@ open class Network {
                     return Fetcher.Result(response: httpResponse, data: cachedResponse.data)
                 }
             } else {
-                delegate?.willSendRequest(request, sender: self)
-                fetcher.sendRequest(request, completion: { [weak self] (result) in
-                    defer {
-                        if let weakSelf = self {
-                            weakSelf.delegate?.didCompleteRequest(request, sender: weakSelf)
-                        }
-                    }
-                    do {
-                        let result = try result()
-                        self?.cacheResponse(result.response, with: result.data, from: request)
-                        completion {
-                            return result
-                        }
-                    } catch {
-                        completion {
-                            throw error
-                        }
-                    }
-                })
-                delegate?.didSendRequest(request, sender: self)
+                performNetworkRequest(request, completion: completion)
             }
         } else {
             completion {
@@ -101,6 +82,29 @@ open class Network {
     }
 
     // MARK: Helpers
+
+    private func performNetworkRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+        delegate?.willSendRequest(request, sender: self)
+        fetcher.sendRequest(request, completion: { [weak self] (result) in
+            defer {
+                if let weakSelf = self {
+                    weakSelf.delegate?.didCompleteRequest(request, sender: weakSelf)
+                }
+            }
+            do {
+                let result = try result()
+                self?.cacheResponse(result.response, with: result.data, from: request)
+                completion {
+                    return result
+                }
+            } catch {
+                completion {
+                    throw error
+                }
+            }
+        })
+        delegate?.didSendRequest(request, sender: self)
+    }
 
     private func loadCachedResponse(for request: URLRequest) -> CachedURLResponse? {
         guard

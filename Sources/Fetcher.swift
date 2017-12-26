@@ -50,7 +50,7 @@ open class Fetcher {
     public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
         session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
-                self?.handleResponse(response, with: data, from: request, completion: completion)
+                self?.handleValidResponse(response, with: data, from: request, completion: completion)
             } else {
                 self?.handleResponseError(error, from: request, completion: completion)
             }
@@ -59,7 +59,7 @@ open class Fetcher {
 
     // MARK: Helpers
 
-    private func handleResponse(_ response: HTTPURLResponse,
+    private func handleValidResponse(_ response: HTTPURLResponse,
                                 with data: Data,
                                 from request: URLRequest,
                                 completion: Completion.ThrowableResult) {

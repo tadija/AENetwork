@@ -56,5 +56,5 @@ class Test: NetworkDelegate {
 //    }
 //}
 
-let test = Test()
-Network.shared.delegate = test
+//let test = Test()
+//Network.shared.delegate = test

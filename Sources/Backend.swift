@@ -13,6 +13,15 @@ public protocol BackendRequest {
     var parameters: [String : Any]? { get }
 }
 
+public extension BackendRequest {
+    var headers: [String : String]? {
+        return nil
+    }
+    var parameters: [String : Any]? {
+        return nil
+    }
+}
+
 public protocol BackendAPI {
     var baseURL: URL { get }
     func createURLRequest(from backendRequest: BackendRequest) -> URLRequest

@@ -9,7 +9,7 @@ import Foundation
 public protocol NetworkDelegate: class {
     func didSendRequest(_ request: URLRequest, sender: Network)
     func interceptResult(_ result: () throws -> Fetcher.Result, from request: URLRequest,
-                         completion: Fetcher.Completion.ThrowableResult, sender: Network)
+                         completion: @escaping Fetcher.Completion.ThrowableResult, sender: Network)
 
     func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool
     func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool
@@ -18,16 +18,9 @@ public protocol NetworkDelegate: class {
 public extension NetworkDelegate {
     public func didSendRequest(_ request: URLRequest, sender: Network) {}
     public func interceptResult(_ result: () throws -> Fetcher.Result, from request: URLRequest,
-                                completion: Fetcher.Completion.ThrowableResult, sender: Network) {
-        do {
-            let interceptedResult = try result()
-            completion {
-                return interceptedResult
-            }
-        } catch {
-            completion {
-                throw error
-            }
+                                completion: @escaping Fetcher.Completion.ThrowableResult, sender: Network) {
+        completion {
+            return try result()
         }
     }
 

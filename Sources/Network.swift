@@ -7,6 +7,7 @@
 import Foundation
 
 public protocol NetworkDelegate: class {
+    func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
     func didSendRequest(_ request: URLRequest, sender: Network)
     func interceptResult(_ result: () throws -> Fetcher.Result, from request: URLRequest,
                          completion: @escaping Fetcher.Completion.ThrowableResult, sender: Network)
@@ -16,6 +17,9 @@ public protocol NetworkDelegate: class {
 }
 
 public extension NetworkDelegate {
+    public func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest {
+        return request
+    }
     public func didSendRequest(_ request: URLRequest, sender: Network) {}
     public func interceptResult(_ result: () throws -> Fetcher.Result, from request: URLRequest,
                                 completion: @escaping Fetcher.Completion.ThrowableResult, sender: Network) {
@@ -57,6 +61,20 @@ open class Network {
     // MARK: API
 
     public func sendRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+        do {
+            let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
+            let finalRequest = modifiedRequest ?? request
+            handleRequest(finalRequest, completion: completion)
+        } catch {
+            completion {
+                throw error
+            }
+        }
+    }
+
+    // MARK: Helpers
+
+    private func handleRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         if let cachedResponse = loadCachedResponse(for: request) {
             completion {
                 let httpResponse = cachedResponse.response as! HTTPURLResponse
@@ -66,8 +84,6 @@ open class Network {
             performNetworkRequest(request, completion: completion)
         }
     }
-
-    // MARK: Helpers
 
     private func loadCachedResponse(for request: URLRequest) -> CachedURLResponse? {
         guard

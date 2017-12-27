@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.3
+- Added logic to intercept any request / response with NetworkDelegate
+- Improved Backend logic (added BackendAPI protocol)
+- Other improvements and refactoring
+
 ## Version 0.3.2
 - Created initial version of Backend and BackendRequest protocols
 - Improvements and refactoring

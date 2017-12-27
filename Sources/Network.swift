@@ -10,6 +10,8 @@ public protocol NetworkDelegate: class {
     func didSendRequest(_ request: URLRequest, sender: Network)
     func didFinishRequest(_ request: URLRequest, with result: Fetcher.Result, sender: Network)
 
+    func tmp1(_ r: () throws -> Fetcher.Result, c: Fetcher.Completion.ThrowableResult)
+
     func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool
     func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool
 }
@@ -17,6 +19,19 @@ public protocol NetworkDelegate: class {
 public extension NetworkDelegate {
     public func didSendRequest(_ request: URLRequest, sender: Network) {}
     public func didFinishRequest(_ request: URLRequest, with result: Fetcher.Result, sender: Network) {}
+
+    func tmp1(_ r: () throws -> Fetcher.Result, c: Fetcher.Completion.ThrowableResult) {
+        do {
+            let res = try r()
+            c {
+                return res
+            }
+        } catch {
+            c {
+                throw error
+            }
+        }
+    }
 
     public func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool {
         return true
@@ -76,17 +91,20 @@ open class Network {
 
     private func performNetworkRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         fetcher.sendRequest(request, completion: { [weak self] (result) in
-            do {
-                let result = try result()
-                self?.handleNetworkResponse(from: request, with: result)
-                completion {
-                    return result
-                }
-            } catch {
-                completion {
-                    throw error
-                }
-            }
+//            do {
+//                let result = try result()
+//                self?.handleNetworkResponse(from: request, with: result)
+//                completion {
+//                    return result
+//                }
+//            } catch {
+//                completion {
+//                    throw error
+//                }
+//            }
+
+            self?.delegate?.tmp1(result, c: completion)
+
         })
         delegate?.didSendRequest(request, sender: self)
     }

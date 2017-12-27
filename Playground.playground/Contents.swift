@@ -22,3 +22,39 @@ network.sendRequest(request) { (result) in
         print(error)
     }
 }
+
+class Test: NetworkDelegate {
+    let n = Network()
+
+    init() {
+        n.delegate = self
+    }
+
+//    func tmp1(_ r: () throws -> Fetcher.Result, c: (() throws -> Fetcher.Result) -> Void) {
+//        do {
+//            let res = try r()
+//            print(res)
+//            c {
+//                return res
+//            }
+//        } catch {
+//            print(error)
+//            c {
+//                throw error
+//            }
+//        }
+//    }
+}
+
+//let test = Test()
+//test.n.sendRequest(request) { (res) in
+//    do {
+//        let r = try res()
+//        print(r)
+//    } catch {
+//        print(error)
+//    }
+//}
+
+let test = Test()
+Network.shared.delegate = test

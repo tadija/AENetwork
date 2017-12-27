@@ -89,46 +89,25 @@ open class Network {
 
     private func performNetworkRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         fetcher.sendRequest(request, completion: { [weak self] (result) in
-//            do {
-//                let result = try result()
-//                self?.handleNetworkResponse(from: request, with: result)
-//                completion {
-//                    return result
-//                }
-//            } catch {
-//                completion {
-//                    throw error
-//                }
-//            }
-
-            if let weakSelf = self {
-                if let delegate = weakSelf.delegate {
-                    delegate.interceptResult(result, from: request, completion: completion, sender: weakSelf)
-                } else {
-                    completion {
-                        return try result()
-                    }
-                }
+            if let weakSelf = self, let delegate = weakSelf.delegate {
+                weakSelf.tryCachingResult(result, from: request, delegate: delegate)
+                delegate.interceptResult(result, from: request, completion: completion, sender: weakSelf)
             } else {
                 completion {
                     return try result()
                 }
             }
-
         })
         delegate?.didSendRequest(request, sender: self)
     }
 
-    private func handleNetworkResponse(from request: URLRequest, with result: Fetcher.Result) {
-        tryCachingResponse(result.response, with: result.data, from: request)
-    }
-
-    private func tryCachingResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest) {
-        guard let delegate = delegate, delegate.shouldCacheResponse(from: request, sender: self) else {
-            return
+    private func tryCachingResult(_ result: () throws -> Fetcher.Result,
+                                  from request: URLRequest,
+                                  delegate: NetworkDelegate) {
+        if delegate.shouldCacheResponse(from: request, sender: self), let result = try? result() {
+            let response = CachedURLResponse(response: result.response, data: result.data, storagePolicy: .allowed)
+            cache.storeCachedResponse(response, for: request)
         }
-        let cachedResponse = CachedURLResponse(response: response, data: data, storagePolicy: .allowed)
-        cache.storeCachedResponse(cachedResponse, for: request)
     }
 
 }

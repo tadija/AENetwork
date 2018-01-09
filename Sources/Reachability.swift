@@ -15,36 +15,38 @@ public class Reachability {
     
     // MARK: Types
     
-    public typealias ReachabilityStatus = (ConnectionType) -> ()
-    
-    public enum ConnectionType {
-        case none
-        case wifi
-        case cellular
+    public enum Status {
+        case notReachable
+        case reachableOnEthernetOrWiFi
+        case reachableOnCellular
     }
     
     // MARK: Public Properties
     
-    public var status: ReachabilityStatus?
+    public var statusDidChange: ((Status) -> ())?
     
-    public var connectionType: ConnectionType {
-        guard flags.contains(.reachable) else { return .none }
+    public var status: Status {
+        guard flags.contains(.reachable) else { return .notReachable }
         
-        var type: ConnectionType = .none
+        var status: Status = .notReachable
         
         if !flags.contains(.connectionRequired) {
-            type = .wifi
+            status = .reachableOnEthernetOrWiFi
         }
         if flags.contains(.connectionOnTraffic) || flags.contains(.connectionOnDemand) {
             if !flags.contains(.interventionRequired) {
-                type = .wifi
+                status = .reachableOnEthernetOrWiFi
             }
         }
         if flags.contains(.isWWAN) {
-            type = .cellular
+            status = .reachableOnCellular
         }
         
-        return type
+        return status
+    }
+    
+    public var isReachable: Bool {
+        return status != .notReachable
     }
     
     // MARK: Private Properties
@@ -115,8 +117,8 @@ public class Reachability {
         
         DispatchQueue.main.async { [weak self] in
             if let strongSelf = self {
-                strongSelf.status?(strongSelf.connectionType)
-                NotificationCenter.default.post(name: .reachabilityStatusDidChange, object: strongSelf.connectionType)
+                strongSelf.statusDidChange?(strongSelf.status)
+                NotificationCenter.default.post(name: .reachabilityStatusDidChange, object: strongSelf.status)
             }
         }
     }

@@ -7,6 +7,10 @@
 import Foundation
 import SystemConfiguration
 
+extension Notification.Name {
+    public static let reachabilityStatusDidChange = Notification.Name("Reachability.Status.Did.Change")
+}
+
 @objcMembers
 public class Reachability: NSObject {
     
@@ -113,6 +117,7 @@ public class Reachability: NSObject {
         DispatchQueue.main.async { [weak self] in
             if let strongSelf = self {
                 strongSelf.status?(strongSelf.connectionType)
+                NotificationCenter.default.post(name: .reachabilityStatusDidChange, object: strongSelf.connectionType)
             }
         }
     }

@@ -11,14 +11,13 @@ extension Notification.Name {
     public static let reachabilityStatusDidChange = Notification.Name("Reachability.Status.Did.Change")
 }
 
-@objcMembers
-public class Reachability: NSObject {
+public class Reachability {
     
     // MARK: Types
     
     public typealias ReachabilityStatus = (ConnectionType) -> ()
     
-    @objc public enum ConnectionType: Int {
+    public enum ConnectionType {
         case none
         case wifi
         case cellular

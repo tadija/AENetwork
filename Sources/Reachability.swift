@@ -11,7 +11,7 @@ extension Notification.Name {
     public static let reachabilityStatusDidChange = Notification.Name("Reachability.Status.Did.Change")
 }
 
-public class Reachability {
+open class Reachability {
     
     // MARK: Types
     
@@ -20,7 +20,11 @@ public class Reachability {
         case reachableOnEthernetOrWiFi
         case reachableOnCellular
     }
-    
+
+    // MARK: Singleton
+
+    public static let shared = Reachability()
+
     // MARK: Public Properties
     
     public var statusDidChange: ((Status) -> ())?
@@ -77,6 +81,8 @@ public class Reachability {
     private let queue = DispatchQueue(label: "net.tadija.AENetwork.Reachability")
     
     // MARK: Lifecycle
+
+    public init() {}
     
     deinit {
         stopNotifier()

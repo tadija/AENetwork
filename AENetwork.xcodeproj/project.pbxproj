@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		04126DD52004C7E3009BA398 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04126DD42004C7E3009BA398 /* Reachability.swift */; };
+		04126DD72004CCA3009BA398 /* ReachabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04126DD62004CCA3009BA398 /* ReachabilityTests.swift */; };
 		8B01E2651FEB11A100069C3B /* URLRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B01E2631FEB116100069C3B /* URLRequestTests.swift */; };
 		8B01E2671FEB1CEB00069C3B /* Data+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B01E2661FEB1CEB00069C3B /* Data+Serialization.swift */; };
 		8B3335E41FE0862B004F4AC6 /* URLRequest+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */; };
@@ -37,6 +38,7 @@
 
 /* Begin PBXFileReference section */
 		04126DD42004C7E3009BA398 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		04126DD62004CCA3009BA398 /* ReachabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReachabilityTests.swift; path = AENetworkTests/ReachabilityTests.swift; sourceTree = "<group>"; };
 		8B01E2631FEB116100069C3B /* URLRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestTests.swift; sourceTree = "<group>"; };
 		8B01E2661FEB1CEB00069C3B /* Data+Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Serialization.swift"; sourceTree = "<group>"; };
 		8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Helpers.swift"; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */,
+				04126DD62004CCA3009BA398 /* ReachabilityTests.swift */,
 				8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */,
 				8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */,
 				8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */,
@@ -277,6 +280,7 @@
 				8B4D06FD1FD747FE000B4ADB /* DownloaderTests.swift in Sources */,
 				8B4D06FB1FD5F459000B4ADB /* FetcherTests.swift in Sources */,
 				8B6CA4971FD2DFB500162360 /* SerializationTests.swift in Sources */,
+				04126DD72004CCA3009BA398 /* ReachabilityTests.swift in Sources */,
 				8B4D06F71FD5CEDC000B4ADB /* URLTests.swift in Sources */,
 				8B01E2651FEB11A100069C3B /* URLRequestTests.swift in Sources */,
 			);

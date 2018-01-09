@@ -69,6 +69,7 @@ public class Reachability: NSObject {
     
     private var previousFlags: SCNetworkReachabilityFlags?
     private var isNotifierRunning = false
+    private let queue = DispatchQueue(label: "net.tadija.AENetwork.Reachability")
     
     // MARK: Lifecycle
     
@@ -85,9 +86,9 @@ public class Reachability: NSObject {
         context.info = Unmanaged.passUnretained(self).toOpaque()
         
         SCNetworkReachabilitySetCallback(reachabilityRef, reachabilityCallBack, &context)
-        SCNetworkReachabilitySetDispatchQueue(reachabilityRef, DispatchQueue.main)
+        SCNetworkReachabilitySetDispatchQueue(reachabilityRef, queue)
         
-        DispatchQueue.main.async { [weak self] in
+        queue.async { [weak self] in
             self?.networkListener()
         }
         
@@ -109,7 +110,11 @@ public class Reachability: NSObject {
         guard previousFlags != flags else { return }
         previousFlags = flags
         
-        status?(connectionType)
+        DispatchQueue.main.async { [weak self] in
+            if let strongSelf = self {
+                strongSelf.status?(strongSelf.connectionType)
+            }
+        }
     }
     
 }

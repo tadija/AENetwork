@@ -66,11 +66,31 @@ open class Network {
 
     // MARK: API
 
-    public func sendRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+    public func sendRequest(_ request: URLRequest,
+                            completionQueue: DispatchQueue? = nil,
+                            completion: @escaping Fetcher.Completion.ThrowableResult) {
+        performRequest(request) { (result) in
+            if let queue = completionQueue {
+                queue.sync {
+                    completion {
+                        return try result()
+                    }
+                }
+            } else {
+                completion {
+                    return try result()
+                }
+            }
+        }
+    }
+
+    // MARK: Helpers
+
+    private func performRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
             let finalRequest = modifiedRequest ?? request
-            handleRequest(finalRequest, completion: completion)
+            provideResponse(for: finalRequest, completion: completion)
         } catch {
             completion {
                 throw error
@@ -78,9 +98,7 @@ open class Network {
         }
     }
 
-    // MARK: Helpers
-
-    private func handleRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+    private func provideResponse(for request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
         if let cachedResponse = loadCachedResponse(for: request) {
             completion {
                 let httpResponse = cachedResponse.response as! HTTPURLResponse

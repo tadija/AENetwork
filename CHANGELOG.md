@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.5
+
+- Possibility to provide custom completion queue when sending network request
+- Minor other fixes
+
 ## Version 0.3.4
 
 - Added Reachability

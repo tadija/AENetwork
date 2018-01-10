@@ -46,13 +46,19 @@ open class Network {
 
     public weak var delegate: NetworkDelegate?
 
+    public let reachability: Reachability
     public let fetcher: Fetcher
     public let downloader: Downloader
     public let cache: URLCache
 
     // MARK: Init
     
-    public init(fetcher: Fetcher = .shared, downloader: Downloader = .shared, cache: URLCache = .shared) {
+    public init(reachability: Reachability = .shared,
+                fetcher: Fetcher = .shared,
+                downloader: Downloader = .shared,
+                cache: URLCache = .shared)
+    {
+        self.reachability = reachability
         self.fetcher = fetcher
         self.downloader = downloader
         self.cache = cache

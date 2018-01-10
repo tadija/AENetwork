@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.3.4
+
+- Added Reachability
+
 ## Version 0.3.3
 - Added logic to intercept any request / response with NetworkDelegate
 - Improved Backend logic (added BackendAPI protocol)

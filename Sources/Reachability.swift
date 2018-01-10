@@ -55,7 +55,7 @@ open class Reachability {
     
     // MARK: Private Properties
     
-    private let reachabilityRef: SCNetworkReachability! = {
+    private lazy var reachabilityRef: SCNetworkReachability? = {
         var zeroAddress = sockaddr()
         zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
         zeroAddress.sa_family = sa_family_t(AF_INET)
@@ -72,7 +72,9 @@ open class Reachability {
     
     private var flags: SCNetworkReachabilityFlags {
         var flags = SCNetworkReachabilityFlags()
-        SCNetworkReachabilityGetFlags(reachabilityRef, &flags)
+        guard let ref = reachabilityRef, SCNetworkReachabilityGetFlags(ref, &flags) else {
+            return SCNetworkReachabilityFlags()
+        }
         return flags
     }
     
@@ -91,13 +93,13 @@ open class Reachability {
     // MARK: Notifier API
     
     public func startNotifier() {
-        guard !isNotifierRunning else { return }
+        guard !isNotifierRunning, let ref = reachabilityRef else { return }
         
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
         context.info = Unmanaged.passUnretained(self).toOpaque()
         
-        SCNetworkReachabilitySetCallback(reachabilityRef, reachabilityCallBack, &context)
-        SCNetworkReachabilitySetDispatchQueue(reachabilityRef, queue)
+        SCNetworkReachabilitySetCallback(ref, reachabilityCallBack, &context)
+        SCNetworkReachabilitySetDispatchQueue(ref, queue)
         
         queue.async { [weak self] in
             self?.networkListener()
@@ -107,12 +109,12 @@ open class Reachability {
     }
     
     public func stopNotifier() {
-        defer {
-            isNotifierRunning = false
-        }
+        guard let ref = reachabilityRef else { return }
         
-        SCNetworkReachabilitySetCallback(reachabilityRef, nil, nil)
-        SCNetworkReachabilitySetDispatchQueue(reachabilityRef, nil)
+        SCNetworkReachabilitySetCallback(ref, nil, nil)
+        SCNetworkReachabilitySetDispatchQueue(ref, nil)
+
+        isNotifierRunning = false
     }
     
     // MARK: Listener

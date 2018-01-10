@@ -11,6 +11,15 @@ extension Notification.Name {
     public static let reachabilityStatusDidChange = Notification.Name("Reachability.Status.Did.Change")
 }
 
+private func callback(networkReference: SCNetworkReachability,
+                      flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) {
+    guard let info = info else {
+        return
+    }
+    let reachability = Unmanaged<Reachability>.fromOpaque(info).takeUnretainedValue()
+    reachability.networkListener()
+}
+
 open class Reachability {
     
     // MARK: Types
@@ -26,6 +35,8 @@ open class Reachability {
     public static let shared = Reachability()
 
     // MARK: Public Properties
+
+    private let networkReference: SCNetworkReachability?
     
     public var statusDidChange: ((Status) -> ())?
     
@@ -55,24 +66,9 @@ open class Reachability {
     
     // MARK: Private Properties
     
-    private lazy var reachabilityRef: SCNetworkReachability? = {
-        var zeroAddress = sockaddr()
-        zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
-        zeroAddress.sa_family = sa_family_t(AF_INET)
-        
-        return SCNetworkReachabilityCreateWithAddress(nil, &zeroAddress)
-    }()
-    
-    private let reachabilityCallBack: SCNetworkReachabilityCallBack? = { (_,_,info) in
-        guard let info = info else { return }
-        
-        let reachability = Unmanaged<Reachability>.fromOpaque(info).takeUnretainedValue()
-        reachability.networkListener()
-    }
-    
     private var flags: SCNetworkReachabilityFlags {
         var flags = SCNetworkReachabilityFlags()
-        guard let ref = reachabilityRef, SCNetworkReachabilityGetFlags(ref, &flags) else {
+        guard let ref = networkReference, SCNetworkReachabilityGetFlags(ref, &flags) else {
             return SCNetworkReachabilityFlags()
         }
         return flags
@@ -82,23 +78,32 @@ open class Reachability {
     private var isNotifierRunning = false
     private let queue = DispatchQueue(label: "net.tadija.AENetwork.Reachability")
     
-    // MARK: Lifecycle
+    // MARK: Init
 
-    public init() {}
+    public init(hostname: String) {
+        self.networkReference = SCNetworkReachabilityCreateWithName(nil, hostname)
+    }
+
+    public init() {
+        var zeroAddress = sockaddr()
+        zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
+        zeroAddress.sa_family = sa_family_t(AF_INET)
+        self.networkReference = SCNetworkReachabilityCreateWithAddress(nil, &zeroAddress)
+    }
     
     deinit {
         stopNotifier()
     }
     
-    // MARK: Notifier API
+    // MARK: API
     
     public func startNotifier() {
-        guard !isNotifierRunning, let ref = reachabilityRef else { return }
+        guard !isNotifierRunning, let ref = networkReference else { return }
         
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-        context.info = Unmanaged.passUnretained(self).toOpaque()
+        context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())
         
-        SCNetworkReachabilitySetCallback(ref, reachabilityCallBack, &context)
+        SCNetworkReachabilitySetCallback(ref, callback, &context)
         SCNetworkReachabilitySetDispatchQueue(ref, queue)
         
         queue.async { [weak self] in
@@ -109,7 +114,7 @@ open class Reachability {
     }
     
     public func stopNotifier() {
-        guard let ref = reachabilityRef else { return }
+        guard let ref = networkReference else { return }
         
         SCNetworkReachabilitySetCallback(ref, nil, nil)
         SCNetworkReachabilitySetDispatchQueue(ref, nil)
@@ -119,7 +124,7 @@ open class Reachability {
     
     // MARK: Listener
     
-    private func networkListener() {
+    fileprivate func networkListener() {
         guard previousFlags != flags else { return }
         previousFlags = flags
         

@@ -40,7 +40,7 @@ open class Network {
     
     // MARK: Singleton
     
-    public static let shared = Network(fetcher: .shared, downloader: .shared)
+    public static let shared = Network()
 
     // MARK: Properties
 

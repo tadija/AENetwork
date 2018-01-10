@@ -38,8 +38,8 @@
 
 /* Begin PBXFileReference section */
 		04126DDA200529BC009BA398 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
-		04126DDC200529D5009BA398 /* ReachabilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityTests.swift; sourceTree = "<group>"; };
-		8B01E2631FEB116100069C3B /* URLRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestTests.swift; sourceTree = "<group>"; };
+		04126DDC200529D5009BA398 /* ReachabilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityTests.swift; path = AENetworkTests/ReachabilityTests.swift; sourceTree = "<group>"; };
+		8B01E2631FEB116100069C3B /* URLRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLRequestTests.swift; path = AENetworkTests/URLRequestTests.swift; sourceTree = "<group>"; };
 		8B01E2661FEB1CEB00069C3B /* Data+Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Serialization.swift"; sourceTree = "<group>"; };
 		8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Helpers.swift"; sourceTree = "<group>"; };
 		8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLTests.swift; path = AENetworkTests/URLTests.swift; sourceTree = "<group>"; };

@@ -18,3 +18,43 @@ class NetworkTests: XCTestCase {
     }
 
 }
+
+@available(iOS 10.0, macOS 10.12, *)
+class NetworkQueueTests: XCTestCase {
+
+    // MARK: Properties
+
+    let network = Network.shared
+
+    // MARK: Tests
+
+    func testCompletionInBackgroundQueue() {
+        let request = URLRequest.get(url: "https://httpbin.org/get")
+
+        let queueExpectation = expectation(description: "Background")
+        network.sendRequest(request) { (result) in
+            dispatchPrecondition(condition: .notOnQueue(.main))
+            queueExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    func testCompletionInMainQueue() {
+        let request = URLRequest.get(url: "https://httpbin.org/get")
+
+        let queueExpectation = expectation(description: "Main")
+        network.sendRequest(request, completionQueue: .main) { (result) in
+            dispatchPrecondition(condition: .onQueue(.main))
+            queueExpectation.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+
+    static var allTests : [(String, (NetworkQueueTests) -> () throws -> Void)] {
+        return [
+            ("testCompletionInBackgroundQueue", testCompletionInBackgroundQueue),
+            ("testCompletionInMainQueue", testCompletionInMainQueue)
+        ]
+    }
+
+}

@@ -58,9 +58,11 @@ open class Reachability {
                 connection = .wifi
             }
         }
-        if flags.contains(.isWWAN) {
-            connection = .cellular
-        }
+        #if os(iOS)
+            if flags.contains(.isWWAN) {
+                connection = .cellular
+            }
+        #endif
         
         return connection
     }

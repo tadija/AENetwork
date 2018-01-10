@@ -30,16 +30,17 @@ class ReachabilityTests: XCTestCase {
     // MARK: Tests
     
     func testThatBlockIsExecutedWhenNotiferStarts() {
-        let closureExpectation = expectation(description: "listener closure should be executed")
-        reachability.statusDidChange = { (status) in
+        let closureExpectation = expectation(description: "`connectionDidChange` should be executed.")
+        reachability.connectionDidChange = { _ in
             closureExpectation.fulfill()
         }
         waitForExpectations(timeout: 3, handler: nil)
     }
     
     func testThatNotificationIsPostedWhenNotifierStarts() {
-        expectation(forNotification: .reachabilityStatusDidChange, object: nil) { (notification) in
-            XCTAssertNotNil(notification.object as? Reachability.Status, "Should set status from notification.")
+        expectation(forNotification: .reachabilityConnectionDidChange, object: nil) { (notification) in
+            XCTAssertNotNil(notification.object as? Reachability,
+                            ".reachabilityConnectionDidChange notification should be posted.")
             return true
         }
         waitForExpectations(timeout: 3, handler: nil)

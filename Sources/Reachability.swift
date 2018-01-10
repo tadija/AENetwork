@@ -8,65 +8,34 @@ import Foundation
 import SystemConfiguration
 
 extension Notification.Name {
-    public static let reachabilityStatusDidChange = Notification.Name("Reachability.Status.Did.Change")
+    public static let reachabilityConnectionDidChange = Notification.Name("Reachability.Connection.Did.Change")
 }
 
 private func callback(networkReference: SCNetworkReachability,
                       flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) {
-    guard let info = info else {
-        return
-    }
+    guard let info = info else { return }
     let reachability = Unmanaged<Reachability>.fromOpaque(info).takeUnretainedValue()
-    reachability.networkListener()
+    reachability.callListenersIfNeeded()
 }
 
 open class Reachability {
     
     // MARK: Types
     
-    public enum Status {
-        case notReachable
-        case reachableOnEthernetOrWiFi
-        case reachableOnCellular
+    public enum Connection {
+        case unknown
+        case none
+        case wifi
+        case cellular
     }
 
     // MARK: Singleton
 
     public static let shared = Reachability()
 
-    // MARK: Public Properties
+    // MARK: Properties
 
-    private let networkReference: SCNetworkReachability?
-    
-    public var statusDidChange: ((Status) -> ())?
-    
-    public var status: Status {
-        guard flags.contains(.reachable) else { return .notReachable }
-        
-        var status: Status = .notReachable
-        
-        if !flags.contains(.connectionRequired) {
-            status = .reachableOnEthernetOrWiFi
-        }
-        if flags.contains(.connectionOnTraffic) || flags.contains(.connectionOnDemand) {
-            if !flags.contains(.interventionRequired) {
-                status = .reachableOnEthernetOrWiFi
-            }
-        }
-        if flags.contains(.isWWAN) {
-            status = .reachableOnCellular
-        }
-        
-        return status
-    }
-    
-    public var isReachable: Bool {
-        return status != .notReachable
-    }
-    
-    // MARK: Private Properties
-    
-    private var flags: SCNetworkReachabilityFlags {
+    public var flags: SCNetworkReachabilityFlags {
         var flags = SCNetworkReachabilityFlags()
         guard let ref = networkReference, SCNetworkReachabilityGetFlags(ref, &flags) else {
             return SCNetworkReachabilityFlags()
@@ -74,9 +43,40 @@ open class Reachability {
         return flags
     }
     
+    public var connection: Connection {
+        guard networkReference != nil else { return .unknown }
+
+        guard flags.contains(.reachable) else { return .none }
+        
+        var connection: Connection = .none
+        
+        if !flags.contains(.connectionRequired) {
+            connection = .wifi
+        }
+        if flags.contains(.connectionOnTraffic) || flags.contains(.connectionOnDemand) {
+            if !flags.contains(.interventionRequired) {
+                connection = .wifi
+            }
+        }
+        if flags.contains(.isWWAN) {
+            connection = .cellular
+        }
+        
+        return connection
+    }
+
+    public var isConnectedToNetwork: Bool {
+        return connection == .wifi || connection == .cellular
+    }
+
+    public var connectionDidChange: ((Reachability) -> ())?
+
+    // MARK: Private Properties
+
+    private let networkReference: SCNetworkReachability?
+    private let queue = DispatchQueue(label: "net.tadija.AENetwork.Reachability")
     private var previousFlags: SCNetworkReachabilityFlags?
     private var isNotifierRunning = false
-    private let queue = DispatchQueue(label: "net.tadija.AENetwork.Reachability")
     
     // MARK: Init
 
@@ -107,7 +107,7 @@ open class Reachability {
         SCNetworkReachabilitySetDispatchQueue(ref, queue)
         
         queue.async { [weak self] in
-            self?.networkListener()
+            self?.callListenersIfNeeded()
         }
         
         isNotifierRunning = true
@@ -122,16 +122,16 @@ open class Reachability {
         isNotifierRunning = false
     }
     
-    // MARK: Listener
+    // MARK: Helpers
     
-    fileprivate func networkListener() {
+    fileprivate func callListenersIfNeeded() {
         guard previousFlags != flags else { return }
         previousFlags = flags
         
         DispatchQueue.main.async { [weak self] in
             if let strongSelf = self {
-                strongSelf.statusDidChange?(strongSelf.status)
-                NotificationCenter.default.post(name: .reachabilityStatusDidChange, object: strongSelf.status)
+                strongSelf.connectionDidChange?(strongSelf)
+                NotificationCenter.default.post(name: .reachabilityConnectionDidChange, object: strongSelf)
             }
         }
     }

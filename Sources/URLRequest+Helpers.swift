@@ -74,4 +74,10 @@ extension URLRequest {
         network.sendRequest(self, completionQueue: completionQueue, completion: completion)
     }
 
+    public func send(with network: Network = .shared,
+                     completionQueue: DispatchQueue? = nil,
+                     completion: @escaping Network.Completion.FailableFetchResult) {
+        network.sendRequest(self, completionQueue: completionQueue, completion: completion)
+    }
+
 }

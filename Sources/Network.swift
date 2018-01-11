@@ -43,7 +43,7 @@ open class Network {
     public typealias FetchResult = Fetcher.Result
 
     public struct Completion {
-        public typealias ThrowableFetchResult = Fetcher.Completion.ThrowableResult
+        public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void
         public typealias FailableFetchResult = (FetchResult?, Error?) -> Void
     }
     

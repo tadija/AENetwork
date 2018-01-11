@@ -18,11 +18,19 @@ open class Fetcher {
         public let response: HTTPURLResponse
         public let data: Data
 
-        public func dictionary() throws -> [String : Any] {
+        public var dictionary: [String : Any]? {
+            return try? toDictionary()
+        }
+
+        public var array: [Any]? {
+            return try? toArray()
+        }
+
+        public func toDictionary() throws -> [String : Any] {
             return try data.toDictionary()
         }
 
-        public func array() throws -> [Any] {
+        public func toArray() throws -> [Any] {
             return try data.toArray()
         }
     }

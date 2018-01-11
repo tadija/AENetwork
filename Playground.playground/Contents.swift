@@ -8,7 +8,7 @@ let request = URLRequest.get(url: "https://httpbin.org/get")
 
 /// - Note: Fetching directly from request (using `Network.shared` by default)
 request.send { (result) in
-    let dictionary = try? result().dictionary()
+    let dictionary = try? result().toDictionary()
     print(String(describing: dictionary))
 }
 
@@ -16,7 +16,7 @@ request.send { (result) in
 let network = Network()
 network.sendRequest(request) { (result) in
     do {
-        let dictionary = try result().dictionary()
+        let dictionary = try result().toDictionary()
         print(dictionary)
     } catch {
         print(error)

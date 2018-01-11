@@ -59,8 +59,9 @@ class FetcherTests: XCTestCase {
         fetcher.sendRequest(request) { (result) in
             do {
                 let result = try result()
-                let _ = try result.dictionary()
+                let _ = try result.toDictionary()
                 XCTAssertEqual(result.response.statusCode, 200, "Should have response code 200.")
+                XCTAssertNotNil(result.dictionary, "Should not be nil.")
                 XCTAssert(!shouldFail, "Should be able to parse dictionary from: \(String(describing: request.url))")
             } catch {
                 XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")
@@ -78,8 +79,9 @@ class FetcherTests: XCTestCase {
         fetcher.sendRequest(request) { (result) in
             do {
                 let result = try result()
-                let _ = try result.array()
+                let _ = try result.toArray()
                 XCTAssertEqual(result.response.statusCode, 200, "Should have response code 200.")
+                XCTAssertNotNil(result.array, "Should not be nil.")
                 XCTAssert(!shouldFail, "Should be able to parse array from: \(String(describing: request.url))")
             } catch {
                 XCTAssert(shouldFail, "Should throw error from: \(String(describing: request.url))")

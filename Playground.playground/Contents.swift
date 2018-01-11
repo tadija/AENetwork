@@ -6,14 +6,13 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 /// - Note: Convenient creation of request
 let request = URLRequest.get(url: "https://httpbin.org/get")
 
-/// - Note: Fetching directly from request (using `Network.shared` by default)
-request.send { (result) in
-    let dictionary = try? result().toDictionary()
-    print(String(describing: dictionary))
-}
-
-/// - Note: Fetching with throwable completion closure (using custom `Network` instance)
+/// - Note: Using custom `Network` instance
 let network = Network()
+
+/// - Note: Integrated Reachability
+let isOnline = network.reachability.isConnectedToNetwork
+
+/// - Note: Fetching with throwable completion closure
 network.sendRequest(request) { (result) in
     do {
         let dictionary = try result().toDictionary()
@@ -21,4 +20,18 @@ network.sendRequest(request) { (result) in
     } catch {
         print(error)
     }
+}
+
+/// - Note: Fetching with failable completion closure
+network.sendRequest(request) { (result, error) in
+    if let result = result {
+        print(String(describing: result.dictionary))
+    } else {
+        print(String(describing: error))
+    }
+}
+
+/// - Note: Convenient fetching directly from request (using `Network.shared` by default)
+request.send { (result, error) in
+    print(String(describing: result?.dictionary))
 }

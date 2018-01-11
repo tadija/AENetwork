@@ -84,7 +84,7 @@ open class Network {
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
                             failableCompletion: @escaping Completion.FailableFetchResult) {
-        sendRequest(request, completionQueue: completionQueue) { (result) in
+        dispatchRequest(request, completionQueue: completionQueue) { (result) in
             do {
                 let result = try result()
                 failableCompletion(result, nil)

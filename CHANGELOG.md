@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.4.0
+
+- Added failable completion alternatives to Network.Completion
+- Added optional alternatives of serialized data in Fetcher.Result
+- Added HTTPURLResponse+Helper
+- Added more unit tests
+- Other improvements and refactoring
+
 ## Version 0.3.5
 
 - Possibility to provide custom completion queue when sending network request

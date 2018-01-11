@@ -77,19 +77,19 @@ open class Network {
 
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
-                            completion: @escaping Completion.ThrowableFetchResult) {
-        dispatchRequest(request, completionQueue: completionQueue, completion: completion)
+                            throwableCompletion: @escaping Completion.ThrowableFetchResult) {
+        dispatchRequest(request, completionQueue: completionQueue, completion: throwableCompletion)
     }
 
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
-                            completion: @escaping Completion.FailableFetchResult) {
+                            failableCompletion: @escaping Completion.FailableFetchResult) {
         sendRequest(request, completionQueue: completionQueue) { (result) in
             do {
                 let result = try result()
-                completion(result, nil)
+                failableCompletion(result, nil)
             } catch {
-                completion(nil, error)
+                failableCompletion(nil, error)
             }
         }
     }

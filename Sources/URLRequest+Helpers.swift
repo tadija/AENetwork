@@ -70,14 +70,14 @@ extension URLRequest {
 
     public func send(with network: Network = .shared,
                      completionQueue: DispatchQueue? = nil,
-                     completion: @escaping Network.Completion.ThrowableFetchResult) {
-        network.sendRequest(self, completionQueue: completionQueue, completion: completion)
+                     throwableCompletion: @escaping Network.Completion.ThrowableFetchResult) {
+        network.sendRequest(self, completionQueue: completionQueue, throwableCompletion: throwableCompletion)
     }
 
     public func send(with network: Network = .shared,
                      completionQueue: DispatchQueue? = nil,
-                     completion: @escaping Network.Completion.FailableFetchResult) {
-        network.sendRequest(self, completionQueue: completionQueue, completion: completion)
+                     failableCompletion: @escaping Network.Completion.FailableFetchResult) {
+        network.sendRequest(self, completionQueue: completionQueue, failableCompletion: failableCompletion)
     }
 
 }

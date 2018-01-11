@@ -38,13 +38,13 @@ public protocol Backend {
     var network: Network { get }
     func sendRequest(_ backendRequest: BackendRequest,
                      completionQueue: DispatchQueue?,
-                     completion: @escaping Fetcher.Completion.ThrowableResult)
+                     completion: @escaping Network.Completion.ThrowableFetchResult)
 }
 
 public extension Backend {
     public func sendRequest(_ backendRequest: BackendRequest,
                             completionQueue: DispatchQueue? = nil,
-                            completion: @escaping Fetcher.Completion.ThrowableResult) {
+                            completion: @escaping Network.Completion.ThrowableFetchResult) {
         let request = api.createURLRequest(from: backendRequest)
         network.sendRequest(request, completionQueue: completionQueue, completion: completion)
     }

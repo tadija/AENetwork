@@ -71,9 +71,18 @@ open class Network {
                             completion: @escaping Fetcher.Completion.ThrowableResult) {
         performRequest(request) { (result) in
             if let queue = completionQueue {
-                queue.sync {
-                    completion {
-                        return try result()
+                do {
+                    let result = try result()
+                    queue.async {
+                        completion {
+                            return result
+                        }
+                    }
+                } catch {
+                    queue.async {
+                        completion {
+                            throw error
+                        }
                     }
                 }
             } else {

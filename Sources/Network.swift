@@ -77,6 +77,14 @@ open class Network {
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
                             completion: @escaping Completion.ThrowableFetchResult) {
+        dispatchRequest(request, completionQueue: completionQueue, completion: completion)
+    }
+
+    // MARK: Helpers
+
+    private func dispatchRequest(_ request: URLRequest,
+                                completionQueue: DispatchQueue? = nil,
+                                completion: @escaping Completion.ThrowableFetchResult) {
         performRequest(request) { (result) in
             if let queue = completionQueue {
                 do {
@@ -100,8 +108,6 @@ open class Network {
             }
         }
     }
-
-    // MARK: Helpers
 
     private func performRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
         do {

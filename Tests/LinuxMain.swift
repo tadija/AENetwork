@@ -14,5 +14,6 @@ XCTMain([
     testCase(DownloaderTests.allTests),
     testCase(URLTests.allTests),
     testCase(URLRequestTests.allTests),
+    testCase(HTTPURLResponseTests.allTests),
     testCase(SerializationTests.allTests)
 ])

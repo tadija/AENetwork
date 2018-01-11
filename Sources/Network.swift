@@ -9,8 +9,8 @@ import Foundation
 public protocol NetworkDelegate: class {
     func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
     func didSendRequest(_ request: URLRequest, sender: Network)
-    func interceptResult(_ result: () throws -> Fetcher.Result, from request: URLRequest,
-                         completion: @escaping Fetcher.Completion.ThrowableResult, sender: Network)
+    func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
+                         completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network)
 
     func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool
     func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool
@@ -21,8 +21,8 @@ public extension NetworkDelegate {
         return request
     }
     public func didSendRequest(_ request: URLRequest, sender: Network) {}
-    public func interceptResult(_ result: () throws -> Fetcher.Result, from request: URLRequest,
-                                completion: @escaping Fetcher.Completion.ThrowableResult, sender: Network) {
+    public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
+                                completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network) {
         completion {
             return try result()
         }
@@ -37,6 +37,15 @@ public extension NetworkDelegate {
 }
 
 open class Network {
+
+    // MARK: Types
+
+    public typealias FetchResult = Fetcher.Result
+
+    public struct Completion {
+        public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void
+        public typealias FailableFetchResult = (FetchResult?, Error?) -> Void
+    }
     
     // MARK: Singleton
     
@@ -68,12 +77,42 @@ open class Network {
 
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
-                            completion: @escaping Fetcher.Completion.ThrowableResult) {
+                            throwableCompletion: @escaping Completion.ThrowableFetchResult) {
+        dispatchRequest(request, completionQueue: completionQueue, completion: throwableCompletion)
+    }
+
+    public func sendRequest(_ request: URLRequest,
+                            completionQueue: DispatchQueue? = nil,
+                            failableCompletion: @escaping Completion.FailableFetchResult) {
+        sendRequest(request, completionQueue: completionQueue) { (result) in
+            do {
+                let result = try result()
+                failableCompletion(result, nil)
+            } catch {
+                failableCompletion(nil, error)
+            }
+        }
+    }
+
+    // MARK: Helpers
+
+    private func dispatchRequest(_ request: URLRequest,
+                                completionQueue: DispatchQueue? = nil,
+                                completion: @escaping Completion.ThrowableFetchResult) {
         performRequest(request) { (result) in
             if let queue = completionQueue {
-                queue.sync {
-                    completion {
-                        return try result()
+                do {
+                    let result = try result()
+                    queue.async {
+                        completion {
+                            return result
+                        }
+                    }
+                } catch {
+                    queue.async {
+                        completion {
+                            throw error
+                        }
                     }
                 }
             } else {
@@ -84,9 +123,7 @@ open class Network {
         }
     }
 
-    // MARK: Helpers
-
-    private func performRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+    private func performRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
             let finalRequest = modifiedRequest ?? request
@@ -98,11 +135,11 @@ open class Network {
         }
     }
 
-    private func provideResponse(for request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+    private func provideResponse(for request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
         if let cachedResponse = loadCachedResponse(for: request) {
             completion {
                 let httpResponse = cachedResponse.response as! HTTPURLResponse
-                return Fetcher.Result(response: httpResponse, data: cachedResponse.data)
+                return FetchResult(response: httpResponse, data: cachedResponse.data)
             }
         } else {
             performNetworkRequest(request, completion: completion)
@@ -120,7 +157,7 @@ open class Network {
         return cachedResponse
     }
 
-    private func performNetworkRequest(_ request: URLRequest, completion: @escaping Fetcher.Completion.ThrowableResult) {
+    private func performNetworkRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
         fetcher.sendRequest(request, completion: { [weak self] (result) in
             if let weakSelf = self, let delegate = weakSelf.delegate {
                 weakSelf.tryCachingResult(result, from: request, delegate: delegate)
@@ -134,7 +171,7 @@ open class Network {
         delegate?.didSendRequest(request, sender: self)
     }
 
-    private func tryCachingResult(_ result: () throws -> Fetcher.Result,
+    private func tryCachingResult(_ result: () throws -> FetchResult,
                                   from request: URLRequest,
                                   delegate: NetworkDelegate) {
         if delegate.shouldCacheResponse(from: request, sender: self), let result = try? result() {

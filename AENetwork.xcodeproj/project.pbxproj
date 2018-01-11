@@ -11,6 +11,8 @@
 		04126DDD200529D5009BA398 /* ReachabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04126DDC200529D5009BA398 /* ReachabilityTests.swift */; };
 		8B01E2651FEB11A100069C3B /* URLRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B01E2631FEB116100069C3B /* URLRequestTests.swift */; };
 		8B01E2671FEB1CEB00069C3B /* Data+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B01E2661FEB1CEB00069C3B /* Data+Serialization.swift */; };
+		8B0F80762007EF1E00928F0F /* HTTPURLResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0F80752007EF1E00928F0F /* HTTPURLResponseTests.swift */; };
+		8B0F80782008064900928F0F /* BackendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0F80772008064900928F0F /* BackendTests.swift */; };
 		8B3335E41FE0862B004F4AC6 /* URLRequest+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */; };
 		8B4D06F71FD5CEDC000B4ADB /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */; };
 		8B4D06FB1FD5F459000B4ADB /* FetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */; };
@@ -21,6 +23,7 @@
 		8B6CA4901FD2154C00162360 /* URL+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA48F1FD2154C00162360 /* URL+Helpers.swift */; };
 		8B6CA4941FD2270E00162360 /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA4931FD2270E00162360 /* Fetcher.swift */; };
 		8B6CA4971FD2DFB500162360 /* SerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6CA4951FD2DFAE00162360 /* SerializationTests.swift */; };
+		8BB734B02007775100B6E3B0 /* HTTPURLResponse+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB734AF2007775100B6E3B0 /* HTTPURLResponse+Helpers.swift */; };
 		8BE0C4FF1EF47B0E00E6F95F /* AENetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BE0C4FE1EF47B0E00E6F95F /* AENetwork.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		OBJ_28 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Network.swift */; };
 		OBJ_40 /* AENetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = OBJ_19 /* AENetwork.framework */; };
@@ -41,6 +44,8 @@
 		04126DDC200529D5009BA398 /* ReachabilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityTests.swift; path = AENetworkTests/ReachabilityTests.swift; sourceTree = "<group>"; };
 		8B01E2631FEB116100069C3B /* URLRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLRequestTests.swift; path = AENetworkTests/URLRequestTests.swift; sourceTree = "<group>"; };
 		8B01E2661FEB1CEB00069C3B /* Data+Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Serialization.swift"; sourceTree = "<group>"; };
+		8B0F80752007EF1E00928F0F /* HTTPURLResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HTTPURLResponseTests.swift; path = AENetworkTests/HTTPURLResponseTests.swift; sourceTree = "<group>"; };
+		8B0F80772008064900928F0F /* BackendTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BackendTests.swift; path = AENetworkTests/BackendTests.swift; sourceTree = "<group>"; };
 		8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Helpers.swift"; sourceTree = "<group>"; };
 		8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLTests.swift; path = AENetworkTests/URLTests.swift; sourceTree = "<group>"; };
 		8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FetcherTests.swift; path = AENetworkTests/FetcherTests.swift; sourceTree = "<group>"; };
@@ -51,6 +56,7 @@
 		8B6CA48F1FD2154C00162360 /* URL+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Helpers.swift"; sourceTree = "<group>"; };
 		8B6CA4931FD2270E00162360 /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		8B6CA4951FD2DFAE00162360 /* SerializationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SerializationTests.swift; path = AENetworkTests/SerializationTests.swift; sourceTree = "<group>"; };
+		8BB734AF2007775100B6E3B0 /* HTTPURLResponse+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+Helpers.swift"; sourceTree = "<group>"; };
 		8BE0C4F71EF473B100E6F95F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		8BE0C4F81EF473B100E6F95F /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		8BE0C4F91EF473B100E6F95F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -105,12 +111,14 @@
 		OBJ_14 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				8B0F80772008064900928F0F /* BackendTests.swift */,
 				8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */,
 				04126DDC200529D5009BA398 /* ReachabilityTests.swift */,
 				8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */,
 				8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */,
 				8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */,
 				8B01E2631FEB116100069C3B /* URLRequestTests.swift */,
+				8B0F80752007EF1E00928F0F /* HTTPURLResponseTests.swift */,
 				8B6CA4951FD2DFAE00162360 /* SerializationTests.swift */,
 				8BE0C5031EF47F9600E6F95F /* Supporting Files */,
 			);
@@ -147,6 +155,7 @@
 				8B6CA48B1FD2018400162360 /* Downloader.swift */,
 				8B6CA48F1FD2154C00162360 /* URL+Helpers.swift */,
 				8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */,
+				8BB734AF2007775100B6E3B0 /* HTTPURLResponse+Helpers.swift */,
 				8B01E2661FEB1CEB00069C3B /* Data+Serialization.swift */,
 				OBJ_8 /* Supporting Files */,
 			);
@@ -264,6 +273,7 @@
 				8B553A621FF28E6D0093C353 /* Backend.swift in Sources */,
 				8B3335E41FE0862B004F4AC6 /* URLRequest+Helpers.swift in Sources */,
 				8B01E2671FEB1CEB00069C3B /* Data+Serialization.swift in Sources */,
+				8BB734B02007775100B6E3B0 /* HTTPURLResponse+Helpers.swift in Sources */,
 				OBJ_28 /* Network.swift in Sources */,
 				8B6CA4901FD2154C00162360 /* URL+Helpers.swift in Sources */,
 				8B6CA4941FD2270E00162360 /* Fetcher.swift in Sources */,
@@ -277,7 +287,9 @@
 			buildActionMask = 0;
 			files = (
 				8B4D06FF1FD74863000B4ADB /* NetworkTests.swift in Sources */,
+				8B0F80782008064900928F0F /* BackendTests.swift in Sources */,
 				8B4D06FD1FD747FE000B4ADB /* DownloaderTests.swift in Sources */,
+				8B0F80762007EF1E00928F0F /* HTTPURLResponseTests.swift in Sources */,
 				8B4D06FB1FD5F459000B4ADB /* FetcherTests.swift in Sources */,
 				8B6CA4971FD2DFB500162360 /* SerializationTests.swift in Sources */,
 				04126DDD200529D5009BA398 /* ReachabilityTests.swift in Sources */,

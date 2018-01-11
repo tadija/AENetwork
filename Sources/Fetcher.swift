@@ -10,19 +10,25 @@ open class Fetcher {
 
     // MARK: Types
 
-    public struct Completion {
-        public typealias ThrowableResult = (() throws -> Result) -> Void
-    }
+    public typealias ThrowableResult = (() throws -> Result) -> Void
 
     public struct Result {
         public let response: HTTPURLResponse
         public let data: Data
 
-        public func dictionary() throws -> [String : Any] {
+        public var dictionary: [String : Any]? {
+            return try? toDictionary()
+        }
+
+        public var array: [Any]? {
+            return try? toArray()
+        }
+
+        public func toDictionary() throws -> [String : Any] {
             return try data.toDictionary()
         }
 
-        public func array() throws -> [Any] {
+        public func toArray() throws -> [Any] {
             return try data.toArray()
         }
     }
@@ -47,7 +53,7 @@ open class Fetcher {
 
     // MARK: API
 
-    public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableResult) {
+    public func sendRequest(_ request: URLRequest, completion: @escaping ThrowableResult) {
         session.dataTask(with: request) { [weak self] data, response, error in
             if let response = response as? HTTPURLResponse, let data = data, error == nil {
                 self?.handleValidResponse(response, with: data, from: request, completion: completion)
@@ -62,7 +68,7 @@ open class Fetcher {
     private func handleValidResponse(_ response: HTTPURLResponse,
                                 with data: Data,
                                 from request: URLRequest,
-                                completion: Completion.ThrowableResult) {
+                                completion: ThrowableResult) {
         switch response.statusCode {
         case 200 ..< 300:
             completion {
@@ -77,7 +83,7 @@ open class Fetcher {
 
     private func handleResponseError(_ error: Swift.Error?,
                                      from request: URLRequest,
-                                     completion: @escaping Completion.ThrowableResult) {
+                                     completion: @escaping ThrowableResult) {
         if let error = error as NSError? {
             if error.domain == NSURLErrorDomain && error.code == NSURLErrorNetworkConnectionLost {
                 // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314

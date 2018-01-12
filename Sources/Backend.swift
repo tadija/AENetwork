@@ -43,25 +43,14 @@ public protocol Backend {
 
     func sendRequest(_ backendRequest: BackendRequest,
                      completionQueue: DispatchQueue?,
-                     throwableCompletion: @escaping Network.Completion.ThrowableFetchResult)
-    
-    func sendRequest(_ backendRequest: BackendRequest,
-                     completionQueue: DispatchQueue?,
-                     failableCompletion: @escaping Network.Completion.FailableFetchResult)
+                     completion: @escaping Network.Completion.ThrowableFetchResult)
 }
 
 public extension Backend {
     public func sendRequest(_ backendRequest: BackendRequest,
                             completionQueue: DispatchQueue? = nil,
-                            throwableCompletion: @escaping Network.Completion.ThrowableFetchResult) {
+                            completion: @escaping Network.Completion.ThrowableFetchResult) {
         let request = api.createURLRequest(from: backendRequest)
-        network.sendRequest(request, completionQueue: completionQueue, throwableCompletion: throwableCompletion)
-    }
-
-    public func sendRequest(_ backendRequest: BackendRequest,
-                            completionQueue: DispatchQueue? = nil,
-                            failableCompletion: @escaping Network.Completion.FailableFetchResult) {
-        let request = api.createURLRequest(from: backendRequest)
-        network.sendRequest(request, completionQueue: completionQueue, failableCompletion: failableCompletion)
+        network.sendRequest(request, completionQueue: completionQueue, completion: completion)
     }
 }

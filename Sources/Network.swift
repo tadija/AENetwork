@@ -50,7 +50,6 @@ open class Network {
 
     public struct Completion {
         public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void
-        public typealias FailableFetchResult = (FetchResult?, Error?) -> Void
     }
     
     // MARK: Singleton
@@ -83,21 +82,8 @@ open class Network {
 
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
-                            throwableCompletion: @escaping Completion.ThrowableFetchResult) {
-        dispatchRequest(request, completionQueue: completionQueue, completion: throwableCompletion)
-    }
-
-    public func sendRequest(_ request: URLRequest,
-                            completionQueue: DispatchQueue? = nil,
-                            failableCompletion: @escaping Completion.FailableFetchResult) {
-        dispatchRequest(request, completionQueue: completionQueue) { (result) in
-            do {
-                let result = try result()
-                failableCompletion(result, nil)
-            } catch {
-                failableCompletion(nil, error)
-            }
-        }
+                            completion: @escaping Completion.ThrowableFetchResult) {
+        dispatchRequest(request, completionQueue: completionQueue, completion: completion)
     }
 
     // MARK: Helpers

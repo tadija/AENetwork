@@ -34,7 +34,7 @@ open class Fetcher {
     }
 
     public enum Error: Swift.Error {
-        case badResponse(HTTPURLResponse?)
+        case badResponse(HTTPURLResponse?, Data?)
     }
 
     // MARK: Singleton
@@ -76,7 +76,7 @@ open class Fetcher {
             }
         default:
             completion {
-                throw Error.badResponse(response)
+                throw Error.badResponse(response, data)
             }
         }
     }
@@ -95,7 +95,7 @@ open class Fetcher {
             }
         } else {
             completion {
-                throw Error.badResponse(nil)
+                throw Error.badResponse(nil, nil)
             }
         }
     }

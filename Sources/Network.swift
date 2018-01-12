@@ -70,31 +70,41 @@ open class Network {
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
                             completion: @escaping Completion.ThrowableFetchResult) {
-        dispatchRequest(request, completionQueue: completionQueue, completion: completion)
+        trySendingRequest(request, completionQueue: completionQueue, completion: completion)
     }
 
     // MARK: Helpers
 
-    private func dispatchRequest(_ request: URLRequest,
-                                completionQueue: DispatchQueue? = nil,
-                                completion: @escaping Completion.ThrowableFetchResult)
+    private func trySendingRequest(_ request: URLRequest,
+                                   completionQueue: DispatchQueue? = nil,
+                                   completion: @escaping Completion.ThrowableFetchResult)
     {
         guard !requestsInProgres.contains(request) else {
             return
         }
-
         requestsInProgres.append(request)
+
         delegate?.didSendRequest(request, sender: self)
 
-        performRequest(request) { [weak self] (result) in
-
+        dispatchRequest(request, completionQueue: completionQueue) { [weak self] (result) in
             if let strongSelf = self {
                 if let index = strongSelf.requestsInProgres.index(of: request) {
                     strongSelf.requestsInProgres.remove(at: index)
                 }
                 strongSelf.delegate?.didReceiveResult(result, from: request, sender: strongSelf)
             }
-            
+
+            completion {
+                return try result()
+            }
+        }
+    }
+
+    private func dispatchRequest(_ request: URLRequest,
+                                 completionQueue: DispatchQueue? = nil,
+                                 completion: @escaping Completion.ThrowableFetchResult)
+    {
+        performRequest(request) { (result) in
             if let queue = completionQueue {
                 do {
                     let result = try result()
@@ -122,7 +132,7 @@ open class Network {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
             let finalRequest = modifiedRequest ?? request
-            
+
             fetcher.sendRequest(finalRequest, completion: { [weak self] (result) in
                 if let weakSelf = self, let delegate = weakSelf.delegate {
                     delegate.interceptResult(result, from: request, completion: completion, sender: weakSelf)

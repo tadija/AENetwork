@@ -11,6 +11,9 @@ public protocol NetworkDelegate: class {
     func didSendRequest(_ request: URLRequest, sender: Network)
     func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
                          completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network)
+    func willProvideResultFromCache(for request: URLRequest, sender: Network)
+    func didReceiveResult(_ result: () throws -> Network.FetchResult,
+                          from request: URLRequest, sender: Network)
 
     func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool
     func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool
@@ -27,6 +30,9 @@ public extension NetworkDelegate {
             return try result()
         }
     }
+    public func willProvideResultFromCache(for request: URLRequest, sender: Network) {}
+    public func didReceiveResult(_ result: () throws -> Network.FetchResult,
+                                 from request: URLRequest, sender: Network) {}
 
     public func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool {
         return false
@@ -99,7 +105,12 @@ open class Network {
     private func dispatchRequest(_ request: URLRequest,
                                 completionQueue: DispatchQueue? = nil,
                                 completion: @escaping Completion.ThrowableFetchResult) {
-        performRequest(request) { (result) in
+        delegate?.didSendRequest(request, sender: self)
+        performRequest(request) { [weak self] (result) in
+            if let strongSelf = self {
+                strongSelf.delegate?.didReceiveResult(result, from: request, sender: strongSelf)
+            }
+            
             if let queue = completionQueue {
                 do {
                     let result = try result()
@@ -137,9 +148,13 @@ open class Network {
 
     private func provideResponse(for request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
         if let cachedResponse = loadCachedResponse(for: request) {
+            delegate?.willProvideResultFromCache(for: request, sender: self)
+            
+            let httpResponse = cachedResponse.response as! HTTPURLResponse
+            let result = FetchResult(response: httpResponse, data: cachedResponse.data)
+            
             completion {
-                let httpResponse = cachedResponse.response as! HTTPURLResponse
-                return FetchResult(response: httpResponse, data: cachedResponse.data)
+                return result
             }
         } else {
             performNetworkRequest(request, completion: completion)
@@ -168,7 +183,6 @@ open class Network {
                 }
             }
         })
-        delegate?.didSendRequest(request, sender: self)
     }
 
     private func tryCachingResult(_ result: () throws -> FetchResult,

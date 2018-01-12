@@ -9,11 +9,15 @@ import Foundation
 public protocol BackendRequest {
     var method: URLRequest.Method { get }
     var endpoint: String { get }
+    var cachePolicy: URLRequest.CachePolicy? { get }
     var headers: [String : String]? { get }
     var parameters: [String : Any]? { get }
 }
 
 public extension BackendRequest {
+    var cachePolicy: URLRequest.CachePolicy? {
+        return nil
+    }
     var headers: [String : String]? {
         return nil
     }

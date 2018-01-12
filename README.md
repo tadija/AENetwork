@@ -30,18 +30,9 @@ network.sendRequest(request) { (result) in
     }
 }
 
-/// - Note: Fetching with failable completion closure
-network.sendRequest(request) { (result, error) in
-    if let result = result {
-        print(String(describing: result.dictionary))
-    } else {
-        print(String(describing: error))
-    }
-}
-
 /// - Note: Convenient fetching directly from request (using `Network.shared` by default)
-request.send { (result, error) in
-    print(String(describing: result?.dictionary))
+request.send { (result) in
+    print(String(describing: try? result().dictionary))
 }
 
 ```

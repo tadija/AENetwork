@@ -7,11 +7,11 @@
 import Foundation
 
 public protocol NetworkDelegate: class {
+    func willSendRequest(_ request: URLRequest, sender: Network)
     func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
-    func didSendRequest(_ request: URLRequest, sender: Network)
     func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
                          completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network)
-    func didReceiveResult(_ result: () throws -> Network.FetchResult,
+    func willReceiveResult(_ result: () throws -> Network.FetchResult,
                           from request: URLRequest, sender: Network)
 }
 
@@ -84,14 +84,14 @@ open class Network {
         }
         requestsInProgres.append(request)
 
-        delegate?.didSendRequest(request, sender: self)
+        delegate?.willSendRequest(request, sender: self)
 
         dispatchRequest(request, completionQueue: completionQueue) { [weak self] (result) in
             if let strongSelf = self {
                 if let index = strongSelf.requestsInProgres.index(of: request) {
                     strongSelf.requestsInProgres.remove(at: index)
                 }
-                strongSelf.delegate?.didReceiveResult(result, from: request, sender: strongSelf)
+                strongSelf.delegate?.willReceiveResult(result, from: request, sender: strongSelf)
             }
 
             completion {

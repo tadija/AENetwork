@@ -16,17 +16,17 @@ public protocol NetworkDelegate: class {
 }
 
 public extension NetworkDelegate {
+    public func willSendRequest(_ request: URLRequest, sender: Network) {}
     public func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest {
         return request
     }
-    public func didSendRequest(_ request: URLRequest, sender: Network) {}
     public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
                                 completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network) {
         completion {
             return try result()
         }
     }
-    public func didReceiveResult(_ result: () throws -> Network.FetchResult,
+    public func willReceiveResult(_ result: () throws -> Network.FetchResult,
                                  from request: URLRequest, sender: Network) {}
 }
 

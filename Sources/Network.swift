@@ -29,7 +29,7 @@ public extension NetworkDelegate {
     }
 
     public func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool {
-        return true
+        return false
     }
     public func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool {
         return false

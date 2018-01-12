@@ -7,33 +7,27 @@
 import Foundation
 
 public protocol NetworkDelegate: class {
+    func willSendRequest(_ request: URLRequest, sender: Network)
     func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
-    func didSendRequest(_ request: URLRequest, sender: Network)
     func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
                          completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network)
-
-    func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool
-    func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool
+    func willReceiveResult(_ result: () throws -> Network.FetchResult,
+                          from request: URLRequest, sender: Network)
 }
 
 public extension NetworkDelegate {
+    public func willSendRequest(_ request: URLRequest, sender: Network) {}
     public func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest {
         return request
     }
-    public func didSendRequest(_ request: URLRequest, sender: Network) {}
     public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
                                 completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network) {
         completion {
             return try result()
         }
     }
-
-    public func isValidCache(_ cache: CachedURLResponse, sender: Network) -> Bool {
-        return true
-    }
-    public func shouldCacheResponse(from request: URLRequest, sender: Network) -> Bool {
-        return false
-    }
+    public func willReceiveResult(_ result: () throws -> Network.FetchResult,
+                                 from request: URLRequest, sender: Network) {}
 }
 
 open class Network {
@@ -44,7 +38,6 @@ open class Network {
 
     public struct Completion {
         public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void
-        public typealias FailableFetchResult = (FetchResult?, Error?) -> Void
     }
     
     // MARK: Singleton
@@ -58,47 +51,59 @@ open class Network {
     public let reachability: Reachability
     public let fetcher: Fetcher
     public let downloader: Downloader
-    public let cache: URLCache
+
+    private var requestsInProgres = [URLRequest]()
 
     // MARK: Init
     
     public init(reachability: Reachability = .shared,
                 fetcher: Fetcher = .shared,
-                downloader: Downloader = .shared,
-                cache: URLCache = .shared)
+                downloader: Downloader = .shared)
     {
         self.reachability = reachability
         self.fetcher = fetcher
         self.downloader = downloader
-        self.cache = cache
     }
 
     // MARK: API
 
     public func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue? = nil,
-                            throwableCompletion: @escaping Completion.ThrowableFetchResult) {
-        dispatchRequest(request, completionQueue: completionQueue, completion: throwableCompletion)
-    }
-
-    public func sendRequest(_ request: URLRequest,
-                            completionQueue: DispatchQueue? = nil,
-                            failableCompletion: @escaping Completion.FailableFetchResult) {
-        sendRequest(request, completionQueue: completionQueue) { (result) in
-            do {
-                let result = try result()
-                failableCompletion(result, nil)
-            } catch {
-                failableCompletion(nil, error)
-            }
-        }
+                            completion: @escaping Completion.ThrowableFetchResult) {
+        trySendingRequest(request, completionQueue: completionQueue, completion: completion)
     }
 
     // MARK: Helpers
 
+    private func trySendingRequest(_ request: URLRequest,
+                                   completionQueue: DispatchQueue? = nil,
+                                   completion: @escaping Completion.ThrowableFetchResult)
+    {
+        guard !requestsInProgres.contains(request) else {
+            return
+        }
+        requestsInProgres.append(request)
+
+        delegate?.willSendRequest(request, sender: self)
+
+        dispatchRequest(request, completionQueue: completionQueue) { [weak self] (result) in
+            if let strongSelf = self {
+                if let index = strongSelf.requestsInProgres.index(of: request) {
+                    strongSelf.requestsInProgres.remove(at: index)
+                }
+                strongSelf.delegate?.willReceiveResult(result, from: request, sender: strongSelf)
+            }
+
+            completion {
+                return try result()
+            }
+        }
+    }
+
     private func dispatchRequest(_ request: URLRequest,
-                                completionQueue: DispatchQueue? = nil,
-                                completion: @escaping Completion.ThrowableFetchResult) {
+                                 completionQueue: DispatchQueue? = nil,
+                                 completion: @escaping Completion.ThrowableFetchResult)
+    {
         performRequest(request) { (result) in
             if let queue = completionQueue {
                 do {
@@ -127,56 +132,20 @@ open class Network {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
             let finalRequest = modifiedRequest ?? request
-            provideResponse(for: finalRequest, completion: completion)
+
+            fetcher.sendRequest(finalRequest, completion: { [weak self] (result) in
+                if let weakSelf = self, let delegate = weakSelf.delegate {
+                    delegate.interceptResult(result, from: request, completion: completion, sender: weakSelf)
+                } else {
+                    completion {
+                        return try result()
+                    }
+                }
+            })
         } catch {
             completion {
                 throw error
             }
-        }
-    }
-
-    private func provideResponse(for request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
-        if let cachedResponse = loadCachedResponse(for: request) {
-            completion {
-                let httpResponse = cachedResponse.response as! HTTPURLResponse
-                return FetchResult(response: httpResponse, data: cachedResponse.data)
-            }
-        } else {
-            performNetworkRequest(request, completion: completion)
-        }
-    }
-
-    private func loadCachedResponse(for request: URLRequest) -> CachedURLResponse? {
-        guard
-            let cachedResponse = cache.cachedResponse(for: request),
-            let delegate = delegate, delegate.isValidCache(cachedResponse, sender: self)
-        else {
-            cache.removeCachedResponse(for: request)
-            return nil
-        }
-        return cachedResponse
-    }
-
-    private func performNetworkRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
-        fetcher.sendRequest(request, completion: { [weak self] (result) in
-            if let weakSelf = self, let delegate = weakSelf.delegate {
-                weakSelf.tryCachingResult(result, from: request, delegate: delegate)
-                delegate.interceptResult(result, from: request, completion: completion, sender: weakSelf)
-            } else {
-                completion {
-                    return try result()
-                }
-            }
-        })
-        delegate?.didSendRequest(request, sender: self)
-    }
-
-    private func tryCachingResult(_ result: () throws -> FetchResult,
-                                  from request: URLRequest,
-                                  delegate: NetworkDelegate) {
-        if delegate.shouldCacheResponse(from: request, sender: self), let result = try? result() {
-            let response = CachedURLResponse(response: result.response, data: result.data, storagePolicy: .allowed)
-            cache.storeCachedResponse(response, for: request)
         }
     }
 

@@ -36,6 +36,7 @@ extension URLRequest {
 
     public init(baseURL: URL, backendRequest request: BackendRequest) {
         let url = baseURL.appendingPathComponent(request.endpoint)
+        
         switch request.method {
         case .get:
             self = URLRequest.get(url: url, headers: request.headers, parameters: request.parameters)
@@ -45,6 +46,10 @@ extension URLRequest {
             self = URLRequest.put(url: url, headers: request.headers, parameters: request.parameters)
         case .delete:
             self = URLRequest.delete(url: url, headers: request.headers, parameters: request.parameters)
+        }
+        
+        if let cachePolicy = request.cachePolicy {
+            self.cachePolicy = cachePolicy
         }
     }
 
@@ -70,14 +75,8 @@ extension URLRequest {
 
     public func send(with network: Network = .shared,
                      completionQueue: DispatchQueue? = nil,
-                     throwableCompletion: @escaping Network.Completion.ThrowableFetchResult) {
-        network.sendRequest(self, completionQueue: completionQueue, throwableCompletion: throwableCompletion)
-    }
-
-    public func send(with network: Network = .shared,
-                     completionQueue: DispatchQueue? = nil,
-                     failableCompletion: @escaping Network.Completion.FailableFetchResult) {
-        network.sendRequest(self, completionQueue: completionQueue, failableCompletion: failableCompletion)
+                     completion: @escaping Network.Completion.ThrowableFetchResult) {
+        network.sendRequest(self, completionQueue: completionQueue, completion: completion)
     }
 
 }

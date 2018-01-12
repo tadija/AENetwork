@@ -22,7 +22,7 @@ open class Reachability {
     
     // MARK: Types
     
-    public enum Connection {
+    public enum Connection: String {
         case unknown
         case none
         case wifi

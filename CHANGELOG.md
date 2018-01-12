@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.5.0
+
+- Removed failable completion alternatives
+- Removed custom caching logic
+- Added URLRequest.CachePolicy to BackendRequest
+- Prevented sending duplicated requests
+- Other improvements and refactoring
+
 ## Version 0.4.0
 
 - Added failable completion alternatives to Network.Completion

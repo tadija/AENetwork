@@ -35,6 +35,7 @@ open class Network {
     // MARK: Types
 
     public typealias FetchResult = Fetcher.Result
+    public typealias FetchError = Fetcher.Error
 
     public struct Completion {
         public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void

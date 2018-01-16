@@ -34,7 +34,7 @@ open class Fetcher {
     }
 
     public enum Error: Swift.Error {
-        case badResponse(HTTPURLResponse?, Data?)
+        case badResponseCode(Result)
     }
 
     // MARK: Singleton
@@ -55,10 +55,10 @@ open class Fetcher {
 
     public func sendRequest(_ request: URLRequest, completion: @escaping ThrowableResult) {
         session.dataTask(with: request) { [weak self] data, response, error in
-            if let response = response as? HTTPURLResponse, let data = data, error == nil {
+            if error == nil, let response = response as? HTTPURLResponse, let data = data {
                 self?.handleValidResponse(response, with: data, from: request, completion: completion)
             } else {
-                self?.handleResponseError(error, from: request, completion: completion)
+                self?.handleResponseError(error.unsafelyUnwrapped, from: request, completion: completion)
             }
         }.resume()
     }
@@ -69,33 +69,29 @@ open class Fetcher {
                                 with data: Data,
                                 from request: URLRequest,
                                 completion: ThrowableResult) {
+        let result = Result(response: response, data: data)
         switch response.statusCode {
         case 200 ..< 300:
             completion {
-                return Result(response: response, data: data)
+                return result
             }
         default:
             completion {
-                throw Error.badResponse(response, data)
+                throw Error.badResponseCode(result)
             }
         }
     }
 
-    private func handleResponseError(_ error: Swift.Error?,
+    private func handleResponseError(_ error: Swift.Error,
                                      from request: URLRequest,
                                      completion: @escaping ThrowableResult) {
-        if let error = error as NSError? {
-            if error.domain == NSURLErrorDomain && error.code == NSURLErrorNetworkConnectionLost {
-                // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
-                sendRequest(request, completion: completion)
-            } else {
-                completion {
-                    throw error
-                }
-            }
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorNetworkConnectionLost {
+            // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
+            sendRequest(request, completion: completion)
         } else {
             completion {
-                throw Error.badResponse(nil, nil)
+                throw error
             }
         }
     }

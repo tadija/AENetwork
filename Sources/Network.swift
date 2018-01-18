@@ -53,8 +53,6 @@ open class Network {
     public let fetcher: Fetcher
     public let downloader: Downloader
 
-    private var requestsInProgres = [URLRequest]()
-
     // MARK: Init
     
     public init(reachability: Reachability = .shared,
@@ -80,21 +78,12 @@ open class Network {
                                    completionQueue: DispatchQueue? = nil,
                                    completion: @escaping Completion.ThrowableFetchResult)
     {
-        guard !requestsInProgres.contains(request) else {
-            return
-        }
-        requestsInProgres.append(request)
-
         delegate?.willSendRequest(request, sender: self)
 
         dispatchRequest(request, completionQueue: completionQueue) { [weak self] (result) in
             if let strongSelf = self {
-                if let index = strongSelf.requestsInProgres.index(of: request) {
-                    strongSelf.requestsInProgres.remove(at: index)
-                }
                 strongSelf.delegate?.willReceiveResult(result, from: request, sender: strongSelf)
             }
-
             completion {
                 return try result()
             }

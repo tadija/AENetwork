@@ -61,6 +61,8 @@ open class Backend {
     public let api: BackendAPI
     public let network: Network
 
+    private var operations = Array<[URLRequest : Network.Completion.ThrowableFetchResult]>()
+
     public init(api: BackendAPI, network: Network) {
         self.api = api
         self.network = network
@@ -72,6 +74,25 @@ open class Backend {
     {
         let request = api.createURLRequest(from: backendRequest)
         
+        guard operations.filter({ $0.keys.contains(request) }).count == 0 else {
+            operations.append([request : completion])
+            return
+        }
+        operations.append([request : completion])
+
+        performRequest(request: request, completionQueue: completionQueue) { [unowned self] (result) in
+            let f = self.operations.filter({ $0.keys.contains(request) })
+            let v = f.flatMap({ $0.values.first })
+            v.forEach({ $0{ return try result() } })
+            let nf = self.operations.filter({ $0.keys.contains(request) == false })
+            self.operations = nf
+        }
+    }
+
+    private func performRequest(request: URLRequest,
+                                completionQueue: DispatchQueue,
+                                completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
             let finalRequest = modifiedRequest ?? request

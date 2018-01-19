@@ -37,7 +37,27 @@ public extension BackendRequest {
     }
 }
 
+public protocol BackendDelegate: class {
+    func interceptRequest(_ request: URLRequest, sender: Backend) throws -> URLRequest
+    func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
+                         completion: @escaping Network.Completion.ThrowableFetchResult, sender: Backend)
+}
+
+public extension BackendDelegate {
+    public func interceptRequest(_ request: URLRequest, sender: Backend) throws -> URLRequest {
+        return request
+    }
+    public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
+                                completion: @escaping Network.Completion.ThrowableFetchResult, sender: Backend) {
+        completion {
+            return try result()
+        }
+    }
+}
+
 open class Backend {
+    public weak var delegate: BackendDelegate?
+
     public let api: BackendAPI
     public let network: Network
 
@@ -47,9 +67,29 @@ open class Backend {
     }
 
     open func sendRequest(_ backendRequest: BackendRequest,
-                     completionQueue: DispatchQueue?,
-                     completion: @escaping Network.Completion.ThrowableFetchResult) {
+                     completionQueue: DispatchQueue = .main,
+                     completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
         let request = api.createURLRequest(from: backendRequest)
-        network.sendRequest(request, completionQueue: completionQueue, completion: completion)
+        
+        do {
+            let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
+            let finalRequest = modifiedRequest ?? request
+
+            network.sendRequest(finalRequest, completionQueue: completionQueue) { [unowned self] (result) in
+                if let delegate = self.delegate {
+                    delegate.interceptResult(result, from: request, completion: completion, sender: self)
+                } else {
+                    completion {
+                        return try result()
+                    }
+                }
+            }
+        } catch {
+            completion {
+                throw error
+            }
+        }
     }
+
 }

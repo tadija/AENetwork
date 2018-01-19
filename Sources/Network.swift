@@ -8,24 +8,12 @@ import Foundation
 
 public protocol NetworkDelegate: class {
     func willSendRequest(_ request: URLRequest, sender: Network)
-    func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
-    func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
-                         completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network)
     func willReceiveResult(_ result: () throws -> Network.FetchResult,
                           from request: URLRequest, sender: Network)
 }
 
 public extension NetworkDelegate {
     public func willSendRequest(_ request: URLRequest, sender: Network) {}
-    public func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest {
-        return request
-    }
-    public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
-                                completion: @escaping Network.Completion.ThrowableFetchResult, sender: Network) {
-        completion {
-            return try result()
-        }
-    }
     public func willReceiveResult(_ result: () throws -> Network.FetchResult,
                                  from request: URLRequest, sender: Network) {}
 }
@@ -67,74 +55,30 @@ open class Network {
     // MARK: API
 
     public func sendRequest(_ request: URLRequest,
-                            completionQueue: DispatchQueue? = nil,
+                            completionQueue: DispatchQueue = .main,
                             completion: @escaping Completion.ThrowableFetchResult) {
-        trySendingRequest(request, completionQueue: completionQueue, completion: completion)
-    }
-
-    // MARK: Helpers
-
-    private func trySendingRequest(_ request: URLRequest,
-                                   completionQueue: DispatchQueue? = nil,
-                                   completion: @escaping Completion.ThrowableFetchResult)
-    {
         delegate?.willSendRequest(request, sender: self)
-
-        dispatchRequest(request, completionQueue: completionQueue) { [weak self] (result) in
-            if let strongSelf = self {
-                strongSelf.delegate?.willReceiveResult(result, from: request, sender: strongSelf)
-            }
-            completion {
-                return try result()
-            }
+        fetcher.sendRequest(request) { [unowned self] (result) in
+            self.delegate?.willReceiveResult(result, from: request, sender: self)
+            self.returnResult(result, in: completionQueue, completion: completion)
         }
     }
 
-    private func dispatchRequest(_ request: URLRequest,
-                                 completionQueue: DispatchQueue? = nil,
-                                 completion: @escaping Completion.ThrowableFetchResult)
-    {
-        performRequest(request) { (result) in
-            if let queue = completionQueue {
-                do {
-                    let result = try result()
-                    queue.async {
-                        completion {
-                            return result
-                        }
-                    }
-                } catch {
-                    queue.async {
-                        completion {
-                            throw error
-                        }
-                    }
-                }
-            } else {
-                completion {
-                    return try result()
-                }
-            }
-        }
-    }
-
-    private func performRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
+    private func returnResult(_ result: () throws -> FetchResult,
+                              in queue: DispatchQueue,
+                              completion: @escaping Completion.ThrowableFetchResult) {
         do {
-            let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
-            let finalRequest = modifiedRequest ?? request
-
-            fetcher.sendRequest(finalRequest, completion: { [weak self] (result) in
-                if let weakSelf = self, let delegate = weakSelf.delegate {
-                    delegate.interceptResult(result, from: request, completion: completion, sender: weakSelf)
-                } else {
-                    completion {
-                        return try result()
-                    }
+            let result = try result()
+            queue.async {
+                completion {
+                    return result
                 }
-            })
+            }
         } catch {
-            completion {
-                throw error
+            queue.async {
+                completion {
+                    throw error
+                }
             }
         }
     }

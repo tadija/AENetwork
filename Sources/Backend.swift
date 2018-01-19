@@ -6,6 +6,17 @@
 
 import Foundation
 
+public protocol BackendAPI {
+    var baseURL: URL { get }
+    func createURLRequest(from backendRequest: BackendRequest) -> URLRequest
+}
+
+public extension BackendAPI {
+    public func createURLRequest(from backendRequest: BackendRequest) -> URLRequest {
+        return URLRequest(baseURL: baseURL, backendRequest: backendRequest)
+    }
+}
+
 public protocol BackendRequest {
     var method: URLRequest.Method { get }
     var endpoint: String { get }
@@ -26,30 +37,18 @@ public extension BackendRequest {
     }
 }
 
-public protocol BackendAPI {
-    var baseURL: URL { get }
-    func createURLRequest(from backendRequest: BackendRequest) -> URLRequest
-}
+open class Backend {
+    public let api: BackendAPI
+    public let network: Network
 
-public extension BackendAPI {
-    public func createURLRequest(from backendRequest: BackendRequest) -> URLRequest {
-        return URLRequest(baseURL: baseURL, backendRequest: backendRequest)
+    public init(api: BackendAPI, network: Network) {
+        self.api = api
+        self.network = network
     }
-}
 
-public protocol Backend {
-    var api: BackendAPI { get }
-    var network: Network { get }
-
-    func sendRequest(_ backendRequest: BackendRequest,
+    open func sendRequest(_ backendRequest: BackendRequest,
                      completionQueue: DispatchQueue?,
-                     completion: @escaping Network.Completion.ThrowableFetchResult)
-}
-
-public extension Backend {
-    public func sendRequest(_ backendRequest: BackendRequest,
-                            completionQueue: DispatchQueue? = nil,
-                            completion: @escaping Network.Completion.ThrowableFetchResult) {
+                     completion: @escaping Network.Completion.ThrowableFetchResult) {
         let request = api.createURLRequest(from: backendRequest)
         network.sendRequest(request, completionQueue: completionQueue, completion: completion)
     }

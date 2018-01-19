@@ -80,7 +80,7 @@ open class Backend {
         }
         operations.append([request : completion])
 
-        performRequest(request: request, completionQueue: completionQueue) { [unowned self] (result) in
+        performRequest(request, completionQueue: completionQueue) { [unowned self] (result) in
             let f = self.operations.filter({ $0.keys.contains(request) })
             let v = f.flatMap({ $0.values.first })
             v.forEach({ $0{ return try result() } })
@@ -89,9 +89,9 @@ open class Backend {
         }
     }
 
-    private func performRequest(request: URLRequest,
-                                completionQueue: DispatchQueue,
-                                completion: @escaping Network.Completion.ThrowableFetchResult)
+    open func performRequest(_ request: URLRequest,
+                        completionQueue: DispatchQueue,
+                        completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)

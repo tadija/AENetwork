@@ -38,16 +38,16 @@ public extension BackendRequest {
 }
 
 public protocol BackendDelegate: class {
-    func interceptRequest(_ request: URLRequest, sender: Backend) throws -> URLRequest
-    func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
+    func interceptRequest(_ request: BackendRequest, sender: Backend) throws -> BackendRequest
+    func interceptResult(_ result: () throws -> Network.FetchResult, from request: BackendRequest,
                          completion: @escaping Network.Completion.ThrowableFetchResult, sender: Backend)
 }
 
 public extension BackendDelegate {
-    public func interceptRequest(_ request: URLRequest, sender: Backend) throws -> URLRequest {
+    public func interceptRequest(_ request: BackendRequest, sender: Backend) throws -> BackendRequest {
         return request
     }
-    public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest,
+    public func interceptResult(_ result: () throws -> Network.FetchResult, from request: BackendRequest,
                                 completion: @escaping Network.Completion.ThrowableFetchResult, sender: Backend) {
         completion {
             return try result()
@@ -68,36 +68,36 @@ open class Backend {
         self.network = network
     }
 
-    open func sendRequest(_ backendRequest: BackendRequest,
+    open func sendRequest(_ request: BackendRequest,
                      completionQueue: DispatchQueue = .main,
                      completion: @escaping Network.Completion.ThrowableFetchResult)
     {
-        let request = api.createURLRequest(from: backendRequest)
+        let urlRequest = api.createURLRequest(from: request)
         
-        guard operations.filter({ $0.keys.contains(request) }).count == 0 else {
-            operations.append([request : completion])
+        guard operations.filter({ $0.keys.contains(urlRequest) }).count == 0 else {
+            operations.append([urlRequest : completion])
             return
         }
-        operations.append([request : completion])
+        operations.append([urlRequest : completion])
 
         performRequest(request, completionQueue: completionQueue) { [unowned self] (result) in
-            let f = self.operations.filter({ $0.keys.contains(request) })
+            let f = self.operations.filter({ $0.keys.contains(urlRequest) })
             let v = f.flatMap({ $0.values.first })
             v.forEach({ $0{ return try result() } })
-            let nf = self.operations.filter({ $0.keys.contains(request) == false })
+            let nf = self.operations.filter({ $0.keys.contains(urlRequest) == false })
             self.operations = nf
         }
     }
 
-    open func performRequest(_ request: URLRequest,
+    open func performRequest(_ request: BackendRequest,
                         completionQueue: DispatchQueue,
                         completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
             let finalRequest = modifiedRequest ?? request
-
-            network.sendRequest(finalRequest, completionQueue: completionQueue) { [unowned self] (result) in
+            let urlRequest = api.createURLRequest(from: finalRequest)
+            network.sendRequest(urlRequest, completionQueue: completionQueue) { [unowned self] (result) in
                 if let delegate = self.delegate {
                     delegate.interceptResult(result, from: request, completion: completion, sender: self)
                 } else {

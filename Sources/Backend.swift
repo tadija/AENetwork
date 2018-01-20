@@ -69,29 +69,42 @@ open class Backend {
     }
 
     open func sendRequest(_ request: BackendRequest,
-                     completionQueue: DispatchQueue = .main,
-                     completion: @escaping Network.Completion.ThrowableFetchResult)
+                          preventIfDuplicate: Bool = true,
+                          completionQueue: DispatchQueue = .main,
+                          completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         let urlRequest = api.createURLRequest(from: request)
-        
-        guard operations.filter({ $0.keys.contains(urlRequest) }).count == 0 else {
+
+        if preventIfDuplicate {
+            guard operations.filter({ $0.keys.contains(urlRequest) }).count == 0 else {
+                operations.append([urlRequest : completion])
+                return
+            }
             operations.append([urlRequest : completion])
-            return
         }
-        operations.append([urlRequest : completion])
 
         performRequest(request, completionQueue: completionQueue) { [unowned self] (result) in
-            let f = self.operations.filter({ $0.keys.contains(urlRequest) })
-            let v = f.flatMap({ $0.values.first })
-            v.forEach({ $0{ return try result() } })
-            let nf = self.operations.filter({ $0.keys.contains(urlRequest) == false })
-            self.operations = nf
+            if preventIfDuplicate {
+                self.performAllWaitingOperations(for: urlRequest, with: result)
+            } else {
+                completion {
+                    return try result()
+                }
+            }
         }
     }
 
-    open func performRequest(_ request: BackendRequest,
-                        completionQueue: DispatchQueue,
-                        completion: @escaping Network.Completion.ThrowableFetchResult)
+    private func performAllWaitingOperations(for request: URLRequest, with result: () throws -> Network.FetchResult) {
+        let f = self.operations.filter({ $0.keys.contains(request) })
+        let v = f.flatMap({ $0.values.first })
+        v.forEach({ $0{ return try result() } })
+        let nf = self.operations.filter({ $0.keys.contains(request) == false })
+        self.operations = nf
+    }
+
+    private func performRequest(_ request: BackendRequest,
+                                completionQueue: DispatchQueue,
+                                completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)

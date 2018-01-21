@@ -74,7 +74,7 @@ extension URLRequest {
     // MARK: API / Fetch
 
     public func send(with network: Network = .shared,
-                     completionQueue: DispatchQueue? = nil,
+                     completionQueue: DispatchQueue = .main,
                      completion: @escaping Network.Completion.ThrowableFetchResult) {
         network.sendRequest(self, completionQueue: completionQueue, completion: completion)
     }

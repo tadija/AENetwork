@@ -32,7 +32,7 @@ class NetworkQueueTests: XCTestCase {
         let request = URLRequest.get(url: "https://httpbin.org/get")
 
         let queueExpectation = expectation(description: "Background")
-        network.sendRequest(request) { (result) in
+        network.sendRequest(request, completionQueue: .global()) { (result) in
             dispatchPrecondition(condition: .notOnQueue(.main))
             queueExpectation.fulfill()
         }

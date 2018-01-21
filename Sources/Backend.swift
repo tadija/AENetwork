@@ -6,6 +6,17 @@
 
 import Foundation
 
+public protocol BackendAPI {
+    var baseURL: URL { get }
+    func createURLRequest(from backendRequest: BackendRequest) -> URLRequest
+}
+
+public extension BackendAPI {
+    public func createURLRequest(from backendRequest: BackendRequest) -> URLRequest {
+        return URLRequest(baseURL: baseURL, backendRequest: backendRequest)
+    }
+}
+
 public protocol BackendRequest {
     var method: URLRequest.Method { get }
     var endpoint: String { get }
@@ -26,31 +37,26 @@ public extension BackendRequest {
     }
 }
 
-public protocol BackendAPI {
-    var baseURL: URL { get }
-    func createURLRequest(from backendRequest: BackendRequest) -> URLRequest
-}
-
-public extension BackendAPI {
-    public func createURLRequest(from backendRequest: BackendRequest) -> URLRequest {
-        return URLRequest(baseURL: baseURL, backendRequest: backendRequest)
-    }
-}
-
-public protocol Backend {
+public protocol Backend: class {
     var api: BackendAPI { get }
     var network: Network { get }
+    var backgroundQueue: DispatchQueue { get }
 
     func sendRequest(_ backendRequest: BackendRequest,
-                     completionQueue: DispatchQueue?,
+                     addRequestToQueue: Bool,
+                     completionQueue: DispatchQueue,
                      completion: @escaping Network.Completion.ThrowableFetchResult)
 }
 
 public extension Backend {
     public func sendRequest(_ backendRequest: BackendRequest,
-                            completionQueue: DispatchQueue? = nil,
+                            addRequestToQueue: Bool = true,
+                            completionQueue: DispatchQueue = .main,
                             completion: @escaping Network.Completion.ThrowableFetchResult) {
-        let request = api.createURLRequest(from: backendRequest)
-        network.sendRequest(request, completionQueue: completionQueue, completion: completion)
+        backgroundQueue.async { [unowned self] in
+            let request = self.api.createURLRequest(from: backendRequest)
+            self.network.sendRequest(request, addRequestToQueue: addRequestToQueue,
+                                completionQueue: completionQueue, completion: completion)
+        }
     }
 }

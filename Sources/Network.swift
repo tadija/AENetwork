@@ -86,13 +86,17 @@ open class Network {
                 operations.append([finalRequest : completion])
             }
 
-            sendRequest(finalRequest, completionQueue: completionQueue) { [unowned self] (result) in
+            delegate?.willSendRequest(request, sender: self)
+            fetcher.sendRequest(finalRequest) { [unowned self] (result) in
                 self.interceptedResult(with: result, from: finalRequest) { (finalResult) in
-                    if preventIfDuplicate {
-                        self.performAllWaitingOperations(for: finalRequest, with: finalResult)
-                    } else {
-                        completion {
-                            return try finalResult()
+                    self.delegate?.willReceiveResult(finalResult, from: request, sender: self)
+                    self.returnResult(finalResult, in: completionQueue) { (endResult) in
+                        if preventIfDuplicate {
+                            self.performAllWaitingOperations(for: finalRequest, with: endResult)
+                        } else {
+                            completion {
+                                return try endResult()
+                            }
                         }
                     }
                 }
@@ -129,24 +133,6 @@ open class Network {
         }
     }
 
-    private func performAllWaitingOperations(for request: URLRequest, with result: () throws -> Network.FetchResult) {
-        let f = self.operations.filter({ $0.keys.contains(request) })
-        let v = f.flatMap({ $0.values.first })
-        v.forEach({ $0{ return try result() } })
-        let nf = self.operations.filter({ $0.keys.contains(request) == false })
-        self.operations = nf
-    }
-
-    private func sendRequest(_ request: URLRequest,
-                            completionQueue: DispatchQueue = .main,
-                            completion: @escaping Completion.ThrowableFetchResult) {
-        delegate?.willSendRequest(request, sender: self)
-        fetcher.sendRequest(request) { [unowned self] (result) in
-            self.delegate?.willReceiveResult(result, from: request, sender: self)
-            self.returnResult(result, in: completionQueue, completion: completion)
-        }
-    }
-
     private func returnResult(_ result: () throws -> FetchResult,
                               in queue: DispatchQueue,
                               completion: @escaping Completion.ThrowableFetchResult) {
@@ -164,6 +150,14 @@ open class Network {
                 }
             }
         }
+    }
+
+    private func performAllWaitingOperations(for request: URLRequest, with result: () throws -> Network.FetchResult) {
+        let f = self.operations.filter({ $0.keys.contains(request) })
+        let v = f.flatMap({ $0.values.first })
+        v.forEach({ $0{ return try result() } })
+        let nf = self.operations.filter({ $0.keys.contains(request) == false })
+        self.operations = nf
     }
 
 }

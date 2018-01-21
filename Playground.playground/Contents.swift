@@ -44,26 +44,9 @@ request.send { (result) in
 
 /// - Note: Convenient creation of entire backend layer
 
-struct MyBackendAPI: BackendAPI {
-    let baseURL = "https://httpbin.org".url
-}
-
-extension MyBackendAPI {
-    struct Test: BackendRequest {
-        var method: URLRequest.Method {
-            return .put
-        }
-        var endpoint: String {
-            return "anything"
-        }
-    }
-}
-
 class MyBackend: Backend {
-    typealias API = MyBackendAPI
-    let api: BackendAPI = MyBackendAPI()
-    let network = Network()
-    let backgroundQueue = DispatchQueue(label: "MyBackend.backgroundQueue")
+    struct API {}
+    let baseURL = "https://httpbin.org".url
 }
 
 extension MyBackend {
@@ -71,6 +54,17 @@ extension MyBackend {
         let request = API.Test()
         sendRequest(request) { (result) in
             print("\(String(describing: try? result().dictionary))\n")
+        }
+    }
+}
+
+extension MyBackend.API {
+    struct Test: BackendRequest {
+        var method: URLRequest.Method {
+            return .put
+        }
+        var endpoint: String {
+            return "anything"
         }
     }
 }

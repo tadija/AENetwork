@@ -37,9 +37,10 @@ public extension BackendRequest {
     }
 }
 
-public protocol Backend {
+public protocol Backend: class {
     var api: BackendAPI { get }
     var network: Network { get }
+    var queue: DispatchQueue { get }
 
     func sendRequest(_ backendRequest: BackendRequest,
                      preventIfDuplicate: Bool,
@@ -52,8 +53,10 @@ public extension Backend {
                             preventIfDuplicate: Bool = true,
                             completionQueue: DispatchQueue = .main,
                             completion: @escaping Network.Completion.ThrowableFetchResult) {
-        let request = api.createURLRequest(from: backendRequest)
-        network.sendRequest(request, preventIfDuplicate: preventIfDuplicate,
-                            completionQueue: completionQueue, completion: completion)
+        queue.async { [unowned self] in
+            let request = self.api.createURLRequest(from: backendRequest)
+            self.network.sendRequest(request, preventIfDuplicate: preventIfDuplicate,
+                                completionQueue: completionQueue, completion: completion)
+        }
     }
 }

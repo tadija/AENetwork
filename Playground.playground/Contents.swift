@@ -63,12 +63,13 @@ class MyBackend: Backend {
     typealias API = MyBackendAPI
     let api: BackendAPI = MyBackendAPI()
     let network = Network()
+    let backgroundQueue = DispatchQueue(label: "MyBackend.backgroundQueue")
 }
 
 extension MyBackend {
     func sendTestRequest() {
         let request = API.Test()
-        sendRequest(request, completionQueue: .main) { (result) in
+        sendRequest(request) { (result) in
             print("\(String(describing: try? result().dictionary))\n")
         }
     }

@@ -111,8 +111,8 @@ open class Network {
             return
         }
         operations.append([request : completion])
-        sendRequest2(request, completionQueue: completionQueue) { [unowned self] (result) in
-            self.performAllWaitingOperations(for: request, with: result)
+        sendRequest2(request, completionQueue: fetchQueue) { [unowned self] (result) in
+            self.performAllWaitingOperations(for: request, with: result, in: completionQueue)
         }
     }
 
@@ -171,10 +171,10 @@ open class Network {
         }
     }
 
-    private func performAllWaitingOperations(for request: URLRequest, with result: () throws -> Network.FetchResult) {
+    private func performAllWaitingOperations(for request: URLRequest, with result: () throws -> Network.FetchResult, in queue: DispatchQueue) {
         let f = self.operations.filter({ $0.keys.contains(request) })
         let v = f.flatMap({ $0.values.first })
-        v.forEach({ $0{ return try result() } })
+        v.forEach({ self.dispatchResult(result, in: queue, completion: $0) })
         let nf = self.operations.filter({ $0.keys.contains(request) == false })
         self.operations = nf
     }

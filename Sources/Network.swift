@@ -55,6 +55,7 @@ open class Network {
     public let fetcher: Fetcher
     public let downloader: Downloader
 
+    private let fetchQueue = DispatchQueue(label: "AENetwork.fetchQueue")
     private var operations = Array<[URLRequest : Network.Completion.ThrowableFetchResult]>()
 
     // MARK: Init
@@ -75,31 +76,24 @@ open class Network {
                           completionQueue: DispatchQueue = .main,
                           completion: @escaping Network.Completion.ThrowableFetchResult)
     {
+        fetchQueue.async { [unowned self] in
+            self.performRequest(request, preventIfDuplicate: preventIfDuplicate, completionQueue: completionQueue, completion: completion)
+        }
+    }
+
+    // MARK: Helpers
+
+    private func performRequest(_ request: URLRequest,
+                             preventIfDuplicate: Bool = true,
+                             completionQueue: DispatchQueue = .main,
+                             completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
         do {
             let finalRequest = try interceptedRequest(for: request)
-
             if preventIfDuplicate {
-                guard operations.filter({ $0.keys.contains(finalRequest) }).count == 0 else {
-                    operations.append([finalRequest : completion])
-                    return
-                }
-                operations.append([finalRequest : completion])
-            }
-
-            delegate?.willSendRequest(request, sender: self)
-            fetcher.sendRequest(finalRequest) { [unowned self] (result) in
-                self.interceptedResult(with: result, from: finalRequest) { (finalResult) in
-                    self.delegate?.willReceiveResult(finalResult, from: request, sender: self)
-                    self.returnResult(finalResult, in: completionQueue) { (endResult) in
-                        if preventIfDuplicate {
-                            self.performAllWaitingOperations(for: finalRequest, with: endResult)
-                        } else {
-                            completion {
-                                return try endResult()
-                            }
-                        }
-                    }
-                }
+                sendRequest1(finalRequest, completionQueue: completionQueue, completion: completion)
+            } else {
+                sendRequest2(finalRequest, completionQueue: completionQueue, completion: completion)
             }
         } catch {
             completion {
@@ -108,7 +102,32 @@ open class Network {
         }
     }
 
-    // MARK: Helpers
+    private func sendRequest1(_ request: URLRequest,
+                              completionQueue: DispatchQueue = .main,
+                              completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        guard operations.filter({ $0.keys.contains(request) }).count == 0 else {
+            operations.append([request : completion])
+            return
+        }
+        operations.append([request : completion])
+        sendRequest2(request, completionQueue: completionQueue) { [unowned self] (result) in
+            self.performAllWaitingOperations(for: request, with: result)
+        }
+    }
+
+    private func sendRequest2(_ request: URLRequest,
+                              completionQueue: DispatchQueue = .main,
+                              completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        delegate?.willSendRequest(request, sender: self)
+        fetcher.sendRequest(request) { [unowned self] (result) in
+            self.interceptedResult(with: result, from: request) { (finalResult) in
+                self.delegate?.willReceiveResult(finalResult, from: request, sender: self)
+                self.dispatchResult(finalResult, in: completionQueue, completion: completion)
+            }
+        }
+    }
 
     private func interceptedRequest(for request: URLRequest) throws -> URLRequest {
         do {
@@ -133,9 +152,9 @@ open class Network {
         }
     }
 
-    private func returnResult(_ result: () throws -> FetchResult,
-                              in queue: DispatchQueue,
-                              completion: @escaping Completion.ThrowableFetchResult) {
+    private func dispatchResult(_ result: () throws -> FetchResult,
+                                in queue: DispatchQueue,
+                                completion: @escaping Completion.ThrowableFetchResult) {
         do {
             let result = try result()
             queue.async {

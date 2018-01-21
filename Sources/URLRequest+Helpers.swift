@@ -74,9 +74,11 @@ extension URLRequest {
     // MARK: API / Fetch
 
     public func send(with network: Network = .shared,
+                     addRequestToQueue: Bool = true,
                      completionQueue: DispatchQueue = .main,
                      completion: @escaping Network.Completion.ThrowableFetchResult) {
-        network.sendRequest(self, completionQueue: completionQueue, completion: completion)
+        network.sendRequest(self, addRequestToQueue: addRequestToQueue,
+                            completionQueue: completionQueue, completion: completion)
     }
 
 }

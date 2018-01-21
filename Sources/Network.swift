@@ -7,9 +7,10 @@
 import Foundation
 
 public protocol NetworkDelegate: class {
+    func willSkipRequest(_ request: URLRequest, sender: Network)
     func willSendRequest(_ request: URLRequest, sender: Network)
     func willReceiveResult(_ result: () throws -> Network.FetchResult,
-                          from request: URLRequest, sender: Network)
+                           from request: URLRequest, sender: Network)
 
     func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
     func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest, sender: Network,
@@ -17,9 +18,10 @@ public protocol NetworkDelegate: class {
 }
 
 public extension NetworkDelegate {
+    public func willSkipRequest(_ request: URLRequest, sender: Network) {}
     public func willSendRequest(_ request: URLRequest, sender: Network) {}
     public func willReceiveResult(_ result: () throws -> Network.FetchResult,
-                                 from request: URLRequest, sender: Network) {}
+                                  from request: URLRequest, sender: Network) {}
 
     public func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest {
         return request
@@ -111,6 +113,7 @@ open class Network {
     {
         guard completions.filter({ $0.keys.contains(request) }).count == 0 else {
             completions.append([request : completion])
+            delegate?.willSkipRequest(request, sender: self)
             return
         }
         completions.append([request : completion])

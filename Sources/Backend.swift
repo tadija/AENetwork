@@ -73,23 +73,55 @@ open class Backend {
                           completionQueue: DispatchQueue = .main,
                           completion: @escaping Network.Completion.ThrowableFetchResult)
     {
-        let urlRequest = api.createURLRequest(from: request)
+        do {
+            let finalRequest = try interceptedRequest(for: request)
+            let urlRequest = api.createURLRequest(from: finalRequest)
 
-        if preventIfDuplicate {
-            guard operations.filter({ $0.keys.contains(urlRequest) }).count == 0 else {
-                operations.append([urlRequest : completion])
-                return
-            }
-            operations.append([urlRequest : completion])
-        }
-
-        performRequest(request, completionQueue: completionQueue) { [unowned self] (result) in
             if preventIfDuplicate {
-                self.performAllWaitingOperations(for: urlRequest, with: result)
-            } else {
-                completion {
-                    return try result()
+                guard operations.filter({ $0.keys.contains(urlRequest) }).count == 0 else {
+                    operations.append([urlRequest : completion])
+                    return
                 }
+                operations.append([urlRequest : completion])
+            }
+
+            network.sendRequest(urlRequest, completionQueue: completionQueue) { [unowned self] (result) in
+                self.interceptedResult(with: result, from: request) { (finalResult) in
+                    if preventIfDuplicate {
+                        self.performAllWaitingOperations(for: urlRequest, with: finalResult)
+                    } else {
+                        completion {
+                            return try finalResult()
+                        }
+                    }
+                }
+            }
+        } catch {
+            completion {
+                throw error
+            }
+        }
+    }
+
+    private func interceptedRequest(for request: BackendRequest) throws -> BackendRequest {
+        do {
+            let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
+            let finalRequest = modifiedRequest ?? request
+            return finalRequest
+        } catch {
+            throw error
+        }
+    }
+
+    private func interceptedResult(with result: () throws -> Network.FetchResult,
+                                   from request: BackendRequest,
+                                   completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        if let delegate = delegate {
+            delegate.interceptResult(result, from: request, completion: completion, sender: self)
+        } else {
+            completion {
+                return try result()
             }
         }
     }
@@ -100,30 +132,6 @@ open class Backend {
         v.forEach({ $0{ return try result() } })
         let nf = self.operations.filter({ $0.keys.contains(request) == false })
         self.operations = nf
-    }
-
-    private func performRequest(_ request: BackendRequest,
-                                completionQueue: DispatchQueue,
-                                completion: @escaping Network.Completion.ThrowableFetchResult)
-    {
-        do {
-            let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
-            let finalRequest = modifiedRequest ?? request
-            let urlRequest = api.createURLRequest(from: finalRequest)
-            network.sendRequest(urlRequest, completionQueue: completionQueue) { [unowned self] (result) in
-                if let delegate = self.delegate {
-                    delegate.interceptResult(result, from: request, completion: completion, sender: self)
-                } else {
-                    completion {
-                        return try result()
-                    }
-                }
-            }
-        } catch {
-            completion {
-                throw error
-            }
-        }
     }
 
 }

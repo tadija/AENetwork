@@ -10,12 +10,26 @@ public protocol NetworkDelegate: class {
     func willSendRequest(_ request: URLRequest, sender: Network)
     func willReceiveResult(_ result: () throws -> Network.FetchResult,
                           from request: URLRequest, sender: Network)
+
+    func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
+    func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest, sender: Network,
+                         completion: @escaping Network.Completion.ThrowableFetchResult)
 }
 
 public extension NetworkDelegate {
     public func willSendRequest(_ request: URLRequest, sender: Network) {}
     public func willReceiveResult(_ result: () throws -> Network.FetchResult,
                                  from request: URLRequest, sender: Network) {}
+
+    public func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest {
+        return request
+    }
+    public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest, sender: Network,
+                                completion: @escaping Network.Completion.ThrowableFetchResult) {
+        completion {
+            return try result()
+        }
+    }
 }
 
 open class Network {
@@ -41,6 +55,8 @@ open class Network {
     public let fetcher: Fetcher
     public let downloader: Downloader
 
+    private var operations = Array<[URLRequest : Network.Completion.ThrowableFetchResult]>()
+
     // MARK: Init
     
     public init(reachability: Reachability = .shared,
@@ -54,7 +70,74 @@ open class Network {
 
     // MARK: API
 
-    public func sendRequest(_ request: URLRequest,
+    open func sendRequest(_ request: URLRequest,
+                          preventIfDuplicate: Bool = true,
+                          completionQueue: DispatchQueue = .main,
+                          completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        do {
+            let finalRequest = try interceptedRequest(for: request)
+
+            if preventIfDuplicate {
+                guard operations.filter({ $0.keys.contains(finalRequest) }).count == 0 else {
+                    operations.append([finalRequest : completion])
+                    return
+                }
+                operations.append([finalRequest : completion])
+            }
+
+            sendRequest(finalRequest, completionQueue: completionQueue) { [unowned self] (result) in
+                self.interceptedResult(with: result, from: finalRequest) { (finalResult) in
+                    if preventIfDuplicate {
+                        self.performAllWaitingOperations(for: finalRequest, with: finalResult)
+                    } else {
+                        completion {
+                            return try finalResult()
+                        }
+                    }
+                }
+            }
+        } catch {
+            completion {
+                throw error
+            }
+        }
+    }
+
+    // MARK: Helpers
+
+    private func interceptedRequest(for request: URLRequest) throws -> URLRequest {
+        do {
+            let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
+            let finalRequest = modifiedRequest ?? request
+            return finalRequest
+        } catch {
+            throw error
+        }
+    }
+
+    private func interceptedResult(with result: () throws -> Network.FetchResult,
+                                   from request: URLRequest,
+                                   completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        if let delegate = delegate {
+            delegate.interceptResult(result, from: request, sender: self, completion: completion)
+        } else {
+            completion {
+                return try result()
+            }
+        }
+    }
+
+    private func performAllWaitingOperations(for request: URLRequest, with result: () throws -> Network.FetchResult) {
+        let f = self.operations.filter({ $0.keys.contains(request) })
+        let v = f.flatMap({ $0.values.first })
+        v.forEach({ $0{ return try result() } })
+        let nf = self.operations.filter({ $0.keys.contains(request) == false })
+        self.operations = nf
+    }
+
+    private func sendRequest(_ request: URLRequest,
                             completionQueue: DispatchQueue = .main,
                             completion: @escaping Completion.ThrowableFetchResult) {
         delegate?.willSendRequest(request, sender: self)

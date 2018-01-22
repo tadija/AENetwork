@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 0.6.0
+
+- Fixed logic for preventing of sending duplicated requests
+- Implemented logic for performing all work in background queue
+- Refactored BackendAPI logic into Backend
+- Other improvements and refactoring
+
 ## Version 0.5.0
 
 - Removed failable completion alternatives

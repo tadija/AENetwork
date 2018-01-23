@@ -34,7 +34,7 @@ extension URLRequest {
         }
     }
 
-    public init(baseURL: URL, backendRequest request: BackendRequest) {
+    public init(baseURL: URL, request: BackendRequest) {
         let url = baseURL.appendingPathComponent(request.endpoint)
         
         switch request.method {
@@ -74,10 +74,10 @@ extension URLRequest {
     // MARK: API / Fetch
 
     public func send(with network: Network = .shared,
-                     addRequestToQueue: Bool = true,
+                     addToQueue: Bool = true,
                      completionQueue: DispatchQueue = .main,
                      completion: @escaping Network.Completion.ThrowableFetchResult) {
-        network.sendRequest(self, addRequestToQueue: addRequestToQueue,
+        network.sendRequest(self, addToQueue: addToQueue,
                             completionQueue: completionQueue, completion: completion)
     }
 

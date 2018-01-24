@@ -1,9 +1,8 @@
-//
-//  String+Helpers.swift
-//  AENetwork
-//
-//  Created by Marko Tadić on 1/24/18.
-//
+/**
+ *  https://github.com/tadija/AENetwork
+ *  Copyright (c) Marko Tadić 2017
+ *  Licensed under the MIT license. See LICENSE file.
+ */
 
 import Foundation
 

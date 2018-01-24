@@ -1,26 +1,28 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017
+ *  Copyright (c) Marko Tadić 2017-2018
  *  Licensed under the MIT license. See LICENSE file.
  */
 
 import Foundation
 
-private let invalidURL = URL(string: "https://invalid.url")!
-
 extension URL: ExpressibleByStringLiteral {
-    public init(stringLiteral value: StaticString) {
-        self = URL(string: "\(value)") ?? invalidURL
-    }
-}
 
-extension String {
-    public var url: URL {
-        return URL(string: self) ?? invalidURL
+    // MARK: Constants
+
+    static let invalid = URL(string: "https://invalid.url")!
+
+    // MARK: Init
+
+    public init(stringLiteral value: StaticString) {
+        self = URL(string: "\(value)") ?? URL.invalid
     }
+
 }
 
 extension URL {
+
+    // MARK: API
     
     public mutating func addParameters(_ parameters: [String : Any]) {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: false)

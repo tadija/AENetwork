@@ -1,6 +1,6 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017
+ *  Copyright (c) Marko Tadić 2017-2018
  *  Licensed under the MIT license. See LICENSE file.
  */
 
@@ -12,9 +12,9 @@ public protocol Backend: class {
     var network: Network { get }
     var backgroundQueue: DispatchQueue { get }
 
-    func createURLRequest(from backendRequest: BackendRequest) -> URLRequest
-    func sendRequest(_ backendRequest: BackendRequest,
-                     addRequestToQueue: Bool,
+    func createURLRequest(from request: BackendRequest) -> URLRequest
+    func sendRequest(_ request: BackendRequest,
+                     addToQueue: Bool,
                      completionQueue: DispatchQueue,
                      completion: @escaping Network.Completion.ThrowableFetchResult)
 }
@@ -27,16 +27,16 @@ public extension Backend {
         return DispatchQueue.global()
     }
 
-    public func createURLRequest(from backendRequest: BackendRequest) -> URLRequest {
-        return URLRequest(baseURL: baseURL, backendRequest: backendRequest)
+    public func createURLRequest(from request: BackendRequest) -> URLRequest {
+        return URLRequest(baseURL: baseURL, request: request)
     }
-    public func sendRequest(_ backendRequest: BackendRequest,
-                            addRequestToQueue: Bool = true,
+    public func sendRequest(_ request: BackendRequest,
+                            addToQueue: Bool = true,
                             completionQueue: DispatchQueue = .main,
                             completion: @escaping Network.Completion.ThrowableFetchResult) {
         backgroundQueue.async { [unowned self] in
-            let request = self.createURLRequest(from: backendRequest)
-            self.network.sendRequest(request, addRequestToQueue: addRequestToQueue,
+            let request = self.createURLRequest(from: request)
+            self.network.sendRequest(request, addToQueue: addToQueue,
                                 completionQueue: completionQueue, completion: completion)
         }
     }

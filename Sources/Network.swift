@@ -1,6 +1,6 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017
+ *  Copyright (c) Marko Tadić 2017-2018
  *  Licensed under the MIT license. See LICENSE file.
  */
 
@@ -74,12 +74,12 @@ open class Network {
     // MARK: API
 
     open func sendRequest(_ request: URLRequest,
-                          addRequestToQueue: Bool = true,
+                          addToQueue: Bool = true,
                           completionQueue: DispatchQueue = .main,
                           completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         backgroundQueue.async { [unowned self] in
-            self.performRequest(request, addRequestToQueue: addRequestToQueue,
+            self.performRequest(request, addToQueue: addToQueue,
                                 completionQueue: completionQueue, completion: completion)
         }
     }
@@ -87,13 +87,13 @@ open class Network {
     // MARK: Helpers
 
     private func performRequest(_ request: URLRequest,
-                                addRequestToQueue: Bool,
+                                addToQueue: Bool,
                                 completionQueue: DispatchQueue,
                                 completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         do {
             let finalRequest = try interceptedRequest(for: request)
-            if addRequestToQueue {
+            if addToQueue {
                 queueRequest(finalRequest, completionQueue: completionQueue, completion: completion)
             } else {
                 fetchRequest(finalRequest, completionQueue: completionQueue, completion: completion)

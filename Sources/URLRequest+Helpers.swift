@@ -1,6 +1,6 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017
+ *  Copyright (c) Marko Tadić 2017-2018
  *  Licensed under the MIT license. See LICENSE file.
  */
 
@@ -12,6 +12,14 @@ extension URLRequest {
 
     public enum Method: String {
         case get, post, put, delete
+    }
+
+    // MARK: Properties
+
+    public var shortDescription: String {
+        let method = (httpMethod ?? String.unavailable).uppercased()
+        let url = self.url?.absoluteString ?? String.unavailable
+        return "\(method) \(url)"
     }
 
     // MARK: Init
@@ -34,7 +42,7 @@ extension URLRequest {
         }
     }
 
-    public init(baseURL: URL, backendRequest request: BackendRequest) {
+    public init(baseURL: URL, request: BackendRequest) {
         let url = baseURL.appendingPathComponent(request.endpoint)
         
         switch request.method {
@@ -74,10 +82,10 @@ extension URLRequest {
     // MARK: API / Fetch
 
     public func send(with network: Network = .shared,
-                     addRequestToQueue: Bool = true,
+                     addToQueue: Bool = true,
                      completionQueue: DispatchQueue = .main,
                      completion: @escaping Network.Completion.ThrowableFetchResult) {
-        network.sendRequest(self, addRequestToQueue: addRequestToQueue,
+        network.sendRequest(self, addToQueue: addToQueue,
                             completionQueue: completionQueue, completion: completion)
     }
 

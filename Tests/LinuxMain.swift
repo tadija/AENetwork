@@ -1,6 +1,6 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017
+ *  Copyright (c) Marko Tadić 2017-2018
  *  Licensed under the MIT license. See LICENSE file.
  */
 
@@ -16,5 +16,6 @@ XCTMain([
     testCase(URLTests.allTests),
     testCase(URLRequestTests.allTests),
     testCase(HTTPURLResponseTests.allTests),
-    testCase(SerializationTests.allTests)
+    testCase(StringTests.allTests),
+    testCase(DataTests.allTests)
 ])

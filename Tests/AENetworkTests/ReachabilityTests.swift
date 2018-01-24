@@ -1,6 +1,7 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Mihailo Rančić 2018
+ *  Copyright (c) Marko Tadić 2017-2018
+ *  Created by Mihailo Rančić
  *  Licensed under the MIT license. See LICENSE file.
  */
 

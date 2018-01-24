@@ -33,8 +33,36 @@ open class Fetcher {
         }
     }
 
-    public enum Error: Swift.Error {
+    public enum Error: Swift.Error, LocalizedError, CustomNSError {
         case badResponseCode(Result)
+
+        public var errorDescription: String? {
+            switch self {
+            case .badResponseCode(let result):
+                let code = result.response.statusCode
+                let status = HTTPURLResponse.localizedString(forStatusCode: code).capitalized
+                let text = "Request failed with status code: \(code) \(status)"
+                return text
+            }
+        }
+
+        public static var errorDomain: String {
+            return "net.tadija.AENetwork/Fetcher"
+        }
+
+        public var errorCode: Int {
+            switch self {
+            case .badResponseCode(let result):
+                return result.response.statusCode
+            }
+        }
+
+        public var errorUserInfo: [String : Any] {
+            switch self {
+            case .badResponseCode(let result):
+                return ["result" : result]
+            }
+        }
     }
 
     // MARK: Singleton

@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.6.1
+
+- Added detailed error description
+- Added short description for URLRequest and HTTPURLResponse
+- Other improvements and refactoring
+
 ## Version 0.6.0
 
 - Fixed logic for preventing of sending duplicated requests

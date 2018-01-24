@@ -14,6 +14,14 @@ extension URLRequest {
         case get, post, put, delete
     }
 
+    // MARK: Properties
+
+    public var shortDescription: String {
+        let method = (httpMethod ?? String.unavailable).uppercased()
+        let url = self.url?.absoluteString ?? String.unavailable
+        return "\(method) \(url)"
+    }
+
     // MARK: Init
 
     public init(url: URL,

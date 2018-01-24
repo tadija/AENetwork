@@ -12,59 +12,6 @@ open class Fetcher {
 
     public typealias ThrowableResult = (() throws -> Result) -> Void
 
-    public struct Result {
-        public let response: HTTPURLResponse
-        public let data: Data
-
-        public var dictionary: [String : Any]? {
-            return try? toDictionary()
-        }
-
-        public var array: [Any]? {
-            return try? toArray()
-        }
-
-        public func toDictionary() throws -> [String : Any] {
-            return try data.toDictionary()
-        }
-
-        public func toArray() throws -> [Any] {
-            return try data.toArray()
-        }
-    }
-
-    public enum Error: Swift.Error, LocalizedError, CustomNSError {
-        case badResponseCode(Result)
-
-        public var errorDescription: String? {
-            switch self {
-            case .badResponseCode(let result):
-                let code = result.response.statusCode
-                let status = HTTPURLResponse.localizedString(forStatusCode: code).capitalized
-                let text = "Request failed with status code: \(code) \(status)"
-                return text
-            }
-        }
-
-        public static var errorDomain: String {
-            return "net.tadija.AENetwork/Fetcher"
-        }
-
-        public var errorCode: Int {
-            switch self {
-            case .badResponseCode(let result):
-                return result.response.statusCode
-            }
-        }
-
-        public var errorUserInfo: [String : Any] {
-            switch self {
-            case .badResponseCode(let result):
-                return ["result" : result]
-            }
-        }
-    }
-
     // MARK: Singleton
 
     public static let shared = Fetcher()
@@ -124,4 +71,63 @@ open class Fetcher {
         }
     }
 
+}
+
+extension Fetcher {
+    public struct Result {
+        public let response: HTTPURLResponse
+        public let data: Data
+
+        public var dictionary: [String : Any]? {
+            return try? toDictionary()
+        }
+        public var array: [Any]? {
+            return try? toArray()
+        }
+
+        public func toDictionary() throws -> [String : Any] {
+            return try data.toDictionary()
+        }
+        public func toArray() throws -> [Any] {
+            return try data.toArray()
+        }
+    }
+}
+
+extension Fetcher {
+    public enum Error: Swift.Error, LocalizedError, CustomNSError {
+        case badResponseCode(Result)
+
+        // MARK: LocalizedError
+
+        public var errorDescription: String? {
+            switch self {
+            case .badResponseCode(let result):
+                let code = result.response.statusCode
+                let status = HTTPURLResponse.localizedString(forStatusCode: code).capitalized
+                let text = "Request failed with status code: \(code) \(status)"
+                return text
+            }
+        }
+
+        // MARK: CustomNSError
+
+        public static var errorDomain: String {
+            return "net.tadija.AENetwork/Fetcher"
+        }
+
+        public var errorCode: Int {
+            switch self {
+            case .badResponseCode(let result):
+                return result.response.statusCode
+            }
+        }
+
+        public var errorUserInfo: [String : Any] {
+            switch self {
+            case .badResponseCode(let result):
+                return ["result" : result]
+            }
+        }
+    }
 }

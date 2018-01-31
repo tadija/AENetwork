@@ -9,6 +9,16 @@ import XCTest
 
 class DownloaderTests: XCTestCase {
 
+    static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
+        return [
+            ("testStartAndStopDownload", testStartAndStopDownload),
+            ("testDownloadFinished", testDownloadFinished),
+            ("testDownloadFailed", testDownloadFailed),
+            ("testReplaceItem", testReplaceItem),
+            ("testCleanup", testCleanup)
+        ]
+    }
+
     // MARK: Types
 
     struct Item: Downloadable {
@@ -150,16 +160,6 @@ class DownloaderTests: XCTestCase {
         }
 
         wait(for: [deinitExpectation], timeout: 5)
-    }
-
-    static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
-        return [
-            ("testStartAndStopDownload", testStartAndStopDownload),
-            ("testDownloadFinished", testDownloadFinished),
-            ("testDownloadFailed", testDownloadFailed),
-            ("testReplaceItem", testReplaceItem),
-            ("testCleanup", testCleanup)
-        ]
     }
 
 }

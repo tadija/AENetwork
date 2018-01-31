@@ -9,6 +9,12 @@ import XCTest
 
 class HTTPURLResponseTests: XCTestCase {
 
+    static var allTests : [(String, (HTTPURLResponseTests) -> () throws -> Void)] {
+        return [
+            ("testCaseInsensitiveSearchOfHeaders", testCaseInsensitiveSearchOfHeaders)
+        ]
+    }
+
     // MARK: Tests
 
     func testCaseInsensitiveSearchOfHeaders() {
@@ -22,12 +28,6 @@ class HTTPURLResponseTests: XCTestCase {
         let message = "Should be able to find header with case insensitive search"
         XCTAssertEqual(response.headerValue(forKey: "X-Custom-Header") as! String, "x-custom-value", message)
         XCTAssertEqual(response.headerValue(forKey: "x-another-header") as! String, "X-Another-Value", message)
-    }
-
-    static var allTests : [(String, (HTTPURLResponseTests) -> () throws -> Void)] {
-        return [
-            ("testCaseInsensitiveSearchOfHeaders", testCaseInsensitiveSearchOfHeaders)
-        ]
     }
 
 }

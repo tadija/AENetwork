@@ -9,6 +9,15 @@ import XCTest
 
 class URLRequestTests: XCTestCase {
 
+    static var allTests : [(String, (URLRequestTests) -> () throws -> Void)] {
+        return [
+            ("testGet", testGet),
+            ("testPost", testPost),
+            ("testPut", testPut),
+            ("testDelete", testDelete)
+        ]
+    }
+
     // MARK: Properties
 
     let headers = ["Content-Type" : "application/json"]
@@ -34,15 +43,6 @@ class URLRequestTests: XCTestCase {
     func testDelete() {
         let request = URLRequest.delete(url: "https://httpbin.org/delete", headers: headers, parameters: params)
         validateRequest(request, method: "DELETE", parametersType: .body)
-    }
-
-    static var allTests : [(String, (URLRequestTests) -> () throws -> Void)] {
-        return [
-            ("testGet", testGet),
-            ("testPost", testPost),
-            ("testPut", testPut),
-            ("testDelete", testDelete)
-        ]
     }
 
     // MARK: Helpers

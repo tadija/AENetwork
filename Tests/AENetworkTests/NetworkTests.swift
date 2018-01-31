@@ -9,6 +9,17 @@ import XCTest
 
 class NetworkTests: XCTestCase {
 
+    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
+        return [
+            ("testFetchDictionary", testFetchDictionary),
+            ("testFetchDictionaryError", testFetchDictionaryError),
+            ("testFetchArray", testFetchArray),
+            ("testFetchArrayError", testFetchArrayError),
+            ("testFetchError", testFetchError),
+            ("testResponseError", testResponseError),
+        ]
+    }
+
     // MARK: Properties
 
     let network = Network.shared
@@ -81,21 +92,17 @@ class NetworkTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
-        return [
-            ("testFetchDictionary", testFetchDictionary),
-            ("testFetchDictionaryError", testFetchDictionaryError),
-            ("testFetchArray", testFetchArray),
-            ("testFetchArrayError", testFetchArrayError),
-            ("testFetchError", testFetchError),
-            ("testResponseError", testResponseError),
-        ]
-    }
-
 }
 
 @available(iOS 10.0, macOS 10.12, *)
 class NetworkQueueTests: XCTestCase {
+
+    static var allTests : [(String, (NetworkQueueTests) -> () throws -> Void)] {
+        return [
+            ("testCompletionInBackgroundQueue", testCompletionInBackgroundQueue),
+            ("testCompletionInMainQueue", testCompletionInMainQueue)
+        ]
+    }
 
     // MARK: Properties
 
@@ -123,13 +130,6 @@ class NetworkQueueTests: XCTestCase {
             queueExpectation.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
-    }
-
-    static var allTests : [(String, (NetworkQueueTests) -> () throws -> Void)] {
-        return [
-            ("testCompletionInBackgroundQueue", testCompletionInBackgroundQueue),
-            ("testCompletionInMainQueue", testCompletionInMainQueue)
-        ]
     }
 
 }

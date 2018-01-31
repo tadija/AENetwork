@@ -9,12 +9,12 @@ import XCTest
 
 class BackendTests: XCTestCase {
 
-    // MARK: Tests
-
     static var allTests : [(String, (BackendTests) -> () throws -> Void)] {
         return [
 
         ]
     }
+
+    // MARK: Tests
 
 }

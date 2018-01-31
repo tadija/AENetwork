@@ -55,7 +55,6 @@ open class Network {
 
     public let reachability: Reachability
     public let fetcher: Fetcher
-    public let downloader: Downloader
 
     private let backgroundQueue = DispatchQueue(label: "AENetwork.Network.backgroundQueue")
     private var completions = Array<[URLRequest : Network.Completion.ThrowableFetchResult]>()
@@ -63,12 +62,10 @@ open class Network {
     // MARK: Init
     
     public init(reachability: Reachability = .shared,
-                fetcher: Fetcher = .shared,
-                downloader: Downloader = .shared)
+                fetcher: Fetcher = .shared)
     {
         self.reachability = reachability
         self.fetcher = fetcher
-        self.downloader = downloader
     }
 
     // MARK: API

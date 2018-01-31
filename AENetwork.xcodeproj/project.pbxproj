@@ -15,7 +15,6 @@
 		8B0F80782008064900928F0F /* BackendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0F80772008064900928F0F /* BackendTests.swift */; };
 		8B3335E41FE0862B004F4AC6 /* URLRequest+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */; };
 		8B4D06F71FD5CEDC000B4ADB /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */; };
-		8B4D06FB1FD5F459000B4ADB /* FetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */; };
 		8B4D06FD1FD747FE000B4ADB /* DownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */; };
 		8B4D06FF1FD74863000B4ADB /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */; };
 		8B553A621FF28E6D0093C353 /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B553A611FF28E6D0093C353 /* Backend.swift */; };
@@ -50,7 +49,6 @@
 		8B0F80772008064900928F0F /* BackendTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BackendTests.swift; path = AENetworkTests/BackendTests.swift; sourceTree = "<group>"; };
 		8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Helpers.swift"; sourceTree = "<group>"; };
 		8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = URLTests.swift; path = AENetworkTests/URLTests.swift; sourceTree = "<group>"; };
-		8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FetcherTests.swift; path = AENetworkTests/FetcherTests.swift; sourceTree = "<group>"; };
 		8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DownloaderTests.swift; path = AENetworkTests/DownloaderTests.swift; sourceTree = "<group>"; };
 		8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTests.swift; path = AENetworkTests/NetworkTests.swift; sourceTree = "<group>"; };
 		8B553A611FF28E6D0093C353 /* Backend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
@@ -130,7 +128,6 @@
 				8B0F80772008064900928F0F /* BackendTests.swift */,
 				8B4D06FE1FD74863000B4ADB /* NetworkTests.swift */,
 				04126DDC200529D5009BA398 /* ReachabilityTests.swift */,
-				8B4D06FA1FD5F459000B4ADB /* FetcherTests.swift */,
 				8B4D06FC1FD747FE000B4ADB /* DownloaderTests.swift */,
 				8B4D06F61FD5CEDC000B4ADB /* URLTests.swift */,
 				8B01E2631FEB116100069C3B /* URLRequestTests.swift */,
@@ -305,7 +302,6 @@
 				8B0F80782008064900928F0F /* BackendTests.swift in Sources */,
 				8B4D06FD1FD747FE000B4ADB /* DownloaderTests.swift in Sources */,
 				8B0F80762007EF1E00928F0F /* HTTPURLResponseTests.swift in Sources */,
-				8B4D06FB1FD5F459000B4ADB /* FetcherTests.swift in Sources */,
 				8B6CA4971FD2DFB500162360 /* DataTests.swift in Sources */,
 				8BB886FD2019204600DA78C6 /* StringTests.swift in Sources */,
 				04126DDD200529D5009BA398 /* ReachabilityTests.swift in Sources */,

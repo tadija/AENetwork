@@ -36,7 +36,7 @@ public extension Backend {
                             completion: @escaping Network.Completion.ThrowableFetchResult) {
         backgroundQueue.async { [unowned self] in
             let request = self.createURLRequest(from: request)
-            self.network.sendRequest(request, addToQueue: addToQueue,
+            self.network.fetchRequest(request, addToQueue: addToQueue,
                                 completionQueue: completionQueue, completion: completion)
         }
     }

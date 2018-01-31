@@ -81,12 +81,12 @@ extension URLRequest {
 
     // MARK: API / Fetch
 
-    public func send(with network: Network = .shared,
-                     addToQueue: Bool = true,
-                     completionQueue: DispatchQueue = .main,
-                     completion: @escaping Network.Completion.ThrowableFetchResult) {
-        network.sendRequest(self, addToQueue: addToQueue,
-                            completionQueue: completionQueue, completion: completion)
+    public func fetch(with network: Network = .shared,
+                      addToQueue: Bool = true,
+                      completionQueue: DispatchQueue = .main,
+                      completion: @escaping Network.Completion.ThrowableFetchResult) {
+        network.fetchRequest(self, addToQueue: addToQueue,
+                             completionQueue: completionQueue, completion: completion)
     }
 
 }

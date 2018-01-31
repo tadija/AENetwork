@@ -10,7 +10,7 @@ extension Network {
     
     // MARK: API
     
-    open func sendRequest(_ request: URLRequest,
+    open func fetchRequest(_ request: URLRequest,
                           addToQueue: Bool = true,
                           completionQueue: DispatchQueue = .main,
                           completion: @escaping Network.Completion.ThrowableFetchResult)
@@ -33,7 +33,7 @@ extension Network {
             if addToQueue {
                 queueRequest(finalRequest, completionQueue: completionQueue, completion: completion)
             } else {
-                fetchRequest(finalRequest, completionQueue: completionQueue, completion: completion)
+                sendRequest(finalRequest, completionQueue: completionQueue, completion: completion)
             }
         } catch {
             completionQueue.async {
@@ -54,17 +54,17 @@ extension Network {
             return
         }
         fetchCompletions.append([request : completion])
-        fetchRequest(request, completionQueue: fetchQueue) { [unowned self] (result) in
+        sendRequest(request, completionQueue: fetchQueue) { [unowned self] (result) in
             self.performAllWaitingCompletions(for: request, with: result, in: completionQueue)
         }
     }
     
-    private func fetchRequest(_ request: URLRequest,
+    private func sendRequest(_ request: URLRequest,
                               completionQueue: DispatchQueue,
                               completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         fetchDelegate?.willSendRequest(request, sender: self)
-        sendRequest(request) { [unowned self] (result) in
+        resumeDataTask(with: request) { [unowned self] (result) in
             self.interceptedResult(with: result, from: request) { [unowned self] (finalResult) in
                 self.fetchDelegate?.willReceiveResult(finalResult, from: request, sender: self)
                 self.dispatchResult(finalResult, in: completionQueue, completion: completion)
@@ -132,9 +132,9 @@ extension Network {
 
 extension Network {
     
-    // MARK: API
+    // MARK: Data Task
     
-    public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
+    fileprivate func resumeDataTask(with request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
         fetchSession.dataTask(with: request) { [weak self] data, response, error in
             if error == nil, let response = response as? HTTPURLResponse, let data = data {
                 self?.handleValidResponse(response, with: data, from: request, completion: completion)
@@ -169,7 +169,7 @@ extension Network {
         let nsError = error as NSError
         if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorNetworkConnectionLost {
             // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
-            sendRequest(request, completion: completion)
+            resumeDataTask(with: request, completion: completion)
         } else {
             completion {
                 throw error

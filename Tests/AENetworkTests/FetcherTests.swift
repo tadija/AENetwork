@@ -57,7 +57,7 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        network.sendRequest(request) { (result) in
+        network.fetchRequest(request) { (result) in
             do {
                 let result = try result()
                 let _ = try result.toDictionary()
@@ -77,7 +77,7 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        network.sendRequest(request) { (result) in
+        network.fetchRequest(request) { (result) in
             do {
                 let result = try result()
                 let _ = try result.toArray()

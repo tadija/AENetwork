@@ -6,30 +6,12 @@
 
 import Foundation
 
-open class Fetcher {
-
-    // MARK: Types
-
-    public typealias ThrowableResult = (() throws -> Result) -> Void
-
-    // MARK: Singleton
-
-    public static let shared = Fetcher()
-
-    // MARK: Properties
-
-    public let session: URLSession
-
-    // MARK: Init
-
-    public init(session: URLSession = .shared) {
-        self.session = session
-    }
-
+extension Network {
+    
     // MARK: API
-
-    public func sendRequest(_ request: URLRequest, completion: @escaping ThrowableResult) {
-        session.dataTask(with: request) { [weak self] data, response, error in
+    
+    public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
+        fetchSession.dataTask(with: request) { [weak self] data, response, error in
             if error == nil, let response = response as? HTTPURLResponse, let data = data {
                 self?.handleValidResponse(response, with: data, from: request, completion: completion)
             } else {
@@ -37,14 +19,14 @@ open class Fetcher {
             }
         }.resume()
     }
-
+    
     // MARK: Helpers
-
+    
     private func handleValidResponse(_ response: HTTPURLResponse,
-                                with data: Data,
-                                from request: URLRequest,
-                                completion: ThrowableResult) {
-        let result = Result(response: response, data: data)
+                                     with data: Data,
+                                     from request: URLRequest,
+                                     completion: Completion.ThrowableFetchResult) {
+        let result = FetchResult(response: response, data: data)
         switch response.statusCode {
         case 200 ..< 300:
             completion {
@@ -52,14 +34,14 @@ open class Fetcher {
             }
         default:
             completion {
-                throw Error.badResponseCode(result)
+                throw FetchError.badResponseCode(result)
             }
         }
     }
-
+    
     private func handleResponseError(_ error: Swift.Error,
                                      from request: URLRequest,
-                                     completion: @escaping ThrowableResult) {
+                                     completion: @escaping Completion.ThrowableFetchResult) {
         let nsError = error as NSError
         if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorNetworkConnectionLost {
             // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
@@ -70,21 +52,22 @@ open class Fetcher {
             }
         }
     }
-
+    
 }
 
-extension Fetcher {
-    public struct Result {
+extension Network {
+    
+    public struct FetchResult {
         public let response: HTTPURLResponse
         public let data: Data
-
+        
         public var dictionary: [String : Any]? {
             return try? toDictionary()
         }
         public var array: [Any]? {
             return try? toArray()
         }
-
+        
         public func toDictionary() throws -> [String : Any] {
             return try data.toDictionary()
         }
@@ -92,14 +75,12 @@ extension Fetcher {
             return try data.toArray()
         }
     }
-}
-
-extension Fetcher {
-    public enum Error: Swift.Error, LocalizedError, CustomNSError {
-        case badResponseCode(Result)
-
+    
+    public enum FetchError: Swift.Error, LocalizedError, CustomNSError {
+        case badResponseCode(FetchResult)
+        
         // MARK: LocalizedError
-
+        
         public var errorDescription: String? {
             switch self {
             case .badResponseCode(let result):
@@ -109,20 +90,20 @@ extension Fetcher {
                 return text
             }
         }
-
+        
         // MARK: CustomNSError
-
+        
         public static var errorDomain: String {
             return "net.tadija.AENetwork/Fetcher"
         }
-
+        
         public var errorCode: Int {
             switch self {
             case .badResponseCode(let result):
                 return result.response.statusCode
             }
         }
-
+        
         public var errorUserInfo: [String : Any] {
             switch self {
             case .badResponseCode(let result):
@@ -130,4 +111,5 @@ extension Fetcher {
             }
         }
     }
+    
 }

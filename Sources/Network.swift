@@ -38,9 +38,6 @@ open class Network {
 
     // MARK: Types
 
-    public typealias FetchResult = Fetcher.Result
-    public typealias FetchError = Fetcher.Error
-
     public struct Completion {
         public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void
     }
@@ -52,20 +49,20 @@ open class Network {
     // MARK: Properties
 
     public weak var delegate: NetworkDelegate?
-
+    
+    public let fetchSession: URLSession
     public let reachability: Reachability
-    public let fetcher: Fetcher
 
     private let backgroundQueue = DispatchQueue(label: "AENetwork.Network.backgroundQueue")
     private var completions = Array<[URLRequest : Network.Completion.ThrowableFetchResult]>()
 
     // MARK: Init
     
-    public init(reachability: Reachability = .shared,
-                fetcher: Fetcher = .shared)
+    public init(fetchSession: URLSession = .shared,
+                reachability: Reachability = .shared)
     {
+        self.fetchSession = fetchSession
         self.reachability = reachability
-        self.fetcher = fetcher
     }
 
     // MARK: API
@@ -124,7 +121,7 @@ open class Network {
                               completion: @escaping Network.Completion.ThrowableFetchResult)
     {
         delegate?.willSendRequest(request, sender: self)
-        fetcher.sendRequest(request) { [unowned self] (result) in
+        sendRequest(request) { [unowned self] (result) in
             self.interceptedResult(with: result, from: request) { [unowned self] (finalResult) in
                 self.delegate?.willReceiveResult(finalResult, from: request, sender: self)
                 self.dispatchResult(finalResult, in: completionQueue, completion: completion)

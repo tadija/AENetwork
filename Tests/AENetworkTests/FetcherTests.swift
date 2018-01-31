@@ -7,11 +7,12 @@
 import XCTest
 @testable import AENetwork
 
+/// - TODO: Refactor later
 class FetcherTests: XCTestCase {
 
     // MARK: Properties
 
-    let fetcher = Fetcher.shared
+    let network = Network.shared
 
     // MARK: Tests
 
@@ -56,7 +57,7 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.sendRequest(request) { (result) in
+        network.sendRequest(request) { (result) in
             do {
                 let result = try result()
                 let _ = try result.toDictionary()
@@ -76,7 +77,7 @@ class FetcherTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
 
         let request = URLRequest(url: url)
-        fetcher.sendRequest(request) { (result) in
+        network.sendRequest(request) { (result) in
             do {
                 let result = try result()
                 let _ = try result.toArray()

@@ -10,6 +10,130 @@ extension Network {
     
     // MARK: API
     
+    open func sendRequest(_ request: URLRequest,
+                          addToQueue: Bool = true,
+                          completionQueue: DispatchQueue = .main,
+                          completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        fetchQueue.async { [unowned self] in
+            self.performRequest(request, addToQueue: addToQueue,
+                                completionQueue: completionQueue, completion: completion)
+        }
+    }
+    
+    // MARK: Helpers
+    
+    private func performRequest(_ request: URLRequest,
+                                addToQueue: Bool,
+                                completionQueue: DispatchQueue,
+                                completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        do {
+            let finalRequest = try interceptedRequest(for: request)
+            if addToQueue {
+                queueRequest(finalRequest, completionQueue: completionQueue, completion: completion)
+            } else {
+                fetchRequest(finalRequest, completionQueue: completionQueue, completion: completion)
+            }
+        } catch {
+            completionQueue.async {
+                completion {
+                    throw error
+                }
+            }
+        }
+    }
+    
+    private func queueRequest(_ request: URLRequest,
+                              completionQueue: DispatchQueue,
+                              completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        guard fetchCompletions.filter({ $0.keys.contains(request) }).count == 0 else {
+            fetchCompletions.append([request : completion])
+            fetchDelegate?.willSkipRequest(request, sender: self)
+            return
+        }
+        fetchCompletions.append([request : completion])
+        fetchRequest(request, completionQueue: fetchQueue) { [unowned self] (result) in
+            self.performAllWaitingCompletions(for: request, with: result, in: completionQueue)
+        }
+    }
+    
+    private func fetchRequest(_ request: URLRequest,
+                              completionQueue: DispatchQueue,
+                              completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        fetchDelegate?.willSendRequest(request, sender: self)
+        sendRequest(request) { [unowned self] (result) in
+            self.interceptedResult(with: result, from: request) { [unowned self] (finalResult) in
+                self.fetchDelegate?.willReceiveResult(finalResult, from: request, sender: self)
+                self.dispatchResult(finalResult, in: completionQueue, completion: completion)
+            }
+        }
+    }
+    
+    private func interceptedRequest(for request: URLRequest) throws -> URLRequest {
+        do {
+            let modifiedRequest = try fetchDelegate?.interceptRequest(request, sender: self)
+            let finalRequest = modifiedRequest ?? request
+            return finalRequest
+        } catch {
+            throw error
+        }
+    }
+    
+    private func interceptedResult(with result: () throws -> Network.FetchResult,
+                                   from request: URLRequest,
+                                   completion: @escaping Network.Completion.ThrowableFetchResult)
+    {
+        if let delegate = fetchDelegate {
+            delegate.interceptResult(result, from: request, sender: self, completion: completion)
+        } else {
+            completion {
+                return try result()
+            }
+        }
+    }
+    
+    private func performAllWaitingCompletions(for request: URLRequest,
+                                              with result: () throws -> Network.FetchResult,
+                                              in completionQueue: DispatchQueue)
+    {
+        let filtered = fetchCompletions.filter({ $0.keys.contains(request) })
+        let filteredCompletions = filtered.flatMap({ $0.values.first })
+        filteredCompletions.forEach { [unowned self] (completion) in
+            self.dispatchResult(result, in: completionQueue, completion: completion)
+        }
+        let remainingCompletions = fetchCompletions.filter({ $0.keys.contains(request) == false })
+        self.fetchCompletions = remainingCompletions
+    }
+    
+    private func dispatchResult(_ result: () throws -> FetchResult,
+                                in queue: DispatchQueue,
+                                completion: @escaping Completion.ThrowableFetchResult)
+    {
+        do {
+            let result = try result()
+            queue.async {
+                completion {
+                    return result
+                }
+            }
+        } catch {
+            queue.async {
+                completion {
+                    throw error
+                }
+            }
+        }
+    }
+    
+}
+
+extension Network {
+    
+    // MARK: API
+    
     public func sendRequest(_ request: URLRequest, completion: @escaping Completion.ThrowableFetchResult) {
         fetchSession.dataTask(with: request) { [weak self] data, response, error in
             if error == nil, let response = response as? HTTPURLResponse, let data = data {

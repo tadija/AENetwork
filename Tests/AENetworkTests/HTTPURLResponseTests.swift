@@ -30,4 +30,10 @@ class HTTPURLResponseTests: XCTestCase {
         XCTAssertEqual(response.headerValue(forKey: "x-another-header") as! String, "X-Another-Value", message)
     }
 
+    func testShortDescription() {
+        let response = HTTPURLResponse(url: "https://tadija.net", statusCode: 200,
+                                       httpVersion: nil, headerFields: nil)!
+        XCTAssertEqual(response.shortDescription, "200 No Error")
+    }
+
 }

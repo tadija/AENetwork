@@ -56,6 +56,7 @@ class URLRequestTests: XCTestCase {
         case .body:
             XCTAssertEqual(request.httpBody, try? Data(jsonWith: params), "Should add parameters to body.")
         }
+        XCTAssertEqual(request.shortDescription, "\(method) \(request.url?.absoluteString ?? String.unavailable)")
     }
 
     private enum ParametersType {

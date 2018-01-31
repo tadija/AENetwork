@@ -9,6 +9,14 @@ import XCTest
 
 class URLTests: XCTestCase {
 
+    static var allTests : [(String, (URLTests) -> () throws -> Void)] {
+        return [
+            ("testReadingParameters", testReadingParameters),
+            ("testParameterTypes", testParameterTypes),
+            ("testURLInit", testURLInit)
+        ]
+    }
+
     // MARK: Properties
 
     var url: URL = "https://httpbin.org"
@@ -70,12 +78,6 @@ class URLTests: XCTestCase {
         let testBadURL: URL = ""
         XCTAssertEqual(badURL, testBadURL, "")
         XCTAssertEqual(badURL, "".url, "")
-    }
-
-    static var allTests : [(String, (URLTests) -> () throws -> Void)] {
-        return [
-            ("testReadingParameters", testReadingParameters)
-        ]
     }
 
 }

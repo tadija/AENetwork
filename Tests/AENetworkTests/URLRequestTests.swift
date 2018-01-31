@@ -9,6 +9,15 @@ import XCTest
 
 class URLRequestTests: XCTestCase {
 
+    static var allTests : [(String, (URLRequestTests) -> () throws -> Void)] {
+        return [
+            ("testGet", testGet),
+            ("testPost", testPost),
+            ("testPut", testPut),
+            ("testDelete", testDelete)
+        ]
+    }
+
     // MARK: Properties
 
     let headers = ["Content-Type" : "application/json"]
@@ -36,15 +45,6 @@ class URLRequestTests: XCTestCase {
         validateRequest(request, method: "DELETE", parametersType: .body)
     }
 
-    static var allTests : [(String, (URLRequestTests) -> () throws -> Void)] {
-        return [
-            ("testGet", testGet),
-            ("testPost", testPost),
-            ("testPut", testPut),
-            ("testDelete", testDelete)
-        ]
-    }
-
     // MARK: Helpers
 
     private func validateRequest(_ request: URLRequest, method: String, parametersType: ParametersType) {
@@ -56,6 +56,7 @@ class URLRequestTests: XCTestCase {
         case .body:
             XCTAssertEqual(request.httpBody, try? Data(jsonWith: params), "Should add parameters to body.")
         }
+        XCTAssertEqual(request.shortDescription, "\(method) \(request.url?.absoluteString ?? String.unavailable)")
     }
 
     private enum ParametersType {

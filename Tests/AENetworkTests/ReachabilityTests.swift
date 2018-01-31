@@ -9,6 +9,13 @@ import XCTest
 @testable import AENetwork
 
 class ReachabilityTests: XCTestCase {
+
+    static var allTests : [(String, (ReachabilityTests) -> () throws -> Void)] {
+        return [
+            ("testThatBlockIsExecutedWhenNotiferStarts", testThatBlockIsExecutedWhenNotiferStarts),
+            ("testThatNotificationIsPostedWhenNotifierStarts", testThatNotificationIsPostedWhenNotifierStarts)
+        ]
+    }
     
     // MARK: Properties
     
@@ -45,13 +52,6 @@ class ReachabilityTests: XCTestCase {
             return true
         }
         waitForExpectations(timeout: 3, handler: nil)
-    }
-    
-    static var allTests : [(String, (ReachabilityTests) -> () throws -> Void)] {
-        return [
-            ("testThatBlockIsExecutedWhenNotiferStarts", testThatBlockIsExecutedWhenNotiferStarts),
-            ("testThatNotificationIsPostedWhenNotifierStarts", testThatNotificationIsPostedWhenNotifierStarts)
-        ]
     }
     
 }

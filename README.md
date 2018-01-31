@@ -36,7 +36,7 @@ network.reachability.connectionDidChange = { r in
 network.reachability.stopNotifier()
 
 /// - Note: Fetching with throwable completion closure
-network.sendRequest(request) { (result) in
+network.fetchRequest(request) { (result) in
     do {
         let dictionary = try result().toDictionary()
         print("\(dictionary)\n")
@@ -46,7 +46,7 @@ network.sendRequest(request) { (result) in
 }
 
 /// - Note: Convenient fetching directly from request (using `Network.shared` by default)
-request.send { (result) in
+request.fetch { (result) in
     print("\(String(describing: try? result().dictionary))\n")
 }
 

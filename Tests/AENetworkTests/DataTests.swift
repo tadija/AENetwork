@@ -9,6 +9,14 @@ import XCTest
 
 class DataTests: XCTestCase {
 
+    static var allTests : [(String, (DataTests) -> () throws -> Void)] {
+        return [
+            ("testSerializingJsonDataToDictionary", testSerializingJsonDataToDictionary),
+            ("testSerializingJsonDataToArray", testSerializingJsonDataToArray),
+            ("testSerializationError", testSerializationError)
+        ]
+    }
+
     // MARK: Tests
 
     func testSerializingJsonDataToDictionary() {
@@ -42,14 +50,6 @@ class DataTests: XCTestCase {
             let test = error is Data.SerializationError
             XCTAssert(test, "Should throw \(error) when serializing JSON data to the wrong type.")
         }
-    }
-
-    static var allTests : [(String, (DataTests) -> () throws -> Void)] {
-        return [
-            ("testSerializingJsonDataToDictionary", testSerializingJsonDataToDictionary),
-            ("testSerializingJsonDataToArray", testSerializingJsonDataToArray),
-            ("testSerializationError", testSerializationError)
-        ]
     }
 
 }

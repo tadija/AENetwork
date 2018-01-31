@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.6.2
+
+- Integrated Fetcher logic directly into Network (removed Fetcher class)
+- Removed Downloader instance from Network class
+- Added Equatable conformance to FetchResult
+- Added more unit tests
+- Other improvements and refactoring
+
 ## Version 0.6.1
 
 - Added detailed error description

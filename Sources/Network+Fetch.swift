@@ -181,7 +181,7 @@ extension Network {
 
 extension Network {
     
-    public struct FetchResult {
+    public struct FetchResult: Equatable {
         public let response: HTTPURLResponse
         public let data: Data
         
@@ -198,6 +198,13 @@ extension Network {
         public func toArray() throws -> [Any] {
             return try data.toArray()
         }
+
+        // MARK: Equatable
+
+        public static func ==(lhs: FetchResult, rhs: FetchResult) -> Bool {
+            return lhs.response == rhs.response && lhs.data == rhs.data
+        }
+
     }
     
     public enum FetchError: Swift.Error, LocalizedError, CustomNSError {

@@ -37,6 +37,15 @@ public extension NetworkFetchDelegate {
 open class Network {
 
     // MARK: Types
+    
+    public struct FetchResult {
+        public let response: HTTPURLResponse
+        public let data: Data
+    }
+    
+    public enum FetchError: Error {
+        case badResponseCode(FetchResult)
+    }
 
     public struct Completion {
         public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void

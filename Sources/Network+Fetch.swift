@@ -179,67 +179,63 @@ extension Network {
     
 }
 
-extension Network {
+extension Network.FetchResult: Equatable {
     
-    public struct FetchResult: Equatable {
-        public let response: HTTPURLResponse
-        public let data: Data
-        
-        public var dictionary: [String : Any]? {
-            return try? toDictionary()
-        }
-        public var array: [Any]? {
-            return try? toArray()
-        }
-        
-        public func toDictionary() throws -> [String : Any] {
-            return try data.toDictionary()
-        }
-        public func toArray() throws -> [Any] {
-            return try data.toArray()
-        }
-
-        // MARK: Equatable
-
-        public static func ==(lhs: FetchResult, rhs: FetchResult) -> Bool {
-            return lhs.response == rhs.response && lhs.data == rhs.data
-        }
-
+    // MARK: Helpers
+    
+    public var dictionary: [String : Any]? {
+        return try? toDictionary()
+    }
+    public var array: [Any]? {
+        return try? toArray()
     }
     
-    public enum FetchError: Swift.Error, LocalizedError, CustomNSError {
-        case badResponseCode(FetchResult)
-        
-        // MARK: LocalizedError
-        
-        public var errorDescription: String? {
-            switch self {
-            case .badResponseCode(let result):
-                let code = result.response.statusCode
-                let status = HTTPURLResponse.localizedString(forStatusCode: code).capitalized
-                let text = "Request failed with status code: \(code) \(status)"
-                return text
-            }
+    public func toDictionary() throws -> [String : Any] {
+        return try data.toDictionary()
+    }
+    public func toArray() throws -> [Any] {
+        return try data.toArray()
+    }
+    
+    // MARK: Equatable
+    
+    public static func ==(lhs: Network.FetchResult, rhs: Network.FetchResult) -> Bool {
+        return lhs.response == rhs.response && lhs.data == rhs.data
+    }
+    
+}
+
+extension Network.FetchError: LocalizedError, CustomNSError {
+    
+    // MARK: LocalizedError
+    
+    public var errorDescription: String? {
+        switch self {
+        case .badResponseCode(let result):
+            let code = result.response.statusCode
+            let status = HTTPURLResponse.localizedString(forStatusCode: code).capitalized
+            let text = "Request failed with status code: \(code) \(status)"
+            return text
         }
-        
-        // MARK: CustomNSError
-        
-        public static var errorDomain: String {
-            return "net.tadija.AENetwork/Fetcher"
+    }
+    
+    // MARK: CustomNSError
+    
+    public static var errorDomain: String {
+        return "net.tadija.AENetwork/Fetcher"
+    }
+    
+    public var errorCode: Int {
+        switch self {
+        case .badResponseCode(let result):
+            return result.response.statusCode
         }
-        
-        public var errorCode: Int {
-            switch self {
-            case .badResponseCode(let result):
-                return result.response.statusCode
-            }
-        }
-        
-        public var errorUserInfo: [String : Any] {
-            switch self {
-            case .badResponseCode(let result):
-                return ["result" : result]
-            }
+    }
+    
+    public var errorUserInfo: [String : Any] {
+        switch self {
+        case .badResponseCode(let result):
+            return ["result" : result]
         }
     }
     

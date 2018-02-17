@@ -10,17 +10,26 @@ extension URL: ExpressibleByStringLiteral {
 
     // MARK: Constants
 
-    static let invalid = URL(string: "https://invalid.url")!
+    public static let invalid = URL(string: "https://invalid.url")!
 
-    // MARK: Init
+    // MARK: Properties
+
+    public var parameters: [String : String]? {
+        guard
+            let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
+            let queryItems = components.queryItems
+        else { return nil }
+
+        var params = [String : String]()
+        queryItems.forEach { params[$0.name] = $0.value }
+        return params
+    }
+
+    // MARK: ExpressibleByStringLiteral
 
     public init(stringLiteral value: StaticString) {
         self = URL(string: "\(value)") ?? URL.invalid
     }
-
-}
-
-extension URL {
 
     // MARK: API
     
@@ -38,17 +47,6 @@ extension URL {
         var copy = self
         copy.addParameters(parameters)
         return copy
-    }
-    
-    public var parameters: [String : String]? {
-        guard
-            let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
-            let queryItems = components.queryItems
-        else { return nil }
-        
-        var params = [String : String]()
-        queryItems.forEach { params[$0.name] = $0.value }
-        return params
     }
 
     /// Convenience method for getting parameter value.

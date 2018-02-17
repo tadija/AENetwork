@@ -20,10 +20,10 @@ public protocol Backend: class {
 }
 
 public extension Backend {
-    var network: Network {
+    public var network: Network {
         return Network.shared
     }
-    var backgroundQueue: DispatchQueue {
+    public var backgroundQueue: DispatchQueue {
         return DispatchQueue.global()
     }
 
@@ -51,13 +51,13 @@ public protocol BackendRequest {
 }
 
 public extension BackendRequest {
-    var cachePolicy: URLRequest.CachePolicy? {
+    public var cachePolicy: URLRequest.CachePolicy? {
         return nil
     }
-    var headers: [String : String]? {
+    public var headers: [String : String]? {
         return nil
     }
-    var parameters: [String : Any]? {
+    public var parameters: [String : Any]? {
         return nil
     }
 }

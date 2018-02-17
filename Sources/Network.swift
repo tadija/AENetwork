@@ -63,7 +63,7 @@ open class Network {
     public let reachability: Reachability
 
     internal let fetchQueue = DispatchQueue(label: "AENetwork.Network.fetchQueue")
-    internal var fetchCompletions = Array<[URLRequest : Network.Completion.ThrowableFetchResult]>()
+    internal var fetchCompletions = Array<[URLRequest : Completion.ThrowableFetchResult]>()
 
     // MARK: Init
     

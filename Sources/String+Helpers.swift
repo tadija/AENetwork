@@ -10,7 +10,7 @@ extension String {
 
     // MARK: Constants
 
-    static let unavailable = "n/a"
+    public static let unavailable = "n/a"
 
     // MARK: Properties
 

@@ -37,6 +37,15 @@ public extension NetworkFetchDelegate {
 open class Network {
 
     // MARK: Types
+    
+    public struct FetchResult {
+        public let response: HTTPURLResponse
+        public let data: Data
+    }
+    
+    public enum FetchError: Error {
+        case badResponseCode(FetchResult)
+    }
 
     public struct Completion {
         public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void
@@ -54,7 +63,7 @@ open class Network {
     public let reachability: Reachability
 
     internal let fetchQueue = DispatchQueue(label: "AENetwork.Network.fetchQueue")
-    internal var fetchCompletions = Array<[URLRequest : Network.Completion.ThrowableFetchResult]>()
+    internal var fetchCompletions = Array<[URLRequest : Completion.ThrowableFetchResult]>()
 
     // MARK: Init
     

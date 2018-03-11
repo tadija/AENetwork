@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.6.3
+
+- Minor improvements and refactoring
+
 ## Version 0.6.2
 
 - Integrated Fetcher logic directly into Network (removed Fetcher class)

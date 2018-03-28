@@ -8,34 +8,22 @@
 import Foundation
 import SystemConfiguration
 
-extension Notification.Name {
-    public static let reachabilityConnectionDidChange = Notification.Name("Reachability.Connection.Did.Change")
-}
-
-private func callback(networkReference: SCNetworkReachability,
-                      flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) {
-    guard let info = info else { return }
-    let reachability = Unmanaged<Reachability>.fromOpaque(info).takeUnretainedValue()
-    reachability.callListenersIfNeeded()
-}
-
 open class Reachability {
-    
+
     // MARK: Types
     
-    public enum Connection: String {
-        case unknown
-        case none
-        case wifi
+    public enum State: String {
+        case offline
         case cellular
+        case wifi
+        
+        public var isOnline: Bool {
+            return self != .offline
+        }
     }
 
-    // MARK: Singleton
-
-    public static let shared = Reachability()
-
     // MARK: Properties
-
+    
     public var flags: SCNetworkReachabilityFlags {
         var flags = SCNetworkReachabilityFlags()
         guard let ref = networkReference, SCNetworkReachabilityGetFlags(ref, &flags) else {
@@ -44,63 +32,56 @@ open class Reachability {
         return flags
     }
     
-    public var connection: Connection {
-        guard networkReference != nil else { return .unknown }
-
-        guard flags.contains(.reachable) else { return .none }
+    public var state: State {
+        guard networkReference != nil else { return .offline }
+        guard flags.contains(.reachable) else { return .offline }
         
-        var connection: Connection = .none
+        var state: State = .offline
         
         if !flags.contains(.connectionRequired) {
-            connection = .wifi
+            state = .wifi
         }
         if flags.contains(.connectionOnTraffic) || flags.contains(.connectionOnDemand) {
             if !flags.contains(.interventionRequired) {
-                connection = .wifi
+                state = .wifi
             }
         }
         #if os(iOS)
             if flags.contains(.isWWAN) {
-                connection = .cellular
+                state = .cellular
             }
         #endif
         
-        return connection
+        return state
     }
-
-    public var isConnectedToNetwork: Bool {
-        return connection == .wifi || connection == .cellular
-    }
-
-    public var connectionDidChange: ((Reachability) -> ())?
-
-    // MARK: Private Properties
+    
+    public var stateDidChange: ((State) -> Void)?
 
     private let networkReference: SCNetworkReachability?
-    private let queue = DispatchQueue(label: "net.tadija.AENetwork.Reachability")
+    private let queue = DispatchQueue(label: "AENetwork.Reachability.Queue")
     private var previousFlags: SCNetworkReachabilityFlags?
     private var isNotifierRunning = false
     
     // MARK: Init
 
-    public init(hostname: String) {
-        self.networkReference = SCNetworkReachabilityCreateWithName(nil, hostname)
-    }
-
-    public init() {
-        var zeroAddress = sockaddr()
-        zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
-        zeroAddress.sa_family = sa_family_t(AF_INET)
-        self.networkReference = SCNetworkReachabilityCreateWithAddress(nil, &zeroAddress)
+    public init(hostname: String? = nil) {
+        if let hostname = hostname {
+            networkReference = SCNetworkReachabilityCreateWithName(nil, hostname)
+        } else {
+            var zeroAddress = sockaddr()
+            zeroAddress.sa_len = UInt8(MemoryLayout<sockaddr>.size)
+            zeroAddress.sa_family = sa_family_t(AF_INET)
+            networkReference = SCNetworkReachabilityCreateWithAddress(nil, &zeroAddress)
+        }
     }
     
     deinit {
-        stopNotifier()
+        stopMonitoring()
     }
     
     // MARK: API
     
-    public func startNotifier() {
+    public func startMonitoring() {
         guard !isNotifierRunning, let ref = networkReference else { return }
         
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
@@ -116,7 +97,7 @@ open class Reachability {
         isNotifierRunning = true
     }
     
-    public func stopNotifier() {
+    public func stopMonitoring() {
         guard let ref = networkReference else { return }
         
         SCNetworkReachabilitySetCallback(ref, nil, nil)
@@ -124,7 +105,7 @@ open class Reachability {
 
         isNotifierRunning = false
     }
-    
+
     // MARK: Helpers
     
     fileprivate func callListenersIfNeeded() {
@@ -133,10 +114,16 @@ open class Reachability {
         
         DispatchQueue.main.async { [weak self] in
             if let strongSelf = self {
-                strongSelf.connectionDidChange?(strongSelf)
-                NotificationCenter.default.post(name: .reachabilityConnectionDidChange, object: strongSelf)
+                strongSelf.stateDidChange?(strongSelf.state)
             }
         }
     }
     
+}
+
+private func callback(networkReference: SCNetworkReachability,
+                      flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) {
+    guard let info = info else { return }
+    let reachability = Unmanaged<Reachability>.fromOpaque(info).takeUnretainedValue()
+    reachability.callListenersIfNeeded()
 }

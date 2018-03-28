@@ -52,11 +52,22 @@ class URLRequestTests: XCTestCase {
         XCTAssertEqual(request.allHTTPHeaderFields!, headers, "Should have given header fields.")
         switch parametersType {
         case .url:
-            XCTAssertEqual(request.url?.parameterValue(forKey: "foo"), "bar", "Should add parameters to URL.")
+            XCTAssertEqual(request.url?.value(forParameterKey: "foo"), "bar", "Should add parameters to URL.")
         case .body:
             XCTAssertEqual(request.httpBody, try? Data(jsonWith: params), "Should add parameters to body.")
         }
-        XCTAssertEqual(request.shortDescription, "\(method) \(request.url?.absoluteString ?? String.unavailable)")
+
+        let shortDescription = "\(method) \(request.url?.absoluteString ?? String.unavailable)"
+        XCTAssertEqual(request.shortDescription, shortDescription)
+
+        let requestHeaders = "\(request.allHTTPHeaderFields ?? [String : String]())"
+        let requestParameters = "\(request.url?.parameters ?? [String : String]())"
+        let fullDescription = """
+        - Request: \(shortDescription)
+        - Headers: \(requestHeaders)
+        - Parameters: \(requestParameters)
+        """
+        XCTAssertEqual(request.fullDescription, fullDescription)
     }
 
     private enum ParametersType {

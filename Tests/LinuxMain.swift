@@ -8,14 +8,14 @@ import XCTest
 @testable import AENetworkTests
 
 XCTMain([
-    testCase(BackendTests.allTests),
+    testCase(ResultTests.allTests),
+    testCase(APIClientTests.allTests),
     testCase(NetworkTests.allTests),
-    testCase(NetworkFetchDelegateTests.allTests),
     testCase(ReachabilityTests.allTests),
+    testCase(FetcherTests.allTests),
     testCase(DownloaderTests.allTests),
     testCase(URLTests.allTests),
     testCase(URLRequestTests.allTests),
     testCase(HTTPURLResponseTests.allTests),
-    testCase(StringTests.allTests),
     testCase(DataTests.allTests)
 ])

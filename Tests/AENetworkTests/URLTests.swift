@@ -35,13 +35,13 @@ class URLTests: XCTestCase {
     func testReadingParameters() {
         let urlWithParameters = url.addingParameters(parameters)
 
-        XCTAssertEqual(urlWithParameters?.parameterValue(forKey: "foo"), "bar",
+        XCTAssertEqual(urlWithParameters?.value(forParameterKey: "foo"), "bar",
                        "Should be able to read parameter value.")
 
-        XCTAssertEqual(urlWithParameters?.parameterValue(forKey: "bar"), "foo",
+        XCTAssertEqual(urlWithParameters?.value(forParameterKey: "bar"), "foo",
                        "Should be able to read parameter value.")
 
-        XCTAssertNil(urlWithParameters?.parameterValue(forKey: "undefined"),
+        XCTAssertNil(urlWithParameters?.value(forParameterKey: "undefined"),
                      "Should return nil for not existing parameter.")
     }
 

@@ -12,46 +12,27 @@ class ReachabilityTests: XCTestCase {
 
     static var allTests : [(String, (ReachabilityTests) -> () throws -> Void)] {
         return [
-            ("testThatBlockIsExecutedWhenNotiferStarts", testThatBlockIsExecutedWhenNotiferStarts),
-            ("testThatNotificationIsPostedWhenNotifierStarts", testThatNotificationIsPostedWhenNotifierStarts)
+            ("testStateDidChangeIsCalled", testStateDidChangeIsCalled),
+            ("testReachabilityFlags", testReachabilityFlags)
         ]
-    }
-    
-    // MARK: Properties
-    
-    let reachability = Reachability()
-    
-    // MARK: Lifecycle
-    
-    override func setUp() {
-        super.setUp()
-        
-        reachability.startNotifier()
-    }
-    
-    override func tearDown() {
-        reachability.stopNotifier()
-        
-        super.tearDown()
     }
     
     // MARK: Tests
     
-    func testThatBlockIsExecutedWhenNotiferStarts() {
-        let closureExpectation = expectation(description: "`connectionDidChange` should be executed.")
-        reachability.connectionDidChange = { _ in
+    func testStateDidChangeIsCalled() {
+        let closureExpectation = expectation(description: "`stateDidChange` should be called.")
+        let reachability = Reachability()
+        reachability.stateDidChange = { (state) in
+            XCTAssertTrue(state.isOnline == (state == .cellular || state == .wifi), "State is wrong.")
             closureExpectation.fulfill()
         }
+        reachability.startMonitoring()
         waitForExpectations(timeout: 3, handler: nil)
     }
     
-    func testThatNotificationIsPostedWhenNotifierStarts() {
-        expectation(forNotification: .reachabilityConnectionDidChange, object: nil) { (notification) in
-            XCTAssertNotNil(notification.object as? Reachability,
-                            ".reachabilityConnectionDidChange notification should be posted.")
-            return true
-        }
-        waitForExpectations(timeout: 3, handler: nil)
+    func testReachabilityFlags() {
+        let reachability = Reachability(hostname: "https://httpbin.org")
+        XCTAssertEqual(reachability.state.isOnline, reachability.flags.contains(.reachable), "State is wrong.")
     }
     
 }

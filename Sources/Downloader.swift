@@ -6,6 +6,12 @@
 
 import Foundation
 
+// MARK: - Downloadable
+
+public protocol Downloadable: DownloadStatusDelegate {
+    var downloadURL: URL? { get }
+}
+
 public protocol DownloadStatusDelegate {
     func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader)
     func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader)
@@ -14,25 +20,19 @@ public protocol DownloadStatusDelegate {
     func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader)
 }
 
-public protocol NetworkDownloaderDelegate: class, DownloadStatusDelegate { }
-
-public protocol Downloadable: DownloadStatusDelegate {
-    var downloadURL: URL? { get }
-}
-
 extension Downloadable {
-    public func startDownload(with downloader: Downloader = .shared) {
-        downloader.start(with: self)
-    }
-    public func stopDownload(with downloader: Downloader = .shared) {
-        downloader.stop(for: self)
-    }
-    
     public func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}
     public func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {}
     public func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}
     public func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {}
     public func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {}
+
+    public func startDownload(with downloader: Downloader) {
+        downloader.start(with: self)
+    }
+    public func stopDownload(with downloader: Downloader) {
+        downloader.stop(for: self)
+    }
 }
 
 extension URL: Downloadable {
@@ -41,25 +41,23 @@ extension URL: Downloadable {
     }
 }
 
+// MARK: - Downloader
+
+public protocol DownloaderDelegate: class, DownloadStatusDelegate {}
+
 open class Downloader: NSObject {
-
-    private static let sharedSessionID = "net.tadija.AENetwork.Downloader.shared"
-
-    // MARK: Singleton
-    
-    public static let shared = Downloader(configuration: .background(withIdentifier: sharedSessionID))
 
     // MARK: Properties
 
     public private(set) var items = [Downloadable]()
-    public weak var delegate: NetworkDownloaderDelegate?
+    public weak var delegate: DownloaderDelegate?
 
     public private(set) var session: URLSession!
     public private(set) var tasks = [URLSessionDownloadTask]()
 
     // MARK: Init
 
-    public init(configuration: URLSessionConfiguration) {
+    public init(configuration: URLSessionConfiguration = .background(withIdentifier: "AENetwork.Downloader")) {
         super.init()
         self.session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
     }

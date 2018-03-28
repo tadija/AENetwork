@@ -6,72 +6,42 @@
 
 import Foundation
 
-public protocol NetworkFetchDelegate: class {
-    func willSkipRequest(_ request: URLRequest, sender: Network)
-    func willSendRequest(_ request: URLRequest, sender: Network)
-    func willReceiveResult(_ result: () throws -> Network.FetchResult,
-                           from request: URLRequest, sender: Network)
-
-    func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest
-    func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest, sender: Network,
-                         completion: @escaping Network.Completion.ThrowableFetchResult)
-}
-
-public extension NetworkFetchDelegate {
-    public func willSkipRequest(_ request: URLRequest, sender: Network) {}
-    public func willSendRequest(_ request: URLRequest, sender: Network) {}
-    public func willReceiveResult(_ result: () throws -> Network.FetchResult,
-                                  from request: URLRequest, sender: Network) {}
-
-    public func interceptRequest(_ request: URLRequest, sender: Network) throws -> URLRequest {
-        return request
-    }
-    public func interceptResult(_ result: () throws -> Network.FetchResult, from request: URLRequest, sender: Network,
-                                completion: @escaping Network.Completion.ThrowableFetchResult) {
-        completion {
-            return try result()
-        }
-    }
-}
+// MARK: - Network
 
 open class Network {
 
-    // MARK: Types
-    
-    public struct FetchResult {
-        public let response: HTTPURLResponse
-        public let data: Data
-    }
-    
-    public enum FetchError: Error {
-        case badResponseCode(FetchResult)
-    }
-
-    public struct Completion {
-        public typealias ThrowableFetchResult = (() throws -> FetchResult) -> Void
-    }
-    
     // MARK: Singleton
     
     public static let shared = Network()
-
-    // MARK: Properties
-
-    public weak var fetchDelegate: NetworkFetchDelegate?
     
-    public let fetchSession: URLSession
+    // MARK: Properties
+    
     public let reachability: Reachability
-
-    internal let fetchQueue = DispatchQueue(label: "AENetwork.Network.fetchQueue")
-    internal var fetchCompletions = Array<[URLRequest : Completion.ThrowableFetchResult]>()
-
+    public let fetcher: Fetcher
+    
     // MARK: Init
     
-    public init(fetchSession: URLSession = .shared,
-                reachability: Reachability = .shared)
-    {
-        self.fetchSession = fetchSession
+    public init(reachability: Reachability = Reachability(),
+                fetcher: Fetcher = Fetcher()) {
         self.reachability = reachability
+        self.fetcher = fetcher
     }
+    
+}
 
+// MARK: - Facade
+
+public extension Network {
+    public static var isOnline: Bool {
+        return shared.reachability.state.isOnline
+    }
+    public static var isOffline: Bool {
+        return !isOnline
+    }
+}
+
+public extension URLRequest {
+    public func send(over network: Network = .shared, completion: @escaping Fetcher.Completion) {
+        network.fetcher.send(self, completion: completion)
+    }
 }

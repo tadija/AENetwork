@@ -6,15 +6,11 @@
 
 import Foundation
 
-extension Data {
-
-    // MARK: Types
+public extension Data {
 
     public enum SerializationError: Swift.Error {
         case jsonSerializationFailed
     }
-
-    // MARK: API
 
     public init(jsonWith any: Any) throws {
         self = try JSONSerialization.data(withJSONObject: any, options: .prettyPrinted)

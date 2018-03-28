@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.7.0
+
+- Renamed Backend -> APIClient and BackendRequest -> APIRequest
+- Added Result<T> type
+- Major improvements and refactoring
+
 ## Version 0.6.3
 
 - Minor improvements and refactoring

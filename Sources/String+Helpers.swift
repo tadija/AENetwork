@@ -6,16 +6,10 @@
 
 import Foundation
 
-extension String {
-
-    // MARK: Constants
-
+public extension String {
     public static let unavailable = "n/a"
-
-    // MARK: Properties
 
     public var url: URL {
         return URL(string: self) ?? URL.invalid
     }
-
 }

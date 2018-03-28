@@ -3,71 +3,75 @@ import AENetwork
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-/// - Note: Convenient creation of URL from String
-var url: URL = "https://httpbin.org/post"
+/// - Note: Make `URL` with just a `String`
+let anything: URL = "https://httpbin.org/anything"
 
-/// - Note: Easily add parameters to URL
-url.addParameters(["foo" : "bar"])
+/// - Note: Easily add parameters to `URL`
+let url = anything.addingParameters(["foo" : "bar"])!
 
-/// - Note: Convenient creation of URL request
-let request = URLRequest.post(url: url,
-                              headers: ["X-Hello" : "X-World"],
-                              parameters: ["like" : true])
+/// - Note: Factory methods on `URLRequest`
+let request = URLRequest.post(url: url, headers: ["hello" : "world"], parameters: ["easy" : true])
 
-/// - Note: Using custom `Network` instance
+/// - Note: Convenient sending of request
+request.send { (result) in
+    if let response = result.value {
+        print("Status Code: \(response.statusCode)\n")
+    }
+}
+
+/// - Note: Integrated `Reachability`
+print("Connected to network: \(Network.isOnline)")
+
+/// - Note: Create custom `Network` instance when needed
 let network = Network()
 
-/// - Note: Integrated Reachability
-print("Connected to network: \(network.reachability.isConnectedToNetwork)")
-
-/// - Note: Be notified about connection changes
-network.reachability.startNotifier()
-network.reachability.connectionDidChange = { r in
-    print("Connection type: \(r.connection.rawValue)\n")
+/// - Note: Monitor reachability state changes
+network.reachability.startMonitoring()
+network.reachability.stateDidChange = { state in
+    print("Reachability state: \(state.rawValue)\n")
 }
-network.reachability.stopNotifier()
+network.reachability.stopMonitoring()
 
-/// - Note: Fetching with throwable completion closure
-network.fetchRequest(request) { (result) in
+/// - Note: Send request with `Fetcher` and use `Result<Fetcher.Response>` in completion
+network.fetcher.send(request) { (result) in
     do {
-        let dictionary = try result().toDictionary()
-        print("\(dictionary)\n")
+        let response = try result.throwValue()
+        print("Headers: \(response.headers as? [String : Any])\n")
     } catch {
-        print("\(error)\n")
+        print(error)
     }
 }
 
-/// - Note: Convenient fetching directly from request (using `Network.shared` by default)
-request.fetch { (result) in
-    print("\(String(describing: try? result().dictionary))\n")
-}
-
-/// - Note: Convenient creation of entire backend layer
-
-class MyBackend: Backend {
+/// - Note: Simple creation of the entire backend layer
+final class Backend: APIClient {
     struct API {}
-    let baseURL = "https://httpbin.org".url
-}
+    let baseURL: URL = "https://httpbin.org"
 
-extension MyBackend {
-    func sendTestRequest() {
-        let request = API.Test()
-        sendRequest(request) { (result) in
-            print("\(String(describing: try? result().dictionary))\n")
+    func send(_ apiRequest: APIRequest, completion: @escaping (Result<APIResponse>) -> Void) {
+        let request = urlRequest(for: apiRequest)
+        request.send { (result) in
+            completion(Fetcher.apiResponseResult(from: result))
         }
     }
 }
 
-extension MyBackend.API {
-    struct Test: BackendRequest {
-        var method: URLRequest.Method {
-            return .put
-        }
-        var endpoint: String {
-            return "anything"
-        }
+/// - Note: Type safe and scalable architecture of API requests
+extension Backend.API {
+    struct Anything: APIRequest {
+        var method: URLRequest.Method { return .get }
+        var path: String { return "anything" }
+        var headers: [String : String]? { return ["X-Hello" : "X-World"] }
+        var parameters: [String : Any]? { return ["easy" : true] }
     }
 }
 
-let backend = MyBackend()
-backend.sendTestRequest()
+/// - Note: `Backend` example in action
+let backend = Backend()
+backend.send(Backend.API.Anything()) { (result) in
+    switch result {
+    case .success(let response):
+        print("Response: \(response.dictionary?.description ?? "")\n")
+    case .failure(let error):
+        print(error)
+    }
+}

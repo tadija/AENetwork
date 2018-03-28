@@ -6,29 +6,19 @@
 
 import Foundation
 
-extension URLRequest {
+// MARK: - Factory
 
-    // MARK: Types
+public extension URLRequest {
 
     public enum Method: String {
         case get, post, put, delete
     }
 
-    // MARK: Properties
-
-    public var shortDescription: String {
-        let method = (httpMethod ?? String.unavailable).uppercased()
-        let url = self.url?.absoluteString ?? String.unavailable
-        return "\(method) \(url)"
-    }
-
-    // MARK: Init
-
     public init(url: URL,
-         method: Method,
-         headers: [String : String]? = nil,
-         urlParameters: [String : Any]? = nil,
-         body: [String : Any]? = nil)
+                method: Method,
+                headers: [String : String]? = nil,
+                urlParameters: [String : Any]? = nil,
+                body: [String : Any]? = nil)
     {
         if let urlParameters = urlParameters, let urlWithParameters = url.addingParameters(urlParameters) {
             self.init(url: urlWithParameters)
@@ -41,27 +31,6 @@ extension URLRequest {
             httpBody = try? Data(jsonWith: body)
         }
     }
-
-    public init(baseURL: URL, request: BackendRequest) {
-        let url = baseURL.appendingPathComponent(request.endpoint)
-        
-        switch request.method {
-        case .get:
-            self = URLRequest.get(url: url, headers: request.headers, parameters: request.parameters)
-        case .post:
-            self = URLRequest.post(url: url, headers: request.headers, parameters: request.parameters)
-        case .put:
-            self = URLRequest.put(url: url, headers: request.headers, parameters: request.parameters)
-        case .delete:
-            self = URLRequest.delete(url: url, headers: request.headers, parameters: request.parameters)
-        }
-        
-        if let cachePolicy = request.cachePolicy {
-            self.cachePolicy = cachePolicy
-        }
-    }
-
-    // MARK: API / Factory
 
     public static func get(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .get, headers: headers, urlParameters: parameters)
@@ -79,14 +48,23 @@ extension URLRequest {
         return URLRequest(url: url, method: .delete, headers: headers, body: parameters)
     }
 
-    // MARK: API / Fetch
+}
 
-    public func fetch(with network: Network = .shared,
-                      addToQueue: Bool = true,
-                      completionQueue: DispatchQueue = .main,
-                      completion: @escaping Network.Completion.ThrowableFetchResult) {
-        network.fetchRequest(self, addToQueue: addToQueue,
-                             completionQueue: completionQueue, completion: completion)
+// MARK: - Description
+
+public extension URLRequest {
+    public var shortDescription: String {
+        let method = (httpMethod ?? String.unavailable).uppercased()
+        let url = self.url?.absoluteString ?? String.unavailable
+        return "\(method) \(url)"
     }
-
+    public var fullDescription: String {
+        let headers = "\(allHTTPHeaderFields ?? [String : String]())"
+        let parameters = "\(url?.parameters ?? [String : String]())"
+        return """
+        - Request: \(shortDescription)
+        - Headers: \(headers)
+        - Parameters: \(parameters)
+        """
+    }
 }

@@ -164,7 +164,7 @@ class DownloaderTests: XCTestCase {
 
 }
 
-extension DownloaderTests: NetworkDownloaderDelegate {
+extension DownloaderTests: DownloaderDelegate {
 
     func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
         XCTAssertNotNil(downloader.tasks.index(of: task), "Should have this task in tasks.")

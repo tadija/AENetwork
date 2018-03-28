@@ -1,13 +1,18 @@
+[![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](https://swift.org)
+[![Platforms iOS | watchOS | tvOS | macOS](https://img.shields.io/badge/Platforms-iOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20macOS-lightgray.svg?style=flat)](http://www.apple.com)
+[![CocoaPods](https://img.shields.io/cocoapods/v/AENetwork.svg?style=flat)](https://cocoapods.org/pods/AENetwork)
+[![Carthage](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+[![License MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](https://github.com/tadija/AENetwork/blob/master/LICENSE)
+
 # AENetwork
 
-**Swift package for simple and lightweight networking**
+**Swift minion for simple and lightweight networking**
 
 > I made this for personal use, but feel free to use it or contribute.
 > For more examples check out [Sources](Sources) and [Tests](Tests).
 
 ## Usage
-
-### TL;DR
 
 ```swift
 import AENetwork
@@ -90,15 +95,21 @@ backend.send(Backend.API.Anything()) { (result) in
 
 - [Swift Package Manager](https://swift.org/package-manager/):
 
-```swift
-.Package(url: "https://github.com/tadija/AENetwork.git", majorVersion: 0)
-```
+	```swift
+	.Package(url: "https://github.com/tadija/AENetwork.git", majorVersion: 0)
+	```
 
 - [Carthage](https://github.com/Carthage/Carthage):
 
-```ogdl
-github "tadija/AENetwork"
-```
+	```ogdl
+	github "tadija/AENetwork"
+	```
+
+- [CocoaPods](http://cocoapods.org/):
+
+	```ruby
+	pod 'AENetwork'
+	```
 
 ## License
 This code is released under the MIT license. See [LICENSE](LICENSE) for details.

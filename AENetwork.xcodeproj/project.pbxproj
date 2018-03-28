@@ -51,6 +51,7 @@
 		8B0F80772008064900928F0F /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NetworkTests.swift; path = AENetworkTests/NetworkTests.swift; sourceTree = "<group>"; };
 		8B3335E31FE0862B004F4AC6 /* URLRequest+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Helpers.swift"; sourceTree = "<group>"; };
 		8B3B24F7206BE48100FA243D /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = APIClientTests.swift; path = AENetworkTests/APIClientTests.swift; sourceTree = "<group>"; };
+		8B3B24FA206BF45500FA243D /* AENetwork.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = AENetwork.podspec; sourceTree = "<group>"; };
 		8B4BAEA620691A7600056479 /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		8B4BAEA82069213100056479 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		8B4BAEC3206A4CBB00056479 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
@@ -113,6 +114,7 @@
 				8BE0C4F81EF473B100E6F95F /* LICENSE */,
 				8BE0C4F91EF473B100E6F95F /* README.md */,
 				8BE0C4F71EF473B100E6F95F /* CHANGELOG.md */,
+				8B3B24FA206BF45500FA243D /* AENetwork.podspec */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";

@@ -41,7 +41,7 @@ public extension Network {
 }
 
 public extension URLRequest {
-    public func send(over network: Network = .shared, completion: @escaping Fetcher.Completion) {
+    public func send(over network: Network = .shared, completion: @escaping Fetcher.Callback) {
         network.fetcher.send(self, completion: completion)
     }
 }

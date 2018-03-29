@@ -46,8 +46,8 @@ network.fetcher.send(request) { (result) in
 final class Backend: APIClient {
     struct API {}
     let baseURL: URL = "https://httpbin.org"
-
-    func send(_ apiRequest: APIRequest, completion: @escaping (Result<APIResponse>) -> Void) {
+    
+    func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {
         let request = urlRequest(for: apiRequest)
         request.send { (result) in
             completion(Fetcher.apiResponseResult(from: result))

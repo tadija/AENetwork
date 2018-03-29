@@ -354,7 +354,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
         }
     }
 
-    func interceptResult(_ result: Fetcher.ResultType, sender: Fetcher, completion: @escaping Fetcher.Completion) {
+    func interceptResult(_ result: Fetcher.ResultType, sender: Fetcher, completion: @escaping Fetcher.Callback) {
         if let request = result.value?.request, request == requestForTestingInterceptResult {
             interceptResultExpectation?.fulfill()
             completion(.failure(CustomError.interceptedResult))

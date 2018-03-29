@@ -11,7 +11,7 @@ import Foundation
 public protocol APIClient {
     var baseURL: URL { get }
     func urlRequest(for apiRequest: APIRequest) -> URLRequest
-    func send(_ apiRequest: APIRequest, completion: @escaping ResultCallback<APIResponse>)
+    func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback)
 }
 
 public protocol APIRequest {
@@ -27,6 +27,8 @@ public protocol APIResponse {
     var response: HTTPURLResponse { get }
     var data: Data { get }
 }
+
+public typealias APIResponseCallback = ResultCallback<APIResponse>
 
 // MARK: - Extensions
 

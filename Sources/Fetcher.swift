@@ -11,21 +11,22 @@ import Foundation
 public protocol FetcherDelegate: class {
     func willSkipRequest(_ request: URLRequest, sender: Fetcher)
     func willSendRequest(_ request: URLRequest, sender: Fetcher)
-    func willReceiveResult(_ result: Fetcher.ResultType, sender: Fetcher)
+    func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher)
     
     func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest
-    func interceptResult(_ result: Fetcher.ResultType, sender: Fetcher, completion: @escaping Fetcher.Callback)
+    func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher, completion: @escaping Fetcher.Callback)
 }
 
 public extension FetcherDelegate {
     public func willSkipRequest(_ request: URLRequest, sender: Fetcher) {}
     public func willSendRequest(_ request: URLRequest, sender: Fetcher) {}
-    public func willReceiveResult(_ result: Fetcher.ResultType, sender: Fetcher) {}
+    public func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {}
 
     public func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest {
         return request
     }
-    public func interceptResult(_ result: Fetcher.ResultType, sender: Fetcher, completion: @escaping Fetcher.Callback) {
+    public func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher,
+                                completion: @escaping Fetcher.Callback) {
         completion(result)
     }
 }
@@ -46,7 +47,7 @@ open class Fetcher {
         case invalidResponse(Response)
     }
 
-    public typealias ResultType = Result<Response>
+    public typealias ResponseResult = Result<Response>
     public typealias Callback = ResultCallback<Response>
     
     // MARK: Properties
@@ -124,7 +125,7 @@ open class Fetcher {
         }
     }
     
-    private func interceptedResult(_ result: ResultType, completion: @escaping Callback) {
+    private func interceptedResult(_ result: ResponseResult, completion: @escaping Callback) {
         if let delegate = delegate {
             delegate.interceptResult(result, sender: self, completion: completion)
         } else {
@@ -132,7 +133,7 @@ open class Fetcher {
         }
     }
     
-    private func performAllCallbacks(for request: URLRequest, with result: ResultType) {
+    private func performAllCallbacks(for request: URLRequest, with result: ResponseResult) {
         let filtered = callbacks.filter({ $0.keys.contains(request) }).flatMap({ $0.values.first })
         filtered.forEach { [unowned self] (completion) in
             self.dispatchResult(result, completion: completion)
@@ -141,7 +142,7 @@ open class Fetcher {
         self.callbacks = remaining
     }
     
-    private func dispatchResult(_ result: ResultType, completion: @escaping Callback) {
+    private func dispatchResult(_ result: ResponseResult, completion: @escaping Callback) {
         DispatchQueue.main.async {
             completion(result)
         }
@@ -184,7 +185,7 @@ open class Fetcher {
 // MARK: - Extensions
 
 public extension Fetcher {
-    public static func apiResponseResult(from result: ResultType) -> Result<APIResponse> {
+    public static func apiResponseResult(from result: ResponseResult) -> APIResponseResult {
         switch result {
         case .success(let response): return .success(response)
         case .failure(let error): return .failure(error)

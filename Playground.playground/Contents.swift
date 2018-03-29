@@ -32,7 +32,7 @@ network.reachability.stateDidChange = { state in
 }
 network.reachability.stopMonitoring()
 
-/// - Note: Send request with `Fetcher` and use `Result<Fetcher.Response>` in completion
+/// - Note: Send request with `Fetcher` and use `ResponseResult` in completion
 network.fetcher.send(request) { (result) in
     do {
         let response = try result.throwValue()

@@ -18,7 +18,7 @@ class FetcherTests: XCTestCase {
             ("testFetchError", testFetchError),
             ("testResponseError", testResponseError),
             ("testInvalidResponseError", testInvalidResponseError),
-            ("testFetcherResultTypeToApiResponseResult", testFetcherResultTypeToApiResponseResult)
+            ("testFetcherResponseResultToAPIResponseResult", testFetcherResponseResultToAPIResponseResult)
         ]
     }
     
@@ -77,14 +77,14 @@ class FetcherTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testFetcherResultTypeToApiResponseResult() {
+    func testFetcherResponseResultToAPIResponseResult() {
         let url: URL = "https://httpbin.org/get"
         let request = URLRequest(url: url)
         let httpResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!
         let data = try! Data(jsonWith: ["foo" : "bar"])
         let fetchResponse = Fetcher.Response(request: request, response: httpResponse, data: data)
         
-        let resultSuccess: Fetcher.ResultType = .success(fetchResponse)
+        let resultSuccess: Fetcher.ResponseResult = .success(fetchResponse)
         let apiResponseResultSuccess = Fetcher.apiResponseResult(from: resultSuccess)
         switch apiResponseResultSuccess {
         case .success(let response):
@@ -95,7 +95,7 @@ class FetcherTests: XCTestCase {
             XCTAssert(false)
         }
         
-        let resultFailure: Fetcher.ResultType = .failure(Fetcher.Error.invalidResponse(fetchResponse))
+        let resultFailure: Fetcher.ResponseResult = .failure(Fetcher.Error.invalidResponse(fetchResponse))
         let apiResponseResultFailure = Fetcher.apiResponseResult(from: resultFailure)
         switch apiResponseResultFailure {
         case .success(_):
@@ -335,7 +335,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
         }
     }
     
-    func willReceiveResult(_ result: Fetcher.ResultType, sender: Fetcher) {
+    func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {
         if let request = result.value?.request, request == requestForTestingWillReceiveResult {
             receivedResult = result.value
             willReceiveResultExpectation?.fulfill()
@@ -354,7 +354,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
         }
     }
 
-    func interceptResult(_ result: Fetcher.ResultType, sender: Fetcher, completion: @escaping Fetcher.Callback) {
+    func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher, completion: @escaping Fetcher.Callback) {
         if let request = result.value?.request, request == requestForTestingInterceptResult {
             interceptResultExpectation?.fulfill()
             completion(.failure(CustomError.interceptedResult))

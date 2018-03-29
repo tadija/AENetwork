@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.7.1
+
+- Minor improvements and refactoring
+
 ## Version 0.7.0
 
 - Renamed Backend -> APIClient and BackendRequest -> APIRequest

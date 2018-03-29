@@ -32,7 +32,7 @@ network.reachability.stateDidChange = { state in
 }
 network.reachability.stopMonitoring()
 
-/// - Note: Send request with `Fetcher` and use `Result<Fetcher.Response>` in completion
+/// - Note: Send request with `Fetcher` and use `ResponseResult` in completion
 network.fetcher.send(request) { (result) in
     do {
         let response = try result.throwValue()
@@ -46,8 +46,8 @@ network.fetcher.send(request) { (result) in
 final class Backend: APIClient {
     struct API {}
     let baseURL: URL = "https://httpbin.org"
-
-    func send(_ apiRequest: APIRequest, completion: @escaping (Result<APIResponse>) -> Void) {
+    
+    func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {
         let request = urlRequest(for: apiRequest)
         request.send { (result) in
             completion(Fetcher.apiResponseResult(from: result))

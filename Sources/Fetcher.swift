@@ -11,21 +11,22 @@ import Foundation
 public protocol FetcherDelegate: class {
     func willSkipRequest(_ request: URLRequest, sender: Fetcher)
     func willSendRequest(_ request: URLRequest, sender: Fetcher)
-    func willReceiveResult(_ result: Fetcher.ResultType, sender: Fetcher)
+    func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher)
     
     func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest
-    func interceptResult(_ result: Fetcher.ResultType, sender: Fetcher, completion: @escaping Fetcher.Completion)
+    func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher, completion: @escaping Fetcher.Callback)
 }
 
 public extension FetcherDelegate {
     public func willSkipRequest(_ request: URLRequest, sender: Fetcher) {}
     public func willSendRequest(_ request: URLRequest, sender: Fetcher) {}
-    public func willReceiveResult(_ result: Fetcher.ResultType, sender: Fetcher) {}
+    public func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {}
 
     public func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest {
         return request
     }
-    public func interceptResult(_ result: Fetcher.ResultType, sender: Fetcher, completion: @escaping Fetcher.Completion) {
+    public func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher,
+                                completion: @escaping Fetcher.Callback) {
         completion(result)
     }
 }
@@ -46,8 +47,8 @@ open class Fetcher {
         case invalidResponse(Response)
     }
 
-    public typealias ResultType = Result<Response>
-    public typealias Completion = ResultCallback<Response>
+    public typealias ResponseResult = Result<Response>
+    public typealias Callback = ResultCallback<Response>
     
     // MARK: Properties
     
@@ -55,7 +56,7 @@ open class Fetcher {
     
     private let session: URLSession
     private let queue = DispatchQueue(label: "AENetwork.Fetcher.Queue")
-    private var completions = Array<[URLRequest : Completion]>()
+    private var callbacks = Array<[URLRequest : Callback]>()
     
     // MARK: Init
     
@@ -65,13 +66,13 @@ open class Fetcher {
     
     // MARK: API
     
-    public func send(_ request: URLRequest, completion: @escaping Completion) {
+    public func send(_ request: URLRequest, completion: @escaping Callback) {
         queue.async { [unowned self] in
             self.handleRequest(request, addToQueue: true, completion: completion)
         }
     }
 
-    public func forceSend(_ request: URLRequest, completion: @escaping Completion) {
+    public func forceSend(_ request: URLRequest, completion: @escaping Callback) {
         queue.async { [unowned self] in
             self.handleRequest(request, addToQueue: false, completion: completion)
         }
@@ -79,7 +80,7 @@ open class Fetcher {
     
     // MARK: Helpers
     
-    private func handleRequest(_ request: URLRequest, addToQueue: Bool, completion: @escaping Completion) {
+    private func handleRequest(_ request: URLRequest, addToQueue: Bool, completion: @escaping Callback) {
         do {
             let finalRequest = try interceptedRequest(for: request)
             if addToQueue {
@@ -92,19 +93,19 @@ open class Fetcher {
         }
     }
     
-    private func queueRequest(_ request: URLRequest, completion: @escaping Completion) {
-        guard completions.filter({ $0.keys.contains(request) }).count == 0 else {
-            completions.append([request : completion])
+    private func queueRequest(_ request: URLRequest, completion: @escaping Callback) {
+        guard callbacks.filter({ $0.keys.contains(request) }).count == 0 else {
+            callbacks.append([request : completion])
             delegate?.willSkipRequest(request, sender: self)
             return
         }
-        completions.append([request : completion])
+        callbacks.append([request : completion])
         performRequest(request) { [unowned self] (result) in
-            self.performAllCompletions(for: request, with: result)
+            self.performAllCallbacks(for: request, with: result)
         }
     }
     
-    private func performRequest(_ request: URLRequest, completion: @escaping Completion) {
+    private func performRequest(_ request: URLRequest, completion: @escaping Callback) {
         delegate?.willSendRequest(request, sender: self)
         resumeDataTask(with: request) { [unowned self] (result) in
             self.interceptedResult(result) { [unowned self] (finalResult) in
@@ -124,7 +125,7 @@ open class Fetcher {
         }
     }
     
-    private func interceptedResult(_ result: ResultType, completion: @escaping Completion) {
+    private func interceptedResult(_ result: ResponseResult, completion: @escaping Callback) {
         if let delegate = delegate {
             delegate.interceptResult(result, sender: self, completion: completion)
         } else {
@@ -132,23 +133,22 @@ open class Fetcher {
         }
     }
     
-    private func performAllCompletions(for request: URLRequest, with result: ResultType) {
-        let filtered = completions.filter({ $0.keys.contains(request) })
-        let filteredCompletions = filtered.flatMap({ $0.values.first })
-        filteredCompletions.forEach { [unowned self] (completion) in
+    private func performAllCallbacks(for request: URLRequest, with result: ResponseResult) {
+        let filtered = callbacks.filter({ $0.keys.contains(request) }).flatMap({ $0.values.first })
+        filtered.forEach { [unowned self] (completion) in
             self.dispatchResult(result, completion: completion)
         }
-        let remaining = completions.filter({ $0.keys.contains(request) == false })
-        self.completions = remaining
+        let remaining = callbacks.filter({ $0.keys.contains(request) == false })
+        self.callbacks = remaining
     }
     
-    private func dispatchResult(_ result: ResultType, completion: @escaping Completion) {
+    private func dispatchResult(_ result: ResponseResult, completion: @escaping Callback) {
         DispatchQueue.main.async {
             completion(result)
         }
     }
     
-    private func resumeDataTask(with request: URLRequest, completion: @escaping Completion) {
+    private func resumeDataTask(with request: URLRequest, completion: @escaping Callback) {
         session.dataTask(with: request) { [weak self] data, response, error in
             if error == nil, let response = response as? HTTPURLResponse, let data = data {
                 self?.handleValidResponse(response, with: data, from: request, completion: completion)
@@ -159,7 +159,7 @@ open class Fetcher {
     }
     
     private func handleValidResponse(_ response: HTTPURLResponse, with data: Data, from request: URLRequest,
-                                     completion: @escaping Completion) {
+                                     completion: @escaping Callback) {
         let response = Response(request: request, response: response, data: data)
         switch response.statusCode {
         case 200 ..< 300:
@@ -170,7 +170,7 @@ open class Fetcher {
     }
     
     private func handleErrorResponse(_ error: Swift.Error, from request: URLRequest,
-                                     completion: @escaping Completion) {
+                                     completion: @escaping Callback) {
         let nsError = error as NSError
         if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorNetworkConnectionLost {
             // Retry request because of the iOS bug - SEE: https://github.com/AFNetworking/AFNetworking/issues/2314
@@ -185,7 +185,7 @@ open class Fetcher {
 // MARK: - Extensions
 
 public extension Fetcher {
-    public static func apiResponseResult(from result: ResultType) -> Result<APIResponse> {
+    public static func apiResponseResult(from result: ResponseResult) -> APIResponseResult {
         switch result {
         case .success(let response): return .success(response)
         case .failure(let error): return .failure(error)

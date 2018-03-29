@@ -54,7 +54,7 @@ class APIClientTests: XCTestCase {
         
         struct Backend: APIClient {
             let baseURL: URL = "https://httpbin.org"
-            func send(_ apiRequest: APIRequest, completion: @escaping (Result<APIResponse>) -> Void) {}
+            func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {}
         }
         
         let backend = Backend()

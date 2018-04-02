@@ -134,7 +134,7 @@ open class Fetcher {
     }
     
     private func performAllCallbacks(for request: URLRequest, with result: ResponseResult) {
-        let filtered = callbacks.filter({ $0.keys.contains(request) }).flatMap({ $0.values.first })
+        let filtered = callbacks.filter({ $0.keys.contains(request) }).compactMap({ $0.values.first })
         filtered.forEach { [unowned self] (completion) in
             self.dispatchResult(result, completion: completion)
         }

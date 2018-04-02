@@ -20,6 +20,18 @@ public extension Result {
     public init(error: Error) {
         self = .failure(error)
     }
+    public init(value: T?, error: Error?) {
+        switch (value, error) {
+        case (let v?, _):
+            self = .success(v)
+        case (nil, let e?):
+            self = .failure(e)
+        case (nil, nil):
+            let error = NSError(domain: "AENetwork.Result", code: 1,
+                             userInfo: [NSLocalizedDescriptionKey : "Invalid result: both value and error are nil."])
+            self = .failure(error)
+        }
+    }
     
     public var value: T? {
         switch self {

@@ -44,18 +44,17 @@ network.fetcher.send(request) { (result) in
 
 /// - Note: Simple creation of the entire backend layer
 final class Backend: APIClient {
-    struct API {}
     let baseURL: URL = "https://httpbin.org"
-    
-    func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {
-        let request = urlRequest(for: apiRequest)
-        request.send { (result) in
-            completion(Fetcher.apiResponseResult(from: result))
-        }
-    }
 }
 
+/// - Note: `APIClient` will by default use shared `Network` instance for sending `APIRequest`,
+/// but a custom `APIClient` implementation can do it via specific `Network` instance,
+/// or even via any other way to resolve `APIRequest` and return `APIResponse` in the completion.
+
 /// - Note: Type safe and scalable architecture of API requests
+extension Backend {
+    struct API {}
+}
 extension Backend.API {
     struct Anything: APIRequest {
         var method: URLRequest.Method { return .get }
@@ -67,7 +66,9 @@ extension Backend.API {
 
 /// - Note: `Backend` example in action
 let backend = Backend()
-backend.send(Backend.API.Anything()) { (result) in
+let apiRequest = Backend.API.Anything()
+
+backend.send(apiRequest) { (result) in
     switch result {
     case .success(let response):
         print("Response: \(response.dictionary?.description ?? "")\n")

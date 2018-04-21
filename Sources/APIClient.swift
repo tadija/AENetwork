@@ -55,6 +55,12 @@ public extension APIClient {
         
         return request
     }
+    func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {
+        let request = urlRequest(for: apiRequest)
+        request.send { (result) in
+            completion(Fetcher.apiResponseResult(from: result))
+        }
+    }
 }
 
 public extension APIRequest {

@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.7.3
+
+- Minor improvements
+
 ## Version 0.7.2
 
 - Migrated to Swift 4.1 with Xcode 9.3 (9E145)

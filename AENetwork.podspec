@@ -2,13 +2,13 @@ Pod::Spec.new do |s|
 
 s.name = 'AENetwork'
 s.summary = 'Swift minion for simple and lightweight networking'
-s.version = '0.7.2'
+s.version = '0.7.3'
 s.license = { :type => 'MIT', :file => 'LICENSE' }
 
 s.source = { :git => 'https://github.com/tadija/AENetwork.git', :tag => s.version }
 s.source_files = 'Sources/*.swift'
 
-s.swift_version = '4.0'
+s.swift_version = '4.1'
 s.ios.deployment_target = '9.0'
 
 s.homepage = 'https://github.com/tadija/AENetwork'

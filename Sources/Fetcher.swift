@@ -53,11 +53,25 @@ open class Fetcher {
     // MARK: Properties
     
     public weak var delegate: FetcherDelegate?
-    
+
     private let session: URLSession
     private let queue = DispatchQueue(label: "AENetwork.Fetcher.Queue")
-    private var callbacks = Array<[URLRequest : Callback]>()
-    
+
+    private var callbacks: [[URLRequest : Callback]] {
+        get {
+            return callbacksQueue.sync {
+                callbacksStorage
+            }
+        }
+        set {
+            callbacksQueue.async(flags: .barrier) { [weak self] in
+                self?.callbacksStorage = newValue
+            }
+        }
+    }
+    private let callbacksQueue = DispatchQueue(label: "AENetwork.Callbacks.Queue", attributes: .concurrent)
+    private var callbacksStorage = [[URLRequest : Callback]]()
+
     // MARK: Init
     
     public init(session: URLSession = .shared) {

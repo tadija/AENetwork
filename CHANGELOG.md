@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.7.4
+
+- Bug fix
+
 ## Version 0.7.3
 
 - Minor improvements

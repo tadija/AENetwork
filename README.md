@@ -3,7 +3,7 @@
 [![CocoaPods](https://img.shields.io/cocoapods/v/AENetwork.svg?style=flat)](https://cocoapods.org/pods/AENetwork)
 [![Carthage](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Swift Package Manager](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
-[![License MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](https://github.com/tadija/AENetwork/blob/master/LICENSE)
+[![License MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat)](LICENSE)
 
 # AENetwork
 

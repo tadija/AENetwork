@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.7.5
+
+- Bumped Swift language version to 4.2 with Xcode 10
+
 ## Version 0.7.4
 
 - Bug fix

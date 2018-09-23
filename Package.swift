@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:4.2
 
 /**
  *  https://github.com/tadija/AENetwork
@@ -15,8 +15,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AENetwork",
-            path: "Sources"
+            name: "AENetwork"
         ),
         .testTarget(
             name: "AENetworkTests",

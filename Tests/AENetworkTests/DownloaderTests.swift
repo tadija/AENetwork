@@ -139,6 +139,8 @@ class DownloaderTests: XCTestCase {
         XCTAssertEqual(downloader.items.count, 1, "Should have 1 download item.")
     }
 
+    /// - TODO: Check why is this test failing in Xcode 10, but it passes in Xcode 9.4.1?
+    /// It also passes when `swift test` is executed from command line...
     func testCleanup() {
         class ClassUnderTest: Downloader {
             var deinitCalled: (() -> Void)?

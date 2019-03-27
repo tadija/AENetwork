@@ -10,12 +10,10 @@ import Foundation
 
 public extension HTTPURLResponse {
     public func headerValue(forKey key: String) -> Any? {
-        guard let index = allHeaderFields.index(where: {
-            "\($0.key)".caseInsensitiveCompare(key) == .orderedSame
-        }) else {
-            return nil
-        }
-        return allHeaderFields[index].value
+        let foundKey: String = allHeaderFields.keys.first {
+            "\($0)".caseInsensitiveCompare(key) == .orderedSame
+            } as? String ?? key
+        return allHeaderFields[foundKey]
     }
 }
 

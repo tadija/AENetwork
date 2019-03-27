@@ -32,16 +32,16 @@ open class Network {
 // MARK: - Facade
 
 public extension Network {
-    public static var isOnline: Bool {
+    static var isOnline: Bool {
         return shared.reachability.state.isOnline
     }
-    public static var isOffline: Bool {
+    static var isOffline: Bool {
         return !isOnline
     }
 }
 
 public extension URLRequest {
-    public func send(over network: Network = .shared, completion: @escaping Fetcher.Callback) {
+    func send(over network: Network = .shared, completion: @escaping Fetcher.Callback) {
         network.fetcher.send(self, completion: completion)
     }
 }

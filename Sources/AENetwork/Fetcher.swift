@@ -18,14 +18,14 @@ public protocol FetcherDelegate: class {
 }
 
 public extension FetcherDelegate {
-    public func willSkipRequest(_ request: URLRequest, sender: Fetcher) {}
-    public func willSendRequest(_ request: URLRequest, sender: Fetcher) {}
-    public func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {}
+    func willSkipRequest(_ request: URLRequest, sender: Fetcher) {}
+    func willSendRequest(_ request: URLRequest, sender: Fetcher) {}
+    func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {}
 
-    public func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest {
+    func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest {
         return request
     }
-    public func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher,
+    func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher,
                                 completion: @escaping Fetcher.Callback) {
         completion(result)
     }
@@ -199,7 +199,7 @@ open class Fetcher {
 // MARK: - Extensions
 
 public extension Fetcher {
-    public static func apiResponseResult(from result: ResponseResult) -> APIResponseResult {
+    static func apiResponseResult(from result: ResponseResult) -> APIResponseResult {
         switch result {
         case .success(let response): return .success(response)
         case .failure(let error): return .failure(error)

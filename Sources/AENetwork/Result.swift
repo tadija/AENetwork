@@ -14,13 +14,13 @@ public enum Result<T> {
 public typealias ResultCallback<T> = (Result<T>) -> Void
 
 public extension Result {
-    public init(value: T) {
+    init(value: T) {
         self = .success(value)
     }
-    public init(error: Error) {
+    init(error: Error) {
         self = .failure(error)
     }
-    public init(value: T?, error: Error?) {
+    init(value: T?, error: Error?) {
         switch (value, error) {
         case (let v?, _):
             self = .success(v)
@@ -33,30 +33,30 @@ public extension Result {
         }
     }
     
-    public var value: T? {
+    var value: T? {
         switch self {
         case let .success(value): return value
         case .failure: return nil
         }
     }
-    public var error: Error? {
+    var error: Error? {
         switch self {
         case .success: return nil
         case let .failure(error): return error
         }
     }
     
-    public var isSuccess: Bool {
+    var isSuccess: Bool {
         switch self {
         case .success: return true
         case .failure: return false
         }
     }
-    public var isFailure: Bool {
+    var isFailure: Bool {
         return !isSuccess
     }
     
-    public func throwValue() throws -> T {
+    func throwValue() throws -> T {
         switch self {
         case let .success(value):
             return value

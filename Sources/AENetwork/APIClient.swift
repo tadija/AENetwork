@@ -34,7 +34,7 @@ public typealias APIResponseCallback = ResultCallback<APIResponse>
 // MARK: - Extensions
 
 public extension APIClient {
-    public func urlRequest(for apiRequest: APIRequest) -> URLRequest {
+    func urlRequest(for apiRequest: APIRequest) -> URLRequest {
         let url = baseURL.appendingPathComponent(apiRequest.path)
         var request: URLRequest
         
@@ -64,44 +64,44 @@ public extension APIClient {
 }
 
 public extension APIRequest {
-    public var headers: [String : String]? {
+    var headers: [String : String]? {
         return nil
     }
-    public var parameters: [String : Any]? {
+    var parameters: [String : Any]? {
         return nil
     }
-    public var cachePolicy: URLRequest.CachePolicy? {
+    var cachePolicy: URLRequest.CachePolicy? {
         return nil
     }
 }
 
 public extension APIResponse {
-    public var statusCode: Int {
+    var statusCode: Int {
         return response.statusCode
     }
-    public var headers: [AnyHashable : Any] {
+    var headers: [AnyHashable : Any] {
         return response.allHeaderFields
     }
-    public var dictionary: [String : Any]? {
+    var dictionary: [String : Any]? {
         return try? toDictionary()
     }
-    public var array: [Any]? {
+    var array: [Any]? {
         return try? toArray()
     }
 
-    public func toDictionary() throws -> [String : Any] {
+    func toDictionary() throws -> [String : Any] {
         return try data.toDictionary()
     }
-    public func toArray() throws -> [Any] {
+    func toArray() throws -> [Any] {
         return try data.toArray()
     }
 }
 
 public extension APIResponse {
-    public var shortDescription: String {
+    var shortDescription: String {
         return "Request: \(request.shortDescription) | Response: \(response.shortDescription)"
     }
-    public var fullDescription: String {
+    var fullDescription: String {
         return "\(request.fullDescription)\n\(response.fullDescription)"
     }
 }

@@ -10,15 +10,15 @@ import Foundation
 
 public extension URLRequest {
 
-    public enum Method: String {
+    enum Method: String {
         case get, post, put, delete
     }
 
-    public init(url: URL,
-                method: Method,
-                headers: [String : String]? = nil,
-                urlParameters: [String : Any]? = nil,
-                body: [String : Any]? = nil)
+    init(url: URL,
+         method: Method,
+         headers: [String : String]? = nil,
+         urlParameters: [String : Any]? = nil,
+         body: [String : Any]? = nil)
     {
         if let urlParameters = urlParameters, let urlWithParameters = url.addingParameters(urlParameters) {
             self.init(url: urlWithParameters)
@@ -32,19 +32,19 @@ public extension URLRequest {
         }
     }
 
-    public static func get(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
+    static func get(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .get, headers: headers, urlParameters: parameters)
     }
 
-    public static func post(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
+    static func post(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .post, headers: headers, body: parameters)
     }
 
-    public static func put(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
+    static func put(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .put, headers: headers, body: parameters)
     }
 
-    public static func delete(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
+    static func delete(url: URL, headers: [String : String]? = nil, parameters: [String : Any]? = nil) -> URLRequest {
         return URLRequest(url: url, method: .delete, headers: headers, body: parameters)
     }
 
@@ -53,12 +53,12 @@ public extension URLRequest {
 // MARK: - Description
 
 public extension URLRequest {
-    public var shortDescription: String {
+    var shortDescription: String {
         let method = (httpMethod ?? String.unavailable).uppercased()
         let url = self.url?.absoluteString ?? String.unavailable
         return "\(method) \(url)"
     }
-    public var fullDescription: String {
+    var fullDescription: String {
         let headers = "\(allHTTPHeaderFields ?? [String : String]())"
         let parameters = "\(url?.parameters ?? [String : String]())"
         return """

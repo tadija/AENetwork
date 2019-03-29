@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.0
 
 /**
  *  https://github.com/tadija/AENetwork
@@ -11,7 +11,9 @@ import PackageDescription
 let package = Package(
     name: "AENetwork",
     products: [
-        .library(name: "AENetwork", targets: ["AENetwork"])
+        .library(
+            name: "AENetwork",
+            targets: ["AENetwork"])
     ],
     targets: [
         .target(

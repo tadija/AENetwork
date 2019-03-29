@@ -8,7 +8,7 @@ s.license = { :type => 'MIT', :file => 'LICENSE' }
 s.source = { :git => 'https://github.com/tadija/AENetwork.git', :tag => s.version }
 s.source_files = 'Sources/AENetwork/*.swift'
 
-s.swift_version = '4.2'
+s.swift_version = '5.0'
 
 s.ios.deployment_target = '9.0'
 

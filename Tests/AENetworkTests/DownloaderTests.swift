@@ -169,7 +169,7 @@ class DownloaderTests: XCTestCase {
 extension DownloaderTests: DownloaderDelegate {
 
     func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
-        XCTAssertNotNil(downloader.tasks.index(of: task), "Should have this task in tasks.")
+        XCTAssertNotNil(downloader.tasks.firstIndex(of: task), "Should have this task in tasks.")
     }
 
     func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {
@@ -179,7 +179,7 @@ extension DownloaderTests: DownloaderDelegate {
     }
 
     func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {
-        XCTAssertNil(downloader.tasks.index(of: task), "Should not have this task in tasks.")
+        XCTAssertNil(downloader.tasks.firstIndex(of: task), "Should not have this task in tasks.")
     }
 
     func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {

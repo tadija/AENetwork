@@ -124,10 +124,10 @@ open class Downloader: NSObject {
     }
 
     fileprivate func performCleanup(for task: URLSessionTask) {
-        if let taskIndex = tasks.index(where: { $0.originalRequest?.url == task.originalRequest?.url }) {
+        if let taskIndex = tasks.firstIndex(where: { $0.originalRequest?.url == task.originalRequest?.url }) {
             tasks.remove(at: taskIndex)
         }
-        if let itemIndex = items.index(where: { $0.downloadURL == task.originalRequest?.url }) {
+        if let itemIndex = items.firstIndex(where: { $0.downloadURL == task.originalRequest?.url }) {
             items.remove(at: itemIndex)
         }
     }

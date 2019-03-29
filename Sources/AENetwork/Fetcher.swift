@@ -47,7 +47,7 @@ open class Fetcher {
         case invalidResponse(Response)
     }
 
-    public typealias ResponseResult = Result<Response>
+    public typealias ResponseResult = Result<Response, Swift.Error>
     public typealias Callback = ResultCallback<Response>
     
     // MARK: Properties

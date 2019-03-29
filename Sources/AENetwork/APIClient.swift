@@ -28,7 +28,8 @@ public protocol APIResponse {
     var data: Data { get }
 }
 
-public typealias APIResponseResult = Result<APIResponse>
+public typealias ResultCallback<T> = (Result<T, Error>) -> Void
+public typealias APIResponseResult = Result<APIResponse, Error>
 public typealias APIResponseCallback = ResultCallback<APIResponse>
 
 // MARK: - Extensions

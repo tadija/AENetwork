@@ -10,7 +10,6 @@
 		8BFC14422156ED7B009F07D8 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14372156ED7B009F07D8 /* Downloader.swift */; };
 		8BFC14432156ED7B009F07D8 /* Data+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14382156ED7B009F07D8 /* Data+Helpers.swift */; };
 		8BFC14442156ED7B009F07D8 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14392156ED7B009F07D8 /* APIClient.swift */; };
-		8BFC14452156ED7B009F07D8 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC143A2156ED7B009F07D8 /* Result.swift */; };
 		8BFC14462156ED7B009F07D8 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC143B2156ED7B009F07D8 /* Network.swift */; };
 		8BFC14472156ED7B009F07D8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC143C2156ED7B009F07D8 /* Reachability.swift */; };
 		8BFC14482156ED7B009F07D8 /* URLRequest+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC143D2156ED7B009F07D8 /* URLRequest+Helpers.swift */; };
@@ -20,7 +19,6 @@
 		8BFC144C2156ED7B009F07D8 /* String+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14412156ED7B009F07D8 /* String+Helpers.swift */; };
 		8BFC145B2156ED8E009F07D8 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14502156ED8E009F07D8 /* NetworkTests.swift */; };
 		8BFC145C2156ED8E009F07D8 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14512156ED8E009F07D8 /* APIClientTests.swift */; };
-		8BFC145D2156ED8E009F07D8 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14522156ED8E009F07D8 /* ResultTests.swift */; };
 		8BFC145E2156ED8E009F07D8 /* HTTPURLResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14532156ED8E009F07D8 /* HTTPURLResponseTests.swift */; };
 		8BFC145F2156ED8E009F07D8 /* URLRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14542156ED8E009F07D8 /* URLRequestTests.swift */; };
 		8BFC14602156ED8E009F07D8 /* URLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14552156ED8E009F07D8 /* URLTests.swift */; };
@@ -53,7 +51,6 @@
 		8BFC14372156ED7B009F07D8 /* Downloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		8BFC14382156ED7B009F07D8 /* Data+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Helpers.swift"; sourceTree = "<group>"; };
 		8BFC14392156ED7B009F07D8 /* APIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
-		8BFC143A2156ED7B009F07D8 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		8BFC143B2156ED7B009F07D8 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		8BFC143C2156ED7B009F07D8 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		8BFC143D2156ED7B009F07D8 /* URLRequest+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLRequest+Helpers.swift"; sourceTree = "<group>"; };
@@ -64,7 +61,6 @@
 		8BFC144E2156ED8E009F07D8 /* LinuxMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		8BFC14502156ED8E009F07D8 /* NetworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
 		8BFC14512156ED8E009F07D8 /* APIClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
-		8BFC14522156ED8E009F07D8 /* ResultTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		8BFC14532156ED8E009F07D8 /* HTTPURLResponseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPURLResponseTests.swift; sourceTree = "<group>"; };
 		8BFC14542156ED8E009F07D8 /* URLRequestTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLRequestTests.swift; sourceTree = "<group>"; };
 		8BFC14552156ED8E009F07D8 /* URLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLTests.swift; sourceTree = "<group>"; };
@@ -128,7 +124,6 @@
 		8BFC14362156ED7B009F07D8 /* AENetwork */ = {
 			isa = PBXGroup;
 			children = (
-				8BFC143A2156ED7B009F07D8 /* Result.swift */,
 				8BFC14392156ED7B009F07D8 /* APIClient.swift */,
 				8BFC14372156ED7B009F07D8 /* Downloader.swift */,
 				8BFC143B2156ED7B009F07D8 /* Network.swift */,
@@ -153,7 +148,6 @@
 			children = (
 				8BFC14502156ED8E009F07D8 /* NetworkTests.swift */,
 				8BFC14512156ED8E009F07D8 /* APIClientTests.swift */,
-				8BFC14522156ED8E009F07D8 /* ResultTests.swift */,
 				8BFC14532156ED8E009F07D8 /* HTTPURLResponseTests.swift */,
 				8BFC14542156ED8E009F07D8 /* URLRequestTests.swift */,
 				8BFC14552156ED8E009F07D8 /* URLTests.swift */,
@@ -306,7 +300,6 @@
 				8BFC14472156ED7B009F07D8 /* Reachability.swift in Sources */,
 				8BFC144B2156ED7B009F07D8 /* HTTPURLResponse+Helpers.swift in Sources */,
 				8BFC14432156ED7B009F07D8 /* Data+Helpers.swift in Sources */,
-				8BFC14452156ED7B009F07D8 /* Result.swift in Sources */,
 				8BFC14442156ED7B009F07D8 /* APIClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -319,7 +312,6 @@
 				8BFC145C2156ED8E009F07D8 /* APIClientTests.swift in Sources */,
 				8BFC145E2156ED8E009F07D8 /* HTTPURLResponseTests.swift in Sources */,
 				8BFC145B2156ED8E009F07D8 /* NetworkTests.swift in Sources */,
-				8BFC145D2156ED8E009F07D8 /* ResultTests.swift in Sources */,
 				8BFC14622156ED8E009F07D8 /* DownloaderTests.swift in Sources */,
 				8BFC14632156ED8E009F07D8 /* FetcherTests.swift in Sources */,
 				8BFC14642156ED8E009F07D8 /* DataTests.swift in Sources */,

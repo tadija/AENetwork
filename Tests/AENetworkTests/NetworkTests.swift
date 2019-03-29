@@ -31,7 +31,7 @@ class NetworkTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
         let request = URLRequest(url: "https://httpbin.org/get")
         request.send { (result) in
-            XCTAssertNotNil(result.value, "Should have value in result.")
+            XCTAssertNotNil(try? result.get(), "Should have value in result.")
             requestExpectation.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)

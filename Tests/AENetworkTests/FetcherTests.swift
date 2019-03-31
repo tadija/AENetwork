@@ -1,6 +1,6 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2018
+ *  Copyright (c) Marko Tadić 2017-2019
  *  Licensed under the MIT license. See LICENSE file.
  */
 
@@ -336,8 +336,8 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     }
     
     func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {
-        if let request = result.value?.request, request == requestForTestingWillReceiveResult {
-            receivedResult = result.value
+        if let result = try? result.get(), result.request == requestForTestingWillReceiveResult {
+            receivedResult = result
             willReceiveResultExpectation?.fulfill()
         }
     }
@@ -355,7 +355,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     }
 
     func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher, completion: @escaping Fetcher.Callback) {
-        if let request = result.value?.request, request == requestForTestingInterceptResult {
+        if let request = try? result.get().request, request == requestForTestingInterceptResult {
             interceptResultExpectation?.fulfill()
             completion(.failure(CustomError.interceptedResult))
         } else {

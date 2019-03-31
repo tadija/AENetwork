@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.8.0
+
+- Migrated to Swift 5 with Xcode 10.2 (10E125)
+
 ## Version 0.7.5
 
 - Bumped Swift language version to 4.2 with Xcode 10

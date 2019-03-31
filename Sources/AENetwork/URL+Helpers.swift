@@ -1,6 +1,6 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2018
+ *  Copyright (c) Marko Tadić 2017-2019
  *  Licensed under the MIT license. See LICENSE file.
  */
 
@@ -22,7 +22,7 @@ public extension URL {
 
     // MARK: Read
 
-    public var parameters: [String : String]? {
+    var parameters: [String : String]? {
         guard
             let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems
@@ -30,29 +30,29 @@ public extension URL {
         return queryItems.reduce(into: [String : String]()) { $0[$1.name] = $1.value }
     }
 
-    public func value(forParameterKey key: String) -> String? {
+    func value(forParameterKey key: String) -> String? {
         return parameters?[key]
     }
     
-    public func stringValue(forParameterKey key: String) -> String {
+    func stringValue(forParameterKey key: String) -> String {
         return value(forParameterKey: key) ?? String()
     }
     
-    public func boolValue(forParameterKey key: String) -> Bool? {
+    func boolValue(forParameterKey key: String) -> Bool? {
         return Bool(stringValue(forParameterKey: key))
     }
     
-    public func intValue(forParameterKey key: String) -> Int? {
+    func intValue(forParameterKey key: String) -> Int? {
         return Int(stringValue(forParameterKey: key))
     }
     
-    public func doubleValue(forParameterKey key: String) -> Double? {
+    func doubleValue(forParameterKey key: String) -> Double? {
         return Double(stringValue(forParameterKey: key))
     }
 
     // MARK: Write
 
-    public func addingParameters(_ parameters: [String : Any]) -> URL? {
+    func addingParameters(_ parameters: [String : Any]) -> URL? {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
         components?.queryItems = parameters.map { URLQueryItem(name: $0.0, value: "\($0.1)") }
         return components?.url

@@ -1,6 +1,6 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2018
+ *  Copyright (c) Marko Tadić 2017-2019
  *  Licensed under the MIT license. See LICENSE file.
  */
 
@@ -31,7 +31,7 @@ class NetworkTests: XCTestCase {
         let requestExpectation = expectation(description: "Request")
         let request = URLRequest(url: "https://httpbin.org/get")
         request.send { (result) in
-            XCTAssertNotNil(result.value, "Should have value in result.")
+            XCTAssertNotNil(try? result.get(), "Should have value in result.")
             requestExpectation.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)

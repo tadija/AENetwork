@@ -72,7 +72,8 @@ let apiRequest = Backend.API.Anything()
 backend.send(apiRequest) { (result) in
     switch result {
     case .success(let response):
-        print("Response: \(response.dictionary?.description ?? "")\n")
+        let dictionary = try? response.toDictionary()
+        print("Response: \(dictionary?.description ?? "")\n")
     case .failure(let error):
         print(error)
     }

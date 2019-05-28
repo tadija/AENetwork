@@ -16,6 +16,12 @@ extension URL: ExpressibleByStringLiteral {
     }
 }
 
+public extension String {
+    var url: URL {
+        return URL(string: self) ?? URL.invalid
+    }
+}
+
 // MARK: - Parameters
 
 public extension URL {
@@ -27,7 +33,9 @@ public extension URL {
             let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
             let queryItems = components.queryItems
         else { return nil }
-        return queryItems.reduce(into: [String : String]()) { $0[$1.name] = $1.value }
+        return queryItems.reduce(into: [String : String]()) {
+            $0[$1.name] = $1.value
+        }
     }
 
     func value(forParameterKey key: String) -> String? {
@@ -54,7 +62,9 @@ public extension URL {
 
     func addingParameters(_ parameters: [String : Any]) -> URL? {
         var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
-        components?.queryItems = parameters.map { URLQueryItem(name: $0.0, value: "\($0.1)") }
+        components?.queryItems = parameters.map {
+            URLQueryItem(name: $0.0, value: "\($0.1)")
+        }
         return components?.url
     }
 

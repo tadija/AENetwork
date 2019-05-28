@@ -83,8 +83,8 @@ public extension URLRequest {
 
 public extension URLRequest {
     var shortDescription: String {
-        let method = (httpMethod ?? String.unavailable).uppercased()
-        let url = self.url?.absoluteString ?? String.unavailable
+        let method = (httpMethod ?? "N/A").uppercased()
+        let url = self.url?.absoluteString ?? "n/a"
         return "\(method) \(url)"
     }
     var fullDescription: String {

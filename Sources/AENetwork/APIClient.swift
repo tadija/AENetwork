@@ -73,6 +73,7 @@ public extension APIClient {
         
         return request
     }
+
     func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {
         let request = urlRequest(for: apiRequest)
         request.send { (result) in
@@ -107,12 +108,6 @@ public extension APIResponse {
     }
     var headers: [AnyHashable : Any] {
         return response.allHeaderFields
-    }
-    var dictionary: [String : Any]? {
-        return try? toDictionary()
-    }
-    var array: [Any]? {
-        return try? toArray()
     }
 
     func toDictionary() throws -> [String : Any] {

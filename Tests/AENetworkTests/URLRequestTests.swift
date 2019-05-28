@@ -60,7 +60,7 @@ class URLRequestTests: XCTestCase {
             XCTAssertEqual(request.httpBody, try? Data(jsonWith: params), "Should add parameters to body.")
         }
 
-        let shortDescription = "\(method) \(request.url?.absoluteString ?? String.unavailable)"
+        let shortDescription = "\(method) \(request.url?.absoluteString ?? "n/a")"
         XCTAssertEqual(request.shortDescription, shortDescription)
 
         let requestHeaders = "\(request.allHTTPHeaderFields ?? [String : String]())"

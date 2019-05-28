@@ -13,19 +13,34 @@ public protocol Downloadable: DownloadStatusDelegate {
 }
 
 public protocol DownloadStatusDelegate {
-    func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader)
-    func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader)
-    func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader)
-    func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader)
-    func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader)
+    func didStartDownloadTask(
+        _ task: URLSessionDownloadTask, sender: Downloader
+    )
+    func didUpdateDownloadTask(
+        _ task: URLSessionDownloadTask, progress: Float, sender: Downloader
+    )
+    func didStopDownloadTask(
+        _ task: URLSessionDownloadTask, sender: Downloader
+    )
+    func didFinishDownloadTask(
+        _ task: URLSessionDownloadTask, to location: URL, sender: Downloader
+    )
+    func didFailDownloadTask(
+        _ task: URLSessionTask, with error: Error?, sender: Downloader
+    )
 }
 
 extension Downloadable {
-    public func didStartDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}
-    public func didUpdateDownloadTask(_ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {}
-    public func didStopDownloadTask(_ task: URLSessionDownloadTask, sender: Downloader) {}
-    public func didFinishDownloadTask(_ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {}
-    public func didFailDownloadTask(_ task: URLSessionTask, with error: Error?, sender: Downloader) {}
+    public func didStartDownloadTask(
+        _ task: URLSessionDownloadTask, sender: Downloader) {}
+    public func didUpdateDownloadTask(
+        _ task: URLSessionDownloadTask, progress: Float, sender: Downloader) {}
+    public func didStopDownloadTask(
+        _ task: URLSessionDownloadTask, sender: Downloader) {}
+    public func didFinishDownloadTask(
+        _ task: URLSessionDownloadTask, to location: URL, sender: Downloader) {}
+    public func didFailDownloadTask(
+        _ task: URLSessionTask, with error: Error?, sender: Downloader) {}
 
     public func startDownload(with downloader: Downloader) {
         downloader.start(with: self)
@@ -47,6 +62,10 @@ public protocol DownloaderDelegate: class, DownloadStatusDelegate {}
 
 open class Downloader: NSObject {
 
+    public static let defaultConfiguration: URLSessionConfiguration = .background(
+        withIdentifier: "AENetwork.Downloader"
+    )
+
     // MARK: Properties
 
     public private(set) var items = [Downloadable]()
@@ -57,9 +76,11 @@ open class Downloader: NSObject {
 
     // MARK: Init
 
-    public init(configuration: URLSessionConfiguration = .background(withIdentifier: "AENetwork.Downloader")) {
+    public init(configuration: URLSessionConfiguration = defaultConfiguration) {
         super.init()
-        self.session = URLSession(configuration: configuration, delegate: self, delegateQueue: .main)
+        self.session = URLSession(
+            configuration: configuration, delegate: self, delegateQueue: .main
+        )
     }
 
     public func cleanup() {
@@ -124,10 +145,12 @@ open class Downloader: NSObject {
     }
 
     fileprivate func performCleanup(for task: URLSessionTask) {
-        if let taskIndex = tasks.firstIndex(where: { $0.originalRequest?.url == task.originalRequest?.url }) {
+        if let taskIndex = tasks.firstIndex(where:
+            { $0.originalRequest?.url == task.originalRequest?.url }) {
             tasks.remove(at: taskIndex)
         }
-        if let itemIndex = items.firstIndex(where: { $0.downloadURL == task.originalRequest?.url }) {
+        if let itemIndex = items.firstIndex(where:
+            { $0.downloadURL == task.originalRequest?.url }) {
             items.remove(at: itemIndex)
         }
     }
@@ -167,7 +190,8 @@ extension Downloader: URLSessionDelegate, URLSessionDownloadDelegate {
 
     // MARK: URLSessionTaskDelegate
 
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask,
+                           didCompleteWithError error: Error?) {
         let failedItem = item(with: task)
         performCleanup(for: task)
 

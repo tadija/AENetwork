@@ -13,7 +13,9 @@ public extension Data {
     }
 
     init(jsonWith any: Any) throws {
-        self = try JSONSerialization.data(withJSONObject: any, options: .prettyPrinted)
+        self = try JSONSerialization.data(
+            withJSONObject: any, options: .prettyPrinted
+        )
     }
 
     func toDictionary() throws -> [String : Any] {
@@ -27,7 +29,9 @@ public extension Data {
     // MARK: Helpers
 
     private func serializeJSON<T>() throws -> T {
-        let jsonObject = try JSONSerialization.jsonObject(with: self, options: .allowFragments)
+        let jsonObject = try JSONSerialization.jsonObject(
+            with: self, options: .allowFragments
+        )
         guard let parsed = jsonObject as? T else {
             throw SerializationError.jsonSerializationFailed
         }

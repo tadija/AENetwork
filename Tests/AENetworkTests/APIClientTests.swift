@@ -126,9 +126,8 @@ class APIClientTests: XCTestCase {
         
         XCTAssertEqual(response.statusCode, 200)
         XCTAssertEqual(response.headers["foo"] as? String, "bar")
-        XCTAssertEqual(response.dictionary?["foo"] as? String, "bar")
-        XCTAssertNil(response.array)
         XCTAssertNoThrow(try response.toDictionary())
+        XCTAssertEqual(try response.toDictionary()["foo"] as? String, "bar")
         XCTAssertThrowsError(try response.toArray())
         
         let shortDescription = """

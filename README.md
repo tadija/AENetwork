@@ -24,11 +24,12 @@ let anything: URL = "https://httpbin.org/anything"
 let url = anything.addingParameters(["foo" : "bar"])!
 
 /// - Note: Factory methods on `URLRequest`
-let request = URLRequest.post(url: url, headers: ["hello" : "world"], parameters: ["easy" : true])
+let body = try? Data(jsonWith: ["easy" : true])
+let request = URLRequest.post(url: url, headers: ["hello" : "world"], body: body)
 
 /// - Note: Convenient sending of request
 request.send { (result) in
-    if let response = result.value {
+    if let response = try? result.get() {
         print("Status Code: \(response.statusCode)\n")
     }
 }
@@ -49,7 +50,7 @@ network.reachability.stopMonitoring()
 /// - Note: Send request with `Fetcher` and use `ResponseResult` in completion
 network.fetcher.send(request) { (result) in
     do {
-        let response = try result.throwValue()
+        let response = try result.get()
         print("Headers: \(response.headers as? [String : Any])\n")
     } catch {
         print(error)
@@ -85,7 +86,8 @@ let apiRequest = Backend.API.Anything()
 backend.send(apiRequest) { (result) in
     switch result {
     case .success(let response):
-        print("Response: \(response.dictionary?.description ?? "")\n")
+        let dictionary = try? response.toDictionary()
+        print("Response: \(dictionary?.description ?? "")\n")
     case .failure(let error):
         print(error)
     }

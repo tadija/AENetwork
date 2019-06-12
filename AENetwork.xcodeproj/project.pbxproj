@@ -16,7 +16,6 @@
 		8BFC14492156ED7B009F07D8 /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC143E2156ED7B009F07D8 /* Fetcher.swift */; };
 		8BFC144A2156ED7B009F07D8 /* URL+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC143F2156ED7B009F07D8 /* URL+Helpers.swift */; };
 		8BFC144B2156ED7B009F07D8 /* HTTPURLResponse+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14402156ED7B009F07D8 /* HTTPURLResponse+Helpers.swift */; };
-		8BFC144C2156ED7B009F07D8 /* String+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14412156ED7B009F07D8 /* String+Helpers.swift */; };
 		8BFC145B2156ED8E009F07D8 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14502156ED8E009F07D8 /* NetworkTests.swift */; };
 		8BFC145C2156ED8E009F07D8 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14512156ED8E009F07D8 /* APIClientTests.swift */; };
 		8BFC145E2156ED8E009F07D8 /* HTTPURLResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BFC14532156ED8E009F07D8 /* HTTPURLResponseTests.swift */; };
@@ -57,7 +56,6 @@
 		8BFC143E2156ED7B009F07D8 /* Fetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		8BFC143F2156ED7B009F07D8 /* URL+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Helpers.swift"; sourceTree = "<group>"; };
 		8BFC14402156ED7B009F07D8 /* HTTPURLResponse+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+Helpers.swift"; sourceTree = "<group>"; };
-		8BFC14412156ED7B009F07D8 /* String+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Helpers.swift"; sourceTree = "<group>"; };
 		8BFC144E2156ED8E009F07D8 /* LinuxMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinuxMain.swift; sourceTree = "<group>"; };
 		8BFC14502156ED8E009F07D8 /* NetworkTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
 		8BFC14512156ED8E009F07D8 /* APIClientTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
@@ -162,7 +160,6 @@
 		8BFC14652156EDBB009F07D8 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				8BFC14412156ED7B009F07D8 /* String+Helpers.swift */,
 				8BFC143F2156ED7B009F07D8 /* URL+Helpers.swift */,
 				8BFC143D2156ED7B009F07D8 /* URLRequest+Helpers.swift */,
 				8BFC14402156ED7B009F07D8 /* HTTPURLResponse+Helpers.swift */,
@@ -292,7 +289,6 @@
 			buildActionMask = 0;
 			files = (
 				8BFC14482156ED7B009F07D8 /* URLRequest+Helpers.swift in Sources */,
-				8BFC144C2156ED7B009F07D8 /* String+Helpers.swift in Sources */,
 				8BFC144A2156ED7B009F07D8 /* URL+Helpers.swift in Sources */,
 				8BFC14492156ED7B009F07D8 /* Fetcher.swift in Sources */,
 				8BFC14462156ED7B009F07D8 /* Network.swift in Sources */,

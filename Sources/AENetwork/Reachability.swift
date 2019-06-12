@@ -84,8 +84,12 @@ open class Reachability {
     public func startMonitoring() {
         guard !isNotifierRunning, let ref = networkReference else { return }
         
-        var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-        context.info = UnsafeMutableRawPointer(Unmanaged<Reachability>.passUnretained(self).toOpaque())
+        var context = SCNetworkReachabilityContext(
+            version: 0, info: nil, retain: nil, release: nil, copyDescription: nil
+        )
+        context.info = UnsafeMutableRawPointer(
+            Unmanaged<Reachability>.passUnretained(self).toOpaque()
+        )
         
         SCNetworkReachabilitySetCallback(ref, callback, &context)
         SCNetworkReachabilitySetDispatchQueue(ref, queue)

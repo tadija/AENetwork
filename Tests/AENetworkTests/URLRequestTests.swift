@@ -26,22 +26,25 @@ class URLRequestTests: XCTestCase {
     // MARK: Tests
 
     func testGet() {
-        let request = URLRequest.get(url: "https://httpbin.org/get", headers: headers, parameters: params)
+        let request = URLRequest.get(url: "https://httpbin.org/get", headers: headers, urlParameters: params)
         validateRequest(request, method: "GET", parametersType: .url)
     }
 
     func testPost() {
-        let request = URLRequest.post(url: "https://httpbin.org/post", headers: headers, parameters: params)
+        let body = try? Data(jsonWith: params)
+        let request = URLRequest.post(url: "https://httpbin.org/post", headers: headers, body: body)
         validateRequest(request, method: "POST", parametersType: .body)
     }
 
     func testPut() {
-        let request = URLRequest.put(url: "https://httpbin.org/put", headers: headers, parameters: params)
+        let body = try? Data(jsonWith: params)
+        let request = URLRequest.put(url: "https://httpbin.org/put", headers: headers, body: body)
         validateRequest(request, method: "PUT", parametersType: .body)
     }
 
     func testDelete() {
-        let request = URLRequest.delete(url: "https://httpbin.org/delete", headers: headers, parameters: params)
+        let body = try? Data(jsonWith: params)
+        let request = URLRequest.delete(url: "https://httpbin.org/delete", headers: headers, body: body)
         validateRequest(request, method: "DELETE", parametersType: .body)
     }
 
@@ -57,7 +60,7 @@ class URLRequestTests: XCTestCase {
             XCTAssertEqual(request.httpBody, try? Data(jsonWith: params), "Should add parameters to body.")
         }
 
-        let shortDescription = "\(method) \(request.url?.absoluteString ?? String.unavailable)"
+        let shortDescription = "\(method) \(request.url?.absoluteString ?? "n/a")"
         XCTAssertEqual(request.shortDescription, shortDescription)
 
         let requestHeaders = "\(request.allHTTPHeaderFields ?? [String : String]())"

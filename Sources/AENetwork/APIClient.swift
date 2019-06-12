@@ -19,6 +19,7 @@ public protocol APIRequest {
     var path: String { get }
     var headers: [String : String]? { get }
     var parameters: [String : Any]? { get }
+    var body: Data? { get }
     var cachePolicy: URLRequest.CachePolicy? { get }
 }
 
@@ -41,13 +42,29 @@ public extension APIClient {
         
         switch apiRequest.method {
         case .get:
-            request = URLRequest.get(url: url, headers: apiRequest.headers, parameters: apiRequest.parameters)
+            request = URLRequest.get(
+                url: url,
+                headers: apiRequest.headers,
+                urlParameters: apiRequest.parameters
+            )
         case .post:
-            request = URLRequest.post(url: url, headers: apiRequest.headers, parameters: apiRequest.parameters)
+            request = URLRequest.post(
+                url: url,
+                headers: apiRequest.headers,
+                body: apiRequest.body
+            )
         case .put:
-            request = URLRequest.put(url: url, headers: apiRequest.headers, parameters: apiRequest.parameters)
+            request = URLRequest.put(
+                url: url,
+                headers: apiRequest.headers,
+                body: apiRequest.body
+            )
         case .delete:
-            request = URLRequest.delete(url: url, headers: apiRequest.headers, parameters: apiRequest.parameters)
+            request = URLRequest.delete(
+                url: url,
+                headers: apiRequest.headers,
+                body: apiRequest.body
+            )
         }
         
         if let cachePolicy = apiRequest.cachePolicy {
@@ -56,6 +73,7 @@ public extension APIClient {
         
         return request
     }
+
     func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {
         let request = urlRequest(for: apiRequest)
         request.send { (result) in
@@ -71,6 +89,14 @@ public extension APIRequest {
     var parameters: [String : Any]? {
         return nil
     }
+    var body: Data? {
+        guard
+            let parameters = parameters,
+            let json = try? Data(jsonWith: parameters) else {
+            return nil
+        }
+        return json
+    }
     var cachePolicy: URLRequest.CachePolicy? {
         return nil
     }
@@ -82,12 +108,6 @@ public extension APIResponse {
     }
     var headers: [AnyHashable : Any] {
         return response.allHeaderFields
-    }
-    var dictionary: [String : Any]? {
-        return try? toDictionary()
-    }
-    var array: [Any]? {
-        return try? toArray()
     }
 
     func toDictionary() throws -> [String : Any] {

@@ -43,6 +43,14 @@ class APIClientTests: XCTestCase {
                 return "put"
             }
         }
+        struct Patch: APIRequest {
+            var method: URLRequest.Method {
+                return .patch
+            }
+            var path: String {
+                return "patch"
+            }
+        }
         struct Delete: APIRequest {
             var method: URLRequest.Method {
                 return .delete
@@ -61,11 +69,13 @@ class APIClientTests: XCTestCase {
         let getRequest = backend.urlRequest(for: Get())
         let postRequest = backend.urlRequest(for: Post())
         let putRequest = backend.urlRequest(for: Put())
+        let patchRequest = backend.urlRequest(for: Patch())
         let deleteRequest = backend.urlRequest(for: Delete())
         
         XCTAssertEqual(getRequest, URLRequest.get(url: "https://httpbin.org/get"))
         XCTAssertEqual(postRequest, URLRequest.post(url: "https://httpbin.org/post"))
         XCTAssertEqual(putRequest, URLRequest.put(url: "https://httpbin.org/put"))
+        XCTAssertEqual(patchRequest, URLRequest.patch(url: "https://httpbin.org/patch"))
         XCTAssertEqual(deleteRequest, URLRequest.delete(url: "https://httpbin.org/delete"))
     }
     

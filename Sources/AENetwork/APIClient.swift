@@ -59,6 +59,12 @@ public extension APIClient {
                 headers: apiRequest.headers,
                 body: apiRequest.body
             )
+        case .patch:
+            request = URLRequest.patch(
+                url: url,
+                headers: apiRequest.headers,
+                body: apiRequest.body
+            )
         case .delete:
             request = URLRequest.delete(
                 url: url,

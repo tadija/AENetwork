@@ -11,7 +11,7 @@ import Foundation
 public extension URLRequest {
 
     enum Method: String {
-        case get, post, put, delete
+        case get, post, put, patch, delete
     }
 
     init(url: URL,
@@ -26,7 +26,7 @@ public extension URLRequest {
         } else {
             self.init(url: url)
         }
-        httpMethod = method.rawValue.capitalized
+        httpMethod = method.rawValue.uppercased()
         allHTTPHeaderFields = headers
         if let body = body {
             httpBody = body
@@ -61,6 +61,17 @@ public extension URLRequest {
         return URLRequest(
             url: url,
             method: .put,
+            headers: headers,
+            body: body
+        )
+    }
+
+    static func patch(url: URL,
+                      headers: [String : String]? = nil,
+                      body: Data? = nil) -> URLRequest {
+        return URLRequest(
+            url: url,
+            method: .patch,
             headers: headers,
             body: body
         )

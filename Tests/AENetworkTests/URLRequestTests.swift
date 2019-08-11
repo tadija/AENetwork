@@ -14,6 +14,7 @@ class URLRequestTests: XCTestCase {
             ("testGet", testGet),
             ("testPost", testPost),
             ("testPut", testPut),
+            ("testPatch", testPatch),
             ("testDelete", testDelete)
         ]
     }
@@ -40,6 +41,12 @@ class URLRequestTests: XCTestCase {
         let body = try? Data(jsonWith: params)
         let request = URLRequest.put(url: "https://httpbin.org/put", headers: headers, body: body)
         validateRequest(request, method: "PUT", parametersType: .body)
+    }
+
+    func testPatch() {
+        let body = try? Data(jsonWith: params)
+        let request = URLRequest.patch(url: "https://httpbin.org/patch", headers: headers, body: body)
+        validateRequest(request, method: "PATCH", parametersType: .body)
     }
 
     func testDelete() {

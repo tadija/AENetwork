@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.8.2
+
+- Add `PATCH` request method
+
+## Version 0.8.1
+
+- Add body to `APIRequest`
+- Minor cleanup and refactoring
+
 ## Version 0.8.0
 
 - Migrated to Swift 5 with Xcode 10.2 (10E125)

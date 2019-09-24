@@ -28,7 +28,7 @@ let body = try? Data(jsonWith: ["easy" : true])
 let request = URLRequest.post(url: url, headers: ["hello" : "world"], body: body)
 
 /// - Note: Convenient sending of request
-request.send { (result) in
+request.send { result in
     if let response = try? result.get() {
         print("Status Code: \(response.statusCode)\n")
     }
@@ -101,7 +101,7 @@ backend.send(apiRequest) { (result) in
 	```swift
     .package(
         url: "https://github.com/tadija/AENetwork.git",
-        .upToNextMinor(from: "0.8.0")
+        .upToNextMinor(from: "0.8.2")
     )
 	```
 

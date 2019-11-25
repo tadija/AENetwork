@@ -70,12 +70,14 @@ class URLRequestTests: XCTestCase {
         let shortDescription = "\(method) \(request.url?.absoluteString ?? "n/a")"
         XCTAssertEqual(request.shortDescription, shortDescription)
 
-        let requestHeaders = "\(request.allHTTPHeaderFields ?? [String : String]())"
-        let requestParameters = "\(request.url?.parameters ?? [String : String]())"
+        let requestHeaders = "\(request.allHTTPHeaderFields ?? [:])"
+        let requestParameters = "\(request.url?.parameters ?? [:])"
+        let requestBody = (try? request.httpBody?.toDictionary()) ?? [:]
         let fullDescription = """
         - Request: \(shortDescription)
         - Headers: \(requestHeaders)
         - Parameters: \(requestParameters)
+        - Body: \(requestBody)
         """
         XCTAssertEqual(request.fullDescription, fullDescription)
     }

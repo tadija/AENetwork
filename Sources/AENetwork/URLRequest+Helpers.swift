@@ -99,12 +99,14 @@ public extension URLRequest {
         return "\(method) \(url)"
     }
     var fullDescription: String {
-        let headers = "\(allHTTPHeaderFields ?? [String : String]())"
-        let parameters = "\(url?.parameters ?? [String : String]())"
+        let headers = "\(allHTTPHeaderFields ?? [:])"
+        let parameters = "\(url?.parameters ?? [:])"
+        let body = (try? httpBody?.toDictionary()) ?? [:]
         return """
         - Request: \(shortDescription)
         - Headers: \(headers)
         - Parameters: \(parameters)
+        - Body: \(body)
         """
     }
 }

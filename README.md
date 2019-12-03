@@ -101,7 +101,7 @@ backend.send(apiRequest) { (result) in
 	```swift
     .package(
         url: "https://github.com/tadija/AENetwork.git",
-        .upToNextMinor(from: "0.8.2")
+        .upToNextMinor(from: "0.8.3")
     )
 	```
 

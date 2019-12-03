@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.8.3
+
+- Add possibility to use mocked `APIResponse` for any `APIRequest`
+- Add `httpBody` to `URLRequest` helper for `fullDescription`
+
 ## Version 0.8.2
 
 - Add `PATCH` request method

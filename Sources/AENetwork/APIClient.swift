@@ -21,6 +21,10 @@ public protocol APIRequest {
     var parameters: [String : Any]? { get }
     var body: Data? { get }
     var cachePolicy: URLRequest.CachePolicy? { get }
+
+    var useMockResponse: Bool { get }
+    var mockData: Data? { get }
+    var mockResponse: APIResponse? { get }
 }
 
 public protocol APIResponse {
@@ -82,8 +86,12 @@ public extension APIClient {
 
     func send(_ apiRequest: APIRequest, completion: @escaping APIResponseCallback) {
         let request = urlRequest(for: apiRequest)
-        request.send { (result) in
-            completion(Fetcher.apiResponseResult(from: result))
+        if let mockResponse = apiRequest.mockResponse {
+            completion(.success(mockResponse))
+        } else {
+            request.send { (result) in
+                completion(Fetcher.apiResponseResult(from: result))
+            }
         }
     }
 }
@@ -105,6 +113,26 @@ public extension APIRequest {
     }
     var cachePolicy: URLRequest.CachePolicy? {
         return nil
+    }
+}
+
+public extension APIRequest {
+    var useMockResponse: Bool {
+        return false
+    }
+    var mockData: Data? {
+        return nil
+    }
+    var mockResponse: APIResponse? {
+        guard useMockResponse,
+            let mockData = mockData else {
+                return nil
+        }
+        return Fetcher.Response(
+            request: URLRequest(url: URL.mocked),
+            response: HTTPURLResponse(),
+            data: mockData
+        )
     }
 }
 

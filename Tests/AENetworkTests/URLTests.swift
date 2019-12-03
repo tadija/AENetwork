@@ -74,10 +74,10 @@ class URLTests: XCTestCase {
         XCTAssertEqual(url, URL(string: "example.com"), "")
         XCTAssertEqual(url, "example.com".url, "")
 
-        let badURL = URL(string: "https://invalid.url")
-        let testBadURL: URL = ""
-        XCTAssertEqual(badURL, testBadURL, "")
-        XCTAssertEqual(badURL, "".url, "")
+        let invalidURL: URL = ""
+        let mockedURL = URL.mocked
+        XCTAssertEqual(invalidURL, mockedURL)
+        XCTAssertEqual("".url, mockedURL)
     }
 
 }

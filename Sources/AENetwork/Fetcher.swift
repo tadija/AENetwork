@@ -42,6 +42,14 @@ open class Fetcher {
         public let request: URLRequest
         public let response: HTTPURLResponse
         public let data: Data
+
+        public init(request: URLRequest,
+                    response: HTTPURLResponse,
+                    data: Data) {
+            self.request = request
+            self.response = response
+            self.data = data
+        }
     }
 
     public enum Error: Swift.Error {

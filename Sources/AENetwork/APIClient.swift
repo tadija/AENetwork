@@ -129,7 +129,7 @@ public extension APIRequest {
                 return nil
         }
         return Fetcher.Response(
-            request: URLRequest(url: URL.mocked),
+            request: URLRequest(url: URL.mock),
             response: HTTPURLResponse(),
             data: mockData
         )

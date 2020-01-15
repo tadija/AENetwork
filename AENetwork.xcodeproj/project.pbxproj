@@ -90,6 +90,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8B2000C623CF298A0005F361 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				8BFC143F2156ED7B009F07D8 /* URL+Helpers.swift */,
+				8BFC143D2156ED7B009F07D8 /* URLRequest+Helpers.swift */,
+				8BFC14402156ED7B009F07D8 /* HTTPURLResponse+Helpers.swift */,
+				8BFC14382156ED7B009F07D8 /* Data+Helpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		8BE0C4FA1EF473B500E6F95F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -123,11 +134,11 @@
 			isa = PBXGroup;
 			children = (
 				8BFC14392156ED7B009F07D8 /* APIClient.swift */,
-				8BFC14372156ED7B009F07D8 /* Downloader.swift */,
 				8BFC143B2156ED7B009F07D8 /* Network.swift */,
 				8BFC143C2156ED7B009F07D8 /* Reachability.swift */,
 				8BFC143E2156ED7B009F07D8 /* Fetcher.swift */,
-				8BFC14652156EDBB009F07D8 /* Helpers */,
+				8BFC14372156ED7B009F07D8 /* Downloader.swift */,
+				8B2000C623CF298A0005F361 /* Helpers */,
 			);
 			path = AENetwork;
 			sourceTree = "<group>";
@@ -155,17 +166,6 @@
 				8BFC14592156ED8E009F07D8 /* DataTests.swift */,
 			);
 			path = AENetworkTests;
-			sourceTree = "<group>";
-		};
-		8BFC14652156EDBB009F07D8 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				8BFC143F2156ED7B009F07D8 /* URL+Helpers.swift */,
-				8BFC143D2156ED7B009F07D8 /* URLRequest+Helpers.swift */,
-				8BFC14402156ED7B009F07D8 /* HTTPURLResponse+Helpers.swift */,
-				8BFC14382156ED7B009F07D8 /* Data+Helpers.swift */,
-			);
-			name = Helpers;
 			sourceTree = "<group>";
 		};
 		OBJ_18 /* Products */ = {

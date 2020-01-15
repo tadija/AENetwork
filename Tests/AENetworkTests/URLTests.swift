@@ -1,7 +1,7 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2019
- *  Licensed under the MIT license. See LICENSE file.
+ *  Copyright © 2017-2020 Marko Tadić
+ *  Licensed under the MIT license
  */
 
 import XCTest
@@ -75,9 +75,9 @@ class URLTests: XCTestCase {
         XCTAssertEqual(url, "example.com".url, "")
 
         let invalidURL: URL = ""
-        let mockedURL = URL.mocked
-        XCTAssertEqual(invalidURL, mockedURL)
-        XCTAssertEqual("".url, mockedURL)
+        let mockURL = URL.mock
+        XCTAssertEqual(invalidURL, mockURL)
+        XCTAssertEqual("".url, mockURL)
     }
 
 }

@@ -1,8 +1,8 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2019
+ *  Copyright © 2017-2020 Marko Tadić
  *  Created by Mihailo Rančić
- *  Licensed under the MIT license. See LICENSE file.
+ *  Licensed under the MIT license
  */
 
 import Foundation

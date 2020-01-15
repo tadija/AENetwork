@@ -1,7 +1,7 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2019
- *  Licensed under the MIT license. See LICENSE file.
+ *  Copyright © 2017-2020 Marko Tadić
+ *  Licensed under the MIT license
  */
 
 import Foundation
@@ -18,11 +18,11 @@ public extension Data {
         )
     }
 
-    func toDictionary() throws -> [String : Any] {
+    func jsonDictionary() throws -> [String : Any] {
         return try serializeJSON()
     }
 
-    func toArray() throws -> [Any] {
+    func jsonArray() throws -> [Any] {
         return try serializeJSON()
     }
 

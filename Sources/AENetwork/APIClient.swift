@@ -1,7 +1,7 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2019
- *  Licensed under the MIT license. See LICENSE file.
+ *  Copyright © 2017-2020 Marko Tadić
+ *  Licensed under the MIT license
  */
 
 import Foundation
@@ -129,7 +129,7 @@ public extension APIRequest {
                 return nil
         }
         return Fetcher.Response(
-            request: URLRequest(url: URL.mocked),
+            request: URLRequest(url: URL.mock),
             response: HTTPURLResponse(),
             data: mockData
         )
@@ -145,10 +145,10 @@ public extension APIResponse {
     }
 
     func toDictionary() throws -> [String : Any] {
-        return try data.toDictionary()
+        return try data.jsonDictionary()
     }
     func toArray() throws -> [Any] {
-        return try data.toArray()
+        return try data.jsonArray()
     }
 }
 

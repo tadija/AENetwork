@@ -1,7 +1,7 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2019
- *  Licensed under the MIT license. See LICENSE file.
+ *  Copyright © 2017-2020 Marko Tadić
+ *  Licensed under the MIT license
  */
 
 import Foundation
@@ -9,16 +9,16 @@ import Foundation
 // MARK: - ExpressibleByStringLiteral
 
 extension URL: ExpressibleByStringLiteral {
-    public static let mocked = URL(string: "https://mocked.url")!
+    public static let mock = URL(string: "https://mock.url")!
     
     public init(stringLiteral value: StaticString) {
-        self = URL(string: "\(value)") ?? URL.mocked
+        self = "\(value)".url
     }
 }
 
 public extension String {
     var url: URL {
-        return URL(string: self) ?? URL.mocked
+        return URL(string: self) ?? URL.mock
     }
 }
 

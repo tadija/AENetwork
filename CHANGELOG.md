@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.8.4
+
+- Rename `URL.mocked` -> `URL.mock` in URL+Helpers
+- Rename `toDictionary` -> `jsonDictionary` in Data+Helpers
+- Rename `toArray` -> `jsonArray` in Data+Helpers
+
 ## Version 0.8.3
 
 - Add possibility to use mocked `APIResponse` for any `APIRequest`

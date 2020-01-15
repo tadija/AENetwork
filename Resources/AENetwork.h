@@ -1,7 +1,7 @@
 /**
  *  https://github.com/tadija/AENetwork
- *  Copyright (c) Marko Tadić 2017-2019
- *  Licensed under the MIT license. See LICENSE file.
+ *  Copyright © 2017-2020 Marko Tadić
+ *  Licensed under the MIT license
  */
 
 #import <Foundation/Foundation.h>

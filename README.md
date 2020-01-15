@@ -7,7 +7,7 @@
 
 # AENetwork
 
-**Swift minion for simple and lightweight networking**
+**Simple and lightweight networking in Swift**
 
 > I made this for personal use, but feel free to use it or contribute.
 > For more examples check out [Sources](Sources) and [Tests](Tests).
@@ -101,7 +101,7 @@ backend.send(apiRequest) { (result) in
 	```swift
     .package(
         url: "https://github.com/tadija/AENetwork.git",
-        .upToNextMinor(from: "0.8.3")
+        .upToNextMinor(from: "0.8.4")
     )
 	```
 

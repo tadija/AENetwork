@@ -72,7 +72,7 @@ class URLRequestTests: XCTestCase {
 
         let requestHeaders = "\(request.allHTTPHeaderFields ?? [:])"
         let requestParameters = "\(request.url?.parameters ?? [:])"
-        let requestBody = (try? request.httpBody?.toDictionary()) ?? [:]
+        let requestBody = (try? request.httpBody?.jsonDictionary()) ?? [:]
         let fullDescription = """
         - Request: \(shortDescription)
         - Headers: \(requestHeaders)

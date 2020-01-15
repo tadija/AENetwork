@@ -145,10 +145,10 @@ public extension APIResponse {
     }
 
     func toDictionary() throws -> [String : Any] {
-        return try data.toDictionary()
+        return try data.jsonDictionary()
     }
     func toArray() throws -> [Any] {
-        return try data.toArray()
+        return try data.jsonArray()
     }
 }
 

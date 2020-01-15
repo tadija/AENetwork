@@ -18,11 +18,11 @@ public extension Data {
         )
     }
 
-    func toDictionary() throws -> [String : Any] {
+    func jsonDictionary() throws -> [String : Any] {
         return try serializeJSON()
     }
 
-    func toArray() throws -> [Any] {
+    func jsonArray() throws -> [Any] {
         return try serializeJSON()
     }
 

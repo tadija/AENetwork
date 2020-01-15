@@ -23,7 +23,7 @@ class DataTests: XCTestCase {
         let dict = ["hello" : "world"]
         do {
             let data = try Data(jsonWith: dict)
-            let parsed = try data.toDictionary()
+            let parsed = try data.jsonDictionary()
             XCTAssertEqual(parsed["hello"] as? String, "world")
         } catch {
             XCTAssert(false, "Should be able to serialize dictionary from JSON data.")
@@ -34,7 +34,7 @@ class DataTests: XCTestCase {
         let array = ["hello", "world"]
         do {
             let data = try Data(jsonWith: array)
-            let parsed = try data.toArray()
+            let parsed = try data.jsonArray()
             XCTAssertEqual(parsed.last as? String, "world")
         } catch {
             XCTAssert(false, "Should be able to serialize array from JSON data.")
@@ -45,7 +45,7 @@ class DataTests: XCTestCase {
         let dict = ["hello" : "world"]
         do {
             let data = try Data(jsonWith: dict)
-            let _ = try data.toArray()
+            let _ = try data.jsonArray()
         } catch {
             let test = error is Data.SerializationError
             XCTAssert(test, "Should throw \(error) when serializing JSON data to the wrong type.")

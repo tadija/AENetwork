@@ -101,7 +101,7 @@ public extension URLRequest {
     var fullDescription: String {
         let headers = "\(allHTTPHeaderFields ?? [:])"
         let parameters = "\(url?.parameters ?? [:])"
-        let body = (try? httpBody?.toDictionary()) ?? [:]
+        let body = (try? httpBody?.jsonDictionary()) ?? [:]
         return """
         - Request: \(shortDescription)
         - Headers: \(headers)

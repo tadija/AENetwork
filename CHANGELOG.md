@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.8.5
+
+- Add CURRENT_PROJECT_VERSION
+
 ## Version 0.8.4
 
 - Rename `URL.mocked` -> `URL.mock` in URL+Helpers

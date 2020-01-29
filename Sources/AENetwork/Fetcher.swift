@@ -73,13 +73,13 @@ open class Fetcher {
             }
         }
         set {
-            callbacksQueue.async(flags: .barrier) { [weak self] in
+            callbacksQueue.sync { [weak self] in
                 self?.callbacksStorage = newValue
             }
         }
     }
     private let callbacksQueue = DispatchQueue(
-        label: "AENetwork.Callbacks.Queue", attributes: .concurrent
+        label: "AENetwork.Callbacks.Queue"
     )
     private var callbacksStorage = [[URLRequest : Callback]]()
 

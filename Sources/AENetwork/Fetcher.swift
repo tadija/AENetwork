@@ -121,11 +121,15 @@ open class Fetcher {
     }
     
     private func queueRequest(_ request: URLRequest, completion: @escaping Callback) {
-        guard callbacks.filter({ $0.keys.contains(request) }).count == 0 else {
+        let callbacksContainRequest = callbacks
+            .contains(where: { request.isEqual(to: $0.keys.first) })
+
+        guard !callbacksContainRequest else {
             callbacks.append([request : completion])
             delegate?.willSkipRequest(request, sender: self)
             return
         }
+
         callbacks.append([request : completion])
         performRequest(request) { [unowned self] (result) in
             self.performAllCallbacks(for: request, with: result)
@@ -162,13 +166,14 @@ open class Fetcher {
     
     private func performAllCallbacks(for request: URLRequest, with result: ResponseResult) {
         let filtered = callbacks
-            .filter({ $0.keys.contains(request) })
+            .filter({ request.isEqual(to: $0.keys.first) })
             .compactMap({ $0.values.first })
+        self.callbacks.removeAll(
+            where: { request.isEqual(to: $0.keys.first) }
+        )
         filtered.forEach { [unowned self] (completion) in
             self.dispatchResult(result, completion: completion)
         }
-        let remaining = callbacks.filter({ $0.keys.contains(request) == false })
-        self.callbacks = remaining
     }
     
     private func dispatchResult(_ result: ResponseResult, completion: @escaping Callback) {

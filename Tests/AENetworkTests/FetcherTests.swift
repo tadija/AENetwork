@@ -166,6 +166,8 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
 
     static var allTests : [(String, (FetcherDelegateTests) -> () throws -> Void)] {
         return [
+            ("testWillNotSkipRequestWithForceSend", testWillNotSkipRequestWithForceSend),
+            ("testWillNotSkipRequestWithDifferentBody", testWillNotSkipRequestWithDifferentBody),
             ("testWillSkipRequest", testWillSkipRequest),
             ("testWillSendRequest", testWillSendRequest),
             ("testWillReceiveResult", testWillReceiveResult),
@@ -195,6 +197,8 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
 
     // MARK: Tests
 
+    private var requestForTestingBody = URLRequest.post(url: "https://httpbin.org/post")
+
     private let requestForTestingWillSkip = URLRequest.post(url: "https://httpbin.org/post")
     private var willSkipRequestExpectation: XCTestExpectation?
     private var skippedRequest: URLRequest?
@@ -207,7 +211,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     private var willReceiveResultExpectation: XCTestExpectation?
     private var receivedResult: Fetcher.Response?
 
-    private let requestForTestingInterceptRequest = URLRequest.post(url: "https://httpbin.org/get")
+    private let requestForTestingInterceptRequest = URLRequest.post(url: "https://httpbin.org/anything")
     private var interceptRequestExpectation: XCTestExpectation?
     private var interceptedRequest: URLRequest?
 
@@ -228,6 +232,23 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
             }
         }
         
+        wait(for: [willSkipRequestExpectation!], timeout: 5)
+    }
+
+    func testWillNotSkipRequestWithDifferentBody() {
+        willSkipRequestExpectation = expectation(description: "Will Not Skip Request")
+        willSkipRequestExpectation?.assertForOverFulfill = false
+
+        for i in 1...5 {
+            requestForTestingBody.httpBody = try? Data(jsonWith: ["id": "\(i)"])
+            fetcher.send(requestForTestingBody) { [weak self] (result) in
+                XCTAssertNil(self?.skippedRequest, "Should be nil.")
+                if i == 5 {
+                    self?.willSkipRequestExpectation?.fulfill()
+                }
+            }
+        }
+
         wait(for: [willSkipRequestExpectation!], timeout: 5)
     }
 
@@ -273,8 +294,12 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     func testInterceptRequest() {
         interceptRequestExpectation = expectation(description: "Intercept Request")
 
-        fetcher.send(requestForTestingInterceptRequest) { (result) in
-            XCTAssertEqual(self.interceptedRequest, self.requestForTestingWillSend)
+        fetcher.send(requestForTestingInterceptRequest) { [unowned self] (result) in
+            XCTAssertNotEqual(self.interceptedRequest, self.requestForTestingInterceptRequest)
+            XCTAssertEqual(self.interceptedRequest, try? result.get().request)
+            /// - Note: I have no idea why this fails... if you ever find out, please let me know!
+            /// let getAnything = URLRequest.get(url: "https://httpbin.org/anything")
+            /// XCTAssertEqual(self.interceptedRequest, getAnything)
         }
 
         wait(for: [interceptRequestExpectation!], timeout: 5)

@@ -166,9 +166,6 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
 
     static var allTests : [(String, (FetcherDelegateTests) -> () throws -> Void)] {
         return [
-            ("testWillNotSkipRequestWithForceSend", testWillNotSkipRequestWithForceSend),
-            ("testWillNotSkipRequestWithDifferentBody", testWillNotSkipRequestWithDifferentBody),
-            ("testWillSkipRequest", testWillSkipRequest),
             ("testWillSendRequest", testWillSendRequest),
             ("testWillReceiveResult", testWillReceiveResult),
             ("testInterceptRequest", testInterceptRequest),
@@ -197,12 +194,6 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
 
     // MARK: Tests
 
-    private var requestForTestingBody = URLRequest.post(url: "https://httpbin.org/post")
-
-    private let requestForTestingWillSkip = URLRequest.post(url: "https://httpbin.org/post")
-    private var willSkipRequestExpectation: XCTestExpectation?
-    private var skippedRequest: URLRequest?
-
     private let requestForTestingWillSend = URLRequest.get(url: "https://httpbin.org/get")
     private var willSendRequestExpectation: XCTestExpectation?
     private var sentRequest: URLRequest?
@@ -218,52 +209,6 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     private let requestForTestingInterceptResult = URLRequest.delete(url: "https://httpbin.org/delete")
     private var interceptResultExpectation: XCTestExpectation?
     private var interceptedResult: URLRequest?
-    
-    func testWillNotSkipRequestWithForceSend() {
-        willSkipRequestExpectation = expectation(description: "Will Not Skip Request")
-        willSkipRequestExpectation?.assertForOverFulfill = false
-        
-        for i in 1...5 {
-            fetcher.forceSend(requestForTestingWillSkip) { [weak self] (result) in
-                XCTAssertNil(self?.skippedRequest, "Should be nil.")
-                if i == 5 {
-                    self?.willSkipRequestExpectation?.fulfill()
-                }
-            }
-        }
-        
-        wait(for: [willSkipRequestExpectation!], timeout: 5)
-    }
-
-    func testWillNotSkipRequestWithDifferentBody() {
-        willSkipRequestExpectation = expectation(description: "Will Not Skip Request")
-        willSkipRequestExpectation?.assertForOverFulfill = false
-
-        for i in 1...5 {
-            requestForTestingBody.httpBody = try? Data(jsonWith: ["id": "\(i)"])
-            fetcher.send(requestForTestingBody) { [weak self] (result) in
-                XCTAssertNil(self?.skippedRequest, "Should be nil.")
-                if i == 5 {
-                    self?.willSkipRequestExpectation?.fulfill()
-                }
-            }
-        }
-
-        wait(for: [willSkipRequestExpectation!], timeout: 5)
-    }
-
-    func testWillSkipRequest() {
-        willSkipRequestExpectation = expectation(description: "Will Skip Request")
-        willSkipRequestExpectation?.assertForOverFulfill = false
-
-        for _ in 1...5 {
-            fetcher.send(requestForTestingWillSkip) { (result) in
-                XCTAssertEqual(self.requestForTestingWillSkip, self.skippedRequest)
-            }
-        }
-
-        wait(for: [willSkipRequestExpectation!], timeout: 5)
-    }
 
     func testWillSendRequest() {
         willSendRequestExpectation = expectation(description: "Will Send Request")
@@ -342,13 +287,6 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     }
 
     // MARK: FetcherDelegate
-
-    func willSkipRequest(_ request: URLRequest, sender: Fetcher) {
-        if request == requestForTestingWillSkip {
-            skippedRequest = request
-            willSkipRequestExpectation?.fulfill()
-        }
-    }
 
     func willSendRequest(_ request: URLRequest, sender: Fetcher) {
         if request == requestForTestingWillSend {

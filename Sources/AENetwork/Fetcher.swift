@@ -9,7 +9,6 @@ import Foundation
 // MARK: - FetcherDelegate
 
 public protocol FetcherDelegate: class {
-    func willSkipRequest(_ request: URLRequest, sender: Fetcher)
     func willSendRequest(_ request: URLRequest, sender: Fetcher)
     func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher)
     
@@ -19,7 +18,6 @@ public protocol FetcherDelegate: class {
 }
 
 public extension FetcherDelegate {
-    func willSkipRequest(_ request: URLRequest, sender: Fetcher) {}
     func willSendRequest(_ request: URLRequest, sender: Fetcher) {}
     func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {}
 
@@ -27,7 +25,7 @@ public extension FetcherDelegate {
         return request
     }
     func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher,
-                                completion: @escaping Fetcher.Callback) {
+                         completion: @escaping Fetcher.Callback) {
         completion(result)
     }
 }
@@ -66,23 +64,6 @@ open class Fetcher {
     private let session: URLSession
     private let queue = DispatchQueue(label: "AENetwork.Fetcher.Queue")
 
-    private var callbacks: [[URLRequest : Callback]] {
-        get {
-            return callbacksQueue.sync {
-                callbacksStorage
-            }
-        }
-        set {
-            callbacksQueue.sync { [weak self] in
-                self?.callbacksStorage = newValue
-            }
-        }
-    }
-    private let callbacksQueue = DispatchQueue(
-        label: "AENetwork.Callbacks.Queue"
-    )
-    private var callbacksStorage = [[URLRequest : Callback]]()
-
     // MARK: Init
     
     public init(session: URLSession = .shared) {
@@ -93,59 +74,21 @@ open class Fetcher {
     
     public func send(_ request: URLRequest, completion: @escaping Callback) {
         queue.async { [unowned self] in
-            self.handleRequest(request, addToQueue: true, completion: completion)
-        }
-    }
-
-    public func forceSend(_ request: URLRequest, completion: @escaping Callback) {
-        queue.async { [unowned self] in
-            self.handleRequest(request, addToQueue: false, completion: completion)
+            self.handleRequest(request, completion: completion)
         }
     }
     
     // MARK: Helpers
     
-    private func handleRequest(_ request: URLRequest,
-                               addToQueue: Bool,
-                               completion: @escaping Callback) {
+    private func handleRequest(_ request: URLRequest, completion: @escaping Callback) {
         do {
             let finalRequest = try interceptedRequest(for: request)
-            if addToQueue {
-                queueRequest(finalRequest, completion: completion)
-            } else {
-                performRequest(finalRequest, completion: completion)
-            }
+            performRequest(finalRequest, completion: completion)
         } catch {
             dispatchResult(.failure(error), completion: completion)
         }
     }
-    
-    private func queueRequest(_ request: URLRequest, completion: @escaping Callback) {
-        let callbacksContainRequest = callbacks
-            .contains(where: { request.isEqual(to: $0.keys.first) })
 
-        guard !callbacksContainRequest else {
-            callbacks.append([request : completion])
-            delegate?.willSkipRequest(request, sender: self)
-            return
-        }
-
-        callbacks.append([request : completion])
-        performRequest(request) { [unowned self] (result) in
-            self.performAllCallbacks(for: request, with: result)
-        }
-    }
-    
-    private func performRequest(_ request: URLRequest, completion: @escaping Callback) {
-        delegate?.willSendRequest(request, sender: self)
-        resumeDataTask(with: request) { [unowned self] (result) in
-            self.interceptedResult(result) { [unowned self] (finalResult) in
-                self.delegate?.willReceiveResult(finalResult, sender: self)
-                self.dispatchResult(finalResult, completion: completion)
-            }
-        }
-    }
-    
     private func interceptedRequest(for request: URLRequest) throws -> URLRequest {
         do {
             let modifiedRequest = try delegate?.interceptRequest(request, sender: self)
@@ -156,29 +99,13 @@ open class Fetcher {
         }
     }
     
-    private func interceptedResult(_ result: ResponseResult, completion: @escaping Callback) {
-        if let delegate = delegate {
-            delegate.interceptResult(result, sender: self, completion: completion)
-        } else {
-            return completion(result)
-        }
-    }
-    
-    private func performAllCallbacks(for request: URLRequest, with result: ResponseResult) {
-        let filtered = callbacks
-            .filter({ request.isEqual(to: $0.keys.first) })
-            .compactMap({ $0.values.first })
-        self.callbacks.removeAll(
-            where: { request.isEqual(to: $0.keys.first) }
-        )
-        filtered.forEach { [unowned self] (completion) in
-            self.dispatchResult(result, completion: completion)
-        }
-    }
-    
-    private func dispatchResult(_ result: ResponseResult, completion: @escaping Callback) {
-        DispatchQueue.main.async {
-            completion(result)
+    private func performRequest(_ request: URLRequest, completion: @escaping Callback) {
+        delegate?.willSendRequest(request, sender: self)
+        resumeDataTask(with: request) { [unowned self] (result) in
+            self.interceptedResult(result) { [unowned self] (finalResult) in
+                self.delegate?.willReceiveResult(finalResult, sender: self)
+                self.dispatchResult(finalResult, completion: completion)
+            }
         }
     }
     
@@ -194,6 +121,20 @@ open class Fetcher {
                 )
             }
         }.resume()
+    }
+
+    private func interceptedResult(_ result: ResponseResult, completion: @escaping Callback) {
+        if let delegate = delegate {
+            delegate.interceptResult(result, sender: self, completion: completion)
+        } else {
+            return completion(result)
+        }
+    }
+
+    private func dispatchResult(_ result: ResponseResult, completion: @escaping Callback) {
+        DispatchQueue.main.async {
+            completion(result)
+        }
     }
     
     private func handleValidResponse(_ response: HTTPURLResponse, with data: Data,
@@ -258,7 +199,7 @@ extension Fetcher.Error: LocalizedError {
 
 extension Fetcher.Error: CustomNSError {
     public static var errorDomain: String {
-        return "net.tadija.AENetwork/Fetcher.Error"
+        return "AENetwork.Fetcher.Error"
     }
     public var errorCode: Int {
         switch self {

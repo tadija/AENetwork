@@ -15,7 +15,8 @@ class URLRequestTests: XCTestCase {
             ("testPost", testPost),
             ("testPut", testPut),
             ("testPatch", testPatch),
-            ("testDelete", testDelete)
+            ("testDelete", testDelete),
+            ("testEqualityWithBody", testEqualityWithBody)
         ]
     }
 
@@ -53,6 +54,24 @@ class URLRequestTests: XCTestCase {
         let body = try? Data(jsonWith: params)
         let request = URLRequest.delete(url: "https://httpbin.org/delete", headers: headers, body: body)
         validateRequest(request, method: "DELETE", parametersType: .body)
+    }
+
+    func testEqualityWithBody() {
+        let r1 = URLRequest.post(
+            url: "https://httpbin.org/post",
+            headers: ["h1": "v1"],
+            body: try? Data(jsonWith: ["id": "1"])
+        )
+        let r2 = URLRequest.post(
+            url: "https://httpbin.org/post",
+            headers: ["h1": "v1"],
+            body: try? Data(jsonWith: ["id": "2"])
+        )
+        /// - Note: default Equatable implementation doesn't take `httpBody` into account
+        XCTAssertEqual(r1, r2)
+
+        /// - Note: so we need a custom `isEqual` helper for that
+        XCTAssertFalse(r1.isEqual(to: r2))
     }
 
     // MARK: Helpers

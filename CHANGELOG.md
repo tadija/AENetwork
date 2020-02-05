@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.8.6
+
+- Fix bug with `Equatable` behavior of `URLRequest` (it doesn't take `httpBody` into account)
+- Potential crash fix
+
 ## Version 0.8.5
 
 - Add CURRENT_PROJECT_VERSION

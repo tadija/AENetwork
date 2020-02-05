@@ -110,3 +110,11 @@ public extension URLRequest {
         """
     }
 }
+
+// MARK: - Custom Equatable
+
+public extension URLRequest {
+    func isEqual(to request: URLRequest?) -> Bool {
+        self == request && self.httpBody == request?.httpBody
+    }
+}

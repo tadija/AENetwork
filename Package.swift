@@ -13,7 +13,8 @@ let package = Package(
     products: [
         .library(
             name: "AENetwork",
-            targets: ["AENetwork"])
+            targets: ["AENetwork"]
+        )
     ],
     targets: [
         .target(

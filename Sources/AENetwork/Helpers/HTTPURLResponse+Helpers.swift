@@ -10,8 +10,9 @@ import Foundation
 
 public extension HTTPURLResponse {
     func headerValue(forKey key: String) -> Any? {
-        let foundKey: String = allHeaderFields.keys.first {
-            "\($0)".caseInsensitiveCompare(key) == .orderedSame
+        let foundKey: String = allHeaderFields.keys
+            .first {
+                "\($0)".caseInsensitiveCompare(key) == .orderedSame
             } as? String ?? key
         return allHeaderFields[foundKey]
     }
@@ -26,7 +27,7 @@ public extension HTTPURLResponse {
         return "\(code) \(status)"
     }
     var fullDescription: String {
-        let headers = "\(allHeaderFields as? [String : Any] ?? [String : String]())"
+        let headers = "\(allHeaderFields as? [String: Any] ?? [String: String]())"
         return """
         - Response: \(shortDescription)
         - Headers: \(headers)

@@ -11,32 +11,32 @@ import Foundation
 open class Network {
 
     // MARK: Singleton
-    
+
     public static let shared = Network()
-    
+
     // MARK: Properties
-    
+
     public let reachability: Reachability
     public let fetcher: Fetcher
-    
+
     // MARK: Init
-    
+
     public init(reachability: Reachability = Reachability(),
                 fetcher: Fetcher = Fetcher()) {
         self.reachability = reachability
         self.fetcher = fetcher
     }
-    
+
 }
 
 // MARK: - Facade
 
 public extension Network {
     static var isOnline: Bool {
-        return shared.reachability.state.isOnline
+        shared.reachability.state.isOnline
     }
     static var isOffline: Bool {
-        return !isOnline
+        !isOnline
     }
 }
 

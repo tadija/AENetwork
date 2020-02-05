@@ -52,7 +52,7 @@ extension Downloadable {
 
 extension URL: Downloadable {
     public var downloadURL: URL? {
-        return self
+        self
     }
 }
 
@@ -105,13 +105,11 @@ open class Downloader: NSObject {
     // MARK: API / Helpers
 
     public func task(with url: URL) -> URLSessionDownloadTask? {
-        let task = tasks.filter({ $0.originalRequest?.url == url }).first
-        return task
+        tasks.first(where: { $0.originalRequest?.url == url })
     }
 
     public func item(with url: URL) -> Downloadable? {
-        let item = items.filter({ $0.downloadURL == url }).first
-        return item
+        items.first(where: { $0.downloadURL == url })
     }
 
     public func replaceItem(at index: Int, with item: Downloadable) {
@@ -138,26 +136,23 @@ open class Downloader: NSObject {
             task.cancel()
             let stoppedItem = item(with: task)
             performCleanup(for: task)
-            
+
             delegate?.didStopDownloadTask(task, sender: self)
             stoppedItem?.didStopDownloadTask(task, sender: self)
         }
     }
 
     fileprivate func performCleanup(for task: URLSessionTask) {
-        if let taskIndex = tasks.firstIndex(where:
-            { $0.originalRequest?.url == task.originalRequest?.url }) {
+        if let taskIndex = tasks.firstIndex(where: { $0.originalRequest?.url == task.originalRequest?.url }) {
             tasks.remove(at: taskIndex)
         }
-        if let itemIndex = items.firstIndex(where:
-            { $0.downloadURL == task.originalRequest?.url }) {
+        if let itemIndex = items.firstIndex(where: { $0.downloadURL == task.originalRequest?.url }) {
             items.remove(at: itemIndex)
         }
     }
 
     fileprivate func item(with task: URLSessionTask) -> Downloadable? {
-        let item = items.filter({ $0.downloadURL == task.originalRequest?.url }).first
-        return item
+        items.first(where: { $0.downloadURL == task.originalRequest?.url })
     }
 
 }

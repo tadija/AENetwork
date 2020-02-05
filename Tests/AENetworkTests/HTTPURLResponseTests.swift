@@ -9,8 +9,8 @@ import XCTest
 
 class HTTPURLResponseTests: XCTestCase {
 
-    static var allTests : [(String, (HTTPURLResponseTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (HTTPURLResponseTests) -> () throws -> Void)] {
+        [
             ("testCaseInsensitiveSearchOfHeaders", testCaseInsensitiveSearchOfHeaders),
             ("testShortDescription", testShortDescription)
         ]
@@ -20,8 +20,8 @@ class HTTPURLResponseTests: XCTestCase {
 
     func testCaseInsensitiveSearchOfHeaders() {
         let headers = [
-            "x-custom-header" : "x-custom-value",
-            "X-Another-Header" : "X-Another-Value"
+            "x-custom-header": "x-custom-value",
+            "X-Another-Header": "X-Another-Value"
         ]
         let response = HTTPURLResponse(url: "https://tadija.net", statusCode: 200,
                                        httpVersion: nil, headerFields: headers)!

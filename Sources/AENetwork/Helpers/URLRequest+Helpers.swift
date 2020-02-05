@@ -16,12 +16,14 @@ public extension URLRequest {
 
     init(url: URL,
          method: Method,
-         headers: [String : String]? = nil,
-         urlParameters: [String : Any]? = nil,
+         headers: [String: String]? = nil,
+         urlParameters: [String: Any]? = nil,
          body: Data? = nil)
     {
-        if let urlParameters = urlParameters,
-            let urlWithParameters = url.addingParameters(urlParameters) {
+        if
+            let urlParameters = urlParameters,
+            let urlWithParameters = url.addingParameters(urlParameters)
+        {
             self.init(url: urlWithParameters)
         } else {
             self.init(url: url)
@@ -34,9 +36,9 @@ public extension URLRequest {
     }
 
     static func get(url: URL,
-                    headers: [String : String]? = nil,
-                    urlParameters: [String : Any]? = nil) -> URLRequest {
-        return URLRequest(
+                    headers: [String: String]? = nil,
+                    urlParameters: [String: Any]? = nil) -> URLRequest {
+        URLRequest(
             url: url,
             method: .get,
             headers: headers,
@@ -45,9 +47,9 @@ public extension URLRequest {
     }
 
     static func post(url: URL,
-                     headers: [String : String]? = nil,
+                     headers: [String: String]? = nil,
                      body: Data? = nil) -> URLRequest {
-        return URLRequest(
+        URLRequest(
             url: url,
             method: .post,
             headers: headers,
@@ -56,9 +58,9 @@ public extension URLRequest {
     }
 
     static func put(url: URL,
-                    headers: [String : String]? = nil,
+                    headers: [String: String]? = nil,
                     body: Data? = nil) -> URLRequest {
-        return URLRequest(
+        URLRequest(
             url: url,
             method: .put,
             headers: headers,
@@ -67,9 +69,9 @@ public extension URLRequest {
     }
 
     static func patch(url: URL,
-                      headers: [String : String]? = nil,
+                      headers: [String: String]? = nil,
                       body: Data? = nil) -> URLRequest {
-        return URLRequest(
+        URLRequest(
             url: url,
             method: .patch,
             headers: headers,
@@ -78,9 +80,9 @@ public extension URLRequest {
     }
 
     static func delete(url: URL,
-                       headers: [String : String]? = nil,
+                       headers: [String: String]? = nil,
                        body: Data? = nil) -> URLRequest {
-        return URLRequest(
+        URLRequest(
             url: url,
             method: .delete,
             headers: headers,

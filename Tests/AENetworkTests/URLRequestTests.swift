@@ -9,8 +9,8 @@ import XCTest
 
 class URLRequestTests: XCTestCase {
 
-    static var allTests : [(String, (URLRequestTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (URLRequestTests) -> () throws -> Void)] {
+        [
             ("testGet", testGet),
             ("testPost", testPost),
             ("testPut", testPut),
@@ -22,8 +22,8 @@ class URLRequestTests: XCTestCase {
 
     // MARK: Properties
 
-    let headers = ["Content-Type" : "application/json"]
-    let params = ["foo" : "bar"]
+    let headers = ["Content-Type": "application/json"]
+    let params = ["foo": "bar"]
 
     // MARK: Tests
 

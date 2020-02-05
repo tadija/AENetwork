@@ -17,8 +17,8 @@ public protocol APIClient {
 public protocol APIRequest {
     var method: URLRequest.Method { get }
     var path: String { get }
-    var headers: [String : String]? { get }
-    var parameters: [String : Any]? { get }
+    var headers: [String: String]? { get }
+    var parameters: [String: Any]? { get }
     var body: Data? { get }
     var cachePolicy: URLRequest.CachePolicy? { get }
 
@@ -43,7 +43,7 @@ public extension APIClient {
     func urlRequest(for apiRequest: APIRequest) -> URLRequest {
         let url = baseURL.appendingPathComponent(apiRequest.path)
         var request: URLRequest
-        
+
         switch apiRequest.method {
         case .get:
             request = URLRequest.get(
@@ -76,11 +76,11 @@ public extension APIClient {
                 body: apiRequest.body
             )
         }
-        
+
         if let cachePolicy = apiRequest.cachePolicy {
             request.cachePolicy = cachePolicy
         }
-        
+
         return request
     }
 
@@ -97,39 +97,39 @@ public extension APIClient {
 }
 
 public extension APIRequest {
-    var headers: [String : String]? {
-        return nil
+    var headers: [String: String]? {
+        nil
     }
-    var parameters: [String : Any]? {
-        return nil
+    var parameters: [String: Any]? {
+        nil
     }
     var body: Data? {
         guard
             let parameters = parameters,
             let json = try? Data(jsonWith: parameters) else {
-            return nil
+                return nil
         }
         return json
     }
     var cachePolicy: URLRequest.CachePolicy? {
-        return nil
+        nil
     }
 }
 
 public extension APIRequest {
     var useMockResponse: Bool {
-        return false
+        false
     }
     var mockData: Data? {
-        return nil
+        nil
     }
     var mockResponse: APIResponse? {
-        guard useMockResponse,
-            let mockData = mockData else {
+        guard useMockResponse, let mockData = mockData
+            else {
                 return nil
         }
         return Fetcher.Response(
-            request: URLRequest(url: URL.mock),
+            request: URLRequest(url: .mock),
             response: HTTPURLResponse(),
             data: mockData
         )
@@ -138,25 +138,25 @@ public extension APIRequest {
 
 public extension APIResponse {
     var statusCode: Int {
-        return response.statusCode
+        response.statusCode
     }
-    var headers: [AnyHashable : Any] {
-        return response.allHeaderFields
+    var headers: [AnyHashable: Any] {
+        response.allHeaderFields
     }
 
-    func toDictionary() throws -> [String : Any] {
-        return try data.jsonDictionary()
+    func toDictionary() throws -> [String: Any] {
+        try data.jsonDictionary()
     }
     func toArray() throws -> [Any] {
-        return try data.jsonArray()
+        try data.jsonArray()
     }
 }
 
 public extension APIResponse {
     var shortDescription: String {
-        return "Request: \(request.shortDescription) | Response: \(response.shortDescription)"
+        "Request: \(request.shortDescription) | Response: \(response.shortDescription)"
     }
     var fullDescription: String {
-        return "\(request.fullDescription)\n\(response.fullDescription)"
+        "\(request.fullDescription)\n\(response.fullDescription)"
     }
 }

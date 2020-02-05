@@ -9,13 +9,12 @@ import XCTest
 
 class DownloaderTests: XCTestCase {
 
-    static var allTests : [(String, (DownloaderTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (DownloaderTests) -> () throws -> Void)] {
+        [
             ("testStartAndStopDownload", testStartAndStopDownload),
             ("testDownloadFinished", testDownloadFinished),
             ("testDownloadFailed", testDownloadFailed),
-            ("testReplaceItem", testReplaceItem),
-//            ("testCleanup", testCleanup)
+            ("testReplaceItem", testReplaceItem)
         ]
     }
 
@@ -62,6 +61,8 @@ class DownloaderTests: XCTestCase {
     // MARK: Setup
 
     override func setUp() {
+        super.setUp()
+
         downloader.delegate = self
     }
 
@@ -138,33 +139,6 @@ class DownloaderTests: XCTestCase {
         XCTAssertNotNil(downloader.item(with: url2), "Should be able to find item with url.")
         XCTAssertEqual(downloader.items.count, 1, "Should have 1 download item.")
     }
-
-    /// - TODO: Check why is this test failing in Xcode 10, but it passes in Xcode 9.4.1?
-    /// Previously, it was also passing when `swift test` was executed from command line, but not anymore...
-    /*
-    func testCleanup() {
-        class ClassUnderTest: Downloader {
-            var deinitCalled: (() -> Void)?
-            deinit { deinitCalled?() }
-        }
-
-        let deinitExpectation = expectation(description: "Deinit Called")
-
-        var instance: ClassUnderTest? = ClassUnderTest(configuration: .default)
-        instance?.deinitCalled = {
-            deinitExpectation.fulfill()
-        }
-
-        DispatchQueue.global(qos: .background).async {
-            /// - Note: In order for `Downloader` instance to be released `cleanup` must be called.
-            /// That's because its `URLSession` has a strong reference to it as its delegate.
-            instance?.cleanup()
-            instance = nil
-        }
-
-        wait(for: [deinitExpectation], timeout: 5)
-    }
-    */
 
 }
 

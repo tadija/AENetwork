@@ -11,7 +11,7 @@ import Foundation
 public protocol FetcherDelegate: class {
     func willSendRequest(_ request: URLRequest, sender: Fetcher)
     func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher)
-    
+
     func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest
     func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher,
                          completion: @escaping Fetcher.Callback)
@@ -22,7 +22,7 @@ public extension FetcherDelegate {
     func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {}
 
     func interceptRequest(_ request: URLRequest, sender: Fetcher) throws -> URLRequest {
-        return request
+        request
     }
     func interceptResult(_ result: Fetcher.ResponseResult, sender: Fetcher,
                          completion: @escaping Fetcher.Callback) {
@@ -33,7 +33,7 @@ public extension FetcherDelegate {
 // MARK: - Fetcher
 
 open class Fetcher {
-    
+
     // MARK: Types
 
     public struct Response: APIResponse {
@@ -56,30 +56,30 @@ open class Fetcher {
 
     public typealias ResponseResult = Result<Response, Swift.Error>
     public typealias Callback = ResultCallback<Response>
-    
+
     // MARK: Properties
-    
+
     public weak var delegate: FetcherDelegate?
 
     private let session: URLSession
     private let queue = DispatchQueue(label: "AENetwork.Fetcher.Queue")
 
     // MARK: Init
-    
+
     public init(session: URLSession = .shared) {
         self.session = session
     }
-    
+
     // MARK: API
-    
+
     public func send(_ request: URLRequest, completion: @escaping Callback) {
         queue.async { [unowned self] in
             self.handleRequest(request, completion: completion)
         }
     }
-    
+
     // MARK: Helpers
-    
+
     private func handleRequest(_ request: URLRequest, completion: @escaping Callback) {
         do {
             let finalRequest = try interceptedRequest(for: request)
@@ -98,7 +98,7 @@ open class Fetcher {
             throw error
         }
     }
-    
+
     private func performRequest(_ request: URLRequest, completion: @escaping Callback) {
         delegate?.willSendRequest(request, sender: self)
         resumeDataTask(with: request) { [unowned self] (result) in
@@ -108,7 +108,7 @@ open class Fetcher {
             }
         }
     }
-    
+
     private func resumeDataTask(with request: URLRequest, completion: @escaping Callback) {
         session.dataTask(with: request) { [weak self] data, response, error in
             if error == nil, let response = response as? HTTPURLResponse, let data = data {
@@ -136,7 +136,7 @@ open class Fetcher {
             completion(result)
         }
     }
-    
+
     private func handleValidResponse(_ response: HTTPURLResponse, with data: Data,
                                      from request: URLRequest,
                                      completion: @escaping Callback) {
@@ -148,7 +148,7 @@ open class Fetcher {
             completion(.failure(Error.invalidResponse(response)))
         }
     }
-    
+
     private func handleErrorResponse(_ error: Swift.Error, from request: URLRequest,
                                      completion: @escaping Callback) {
         let nsError = error as NSError
@@ -161,7 +161,7 @@ open class Fetcher {
             completion(.failure(error))
         }
     }
-    
+
 }
 
 // MARK: - Extensions
@@ -178,8 +178,8 @@ public extension Fetcher {
 }
 
 extension Fetcher.Response: Equatable {
-    public static func ==(lhs: Fetcher.Response, rhs: Fetcher.Response) -> Bool {
-        return lhs.request == rhs.request
+    public static func == (lhs: Fetcher.Response, rhs: Fetcher.Response) -> Bool {
+        lhs.request == rhs.request
             && lhs.response == rhs.response
             && lhs.data == rhs.data
     }
@@ -199,7 +199,7 @@ extension Fetcher.Error: LocalizedError {
 
 extension Fetcher.Error: CustomNSError {
     public static var errorDomain: String {
-        return "AENetwork.Fetcher.Error"
+        "AENetwork.Fetcher.Error"
     }
     public var errorCode: Int {
         switch self {
@@ -207,10 +207,10 @@ extension Fetcher.Error: CustomNSError {
             return response.statusCode
         }
     }
-    public var errorUserInfo: [String : Any] {
+    public var errorUserInfo: [String: Any] {
         switch self {
         case .invalidResponse(let response):
-            return ["response" : response]
+            return ["response": response]
         }
     }
 }

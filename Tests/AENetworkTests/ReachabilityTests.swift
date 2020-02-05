@@ -10,15 +10,15 @@ import XCTest
 
 class ReachabilityTests: XCTestCase {
 
-    static var allTests : [(String, (ReachabilityTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (ReachabilityTests) -> () throws -> Void)] {
+        [
             ("testStateDidChangeIsCalled", testStateDidChangeIsCalled),
             ("testReachabilityFlags", testReachabilityFlags)
         ]
     }
-    
+
     // MARK: Tests
-    
+
     func testStateDidChangeIsCalled() {
         let closureExpectation = expectation(description: "`stateDidChange` should be called.")
         let reachability = Reachability()
@@ -29,10 +29,10 @@ class ReachabilityTests: XCTestCase {
         reachability.startMonitoring()
         waitForExpectations(timeout: 3, handler: nil)
     }
-    
+
     func testReachabilityFlags() {
         let reachability = Reachability(hostname: "https://httpbin.org")
         XCTAssertEqual(reachability.state.isOnline, reachability.flags.contains(.reachable), "State is wrong.")
     }
-    
+
 }

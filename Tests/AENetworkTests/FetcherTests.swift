@@ -9,8 +9,8 @@ import XCTest
 
 class FetcherTests: XCTestCase {
 
-    static var allTests : [(String, (FetcherTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (FetcherTests) -> () throws -> Void)] {
+        [
             ("testFetchDictionary", testFetchDictionary),
             ("testFetchDictionaryError", testFetchDictionaryError),
             ("testFetchArray", testFetchArray),
@@ -21,9 +21,9 @@ class FetcherTests: XCTestCase {
             ("testFetcherResponseResultToAPIResponseResult", testFetcherResponseResultToAPIResponseResult)
         ]
     }
-    
+
     // MARK: Properties
-    
+
     let fetcher = Fetcher()
 
     // MARK: Tests
@@ -51,13 +51,13 @@ class FetcherTests: XCTestCase {
     func testResponseError() {
         fetchDictionary(from: "https://httpbin.org/test", shouldFail: true)
     }
-    
+
     func testInvalidResponseError() {
         let requestExpectation = expectation(description: "Request")
         let request = URLRequest(url: "https://httpbin.org/status/404")
         request.send { (result) in
             switch result {
-            case .success(_):
+            case .success:
                 XCTAssert(false, "Should fail.")
             case .failure(let error):
                 switch error {
@@ -76,14 +76,14 @@ class FetcherTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
     }
-    
+
     func testFetcherResponseResultToAPIResponseResult() {
         let url: URL = "https://httpbin.org/get"
         let request = URLRequest(url: url)
         let httpResponse = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!
-        let data = try! Data(jsonWith: ["foo" : "bar"])
+        let data = (try? Data(jsonWith: ["foo": "bar"])) ?? Data()
         let fetchResponse = Fetcher.Response(request: request, response: httpResponse, data: data)
-        
+
         let resultSuccess: Fetcher.ResponseResult = .success(fetchResponse)
         let apiResponseResultSuccess = Fetcher.apiResponseResult(from: resultSuccess)
         switch apiResponseResultSuccess {
@@ -91,14 +91,14 @@ class FetcherTests: XCTestCase {
             XCTAssertEqual(response.request, request)
             XCTAssertEqual(response.response, httpResponse)
             XCTAssertEqual(response.data, data)
-        case .failure(_):
+        case .failure:
             XCTAssert(false)
         }
-        
+
         let resultFailure: Fetcher.ResponseResult = .failure(Fetcher.Error.invalidResponse(fetchResponse))
         let apiResponseResultFailure = Fetcher.apiResponseResult(from: resultFailure)
         switch apiResponseResultFailure {
-        case .success(_):
+        case .success:
             XCTAssert(false)
         case .failure(let error):
             switch error {
@@ -127,10 +127,10 @@ class FetcherTests: XCTestCase {
                 } else {
                     XCTAssertNotNil(try? response.toDictionary(), "Should not be nil.")
                 }
-            case .failure(_):
+            case .failure:
                 XCTAssert(shouldFail)
             }
-            
+
             requestExpectation.fulfill()
         }
 
@@ -150,7 +150,7 @@ class FetcherTests: XCTestCase {
                 } else {
                     XCTAssertNotNil(try? response.toArray(), "Should not be nil.")
                 }
-            case .failure(_):
+            case .failure:
                 XCTAssert(shouldFail)
             }
 
@@ -164,16 +164,13 @@ class FetcherTests: XCTestCase {
 
 class FetcherDelegateTests: XCTestCase, FetcherDelegate {
 
-    static var allTests : [(String, (FetcherDelegateTests) -> () throws -> Void)] {
-        return [
-            ("testWillNotSkipRequestWithForceSend", testWillNotSkipRequestWithForceSend),
-            ("testWillNotSkipRequestWithDifferentBody", testWillNotSkipRequestWithDifferentBody),
-            ("testWillSkipRequest", testWillSkipRequest),
+    static var allTests: [(String, (FetcherDelegateTests) -> () throws -> Void)] {
+        [
             ("testWillSendRequest", testWillSendRequest),
             ("testWillReceiveResult", testWillReceiveResult),
             ("testInterceptRequest", testInterceptRequest),
             ("testInterceptResult", testInterceptResult),
-            ("testDefaultFetcherDelegate", testDefaultFetcherDelegate),
+            ("testDefaultFetcherDelegate", testDefaultFetcherDelegate)
         ]
     }
 
@@ -191,17 +188,13 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     // MARK: Lifecycle
 
     override func setUp() {
+        super.setUp()
+
         fetcher.delegate = self
         fetcherForTestingDefaultFetcherDelegate.delegate = defaultFetcherDelegate
     }
 
     // MARK: Tests
-
-    private var requestForTestingBody = URLRequest.post(url: "https://httpbin.org/post")
-
-    private let requestForTestingWillSkip = URLRequest.post(url: "https://httpbin.org/post")
-    private var willSkipRequestExpectation: XCTestExpectation?
-    private var skippedRequest: URLRequest?
 
     private let requestForTestingWillSend = URLRequest.get(url: "https://httpbin.org/get")
     private var willSendRequestExpectation: XCTestExpectation?
@@ -218,58 +211,12 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
     private let requestForTestingInterceptResult = URLRequest.delete(url: "https://httpbin.org/delete")
     private var interceptResultExpectation: XCTestExpectation?
     private var interceptedResult: URLRequest?
-    
-    func testWillNotSkipRequestWithForceSend() {
-        willSkipRequestExpectation = expectation(description: "Will Not Skip Request")
-        willSkipRequestExpectation?.assertForOverFulfill = false
-        
-        for i in 1...5 {
-            fetcher.forceSend(requestForTestingWillSkip) { [weak self] (result) in
-                XCTAssertNil(self?.skippedRequest, "Should be nil.")
-                if i == 5 {
-                    self?.willSkipRequestExpectation?.fulfill()
-                }
-            }
-        }
-        
-        wait(for: [willSkipRequestExpectation!], timeout: 5)
-    }
-
-    func testWillNotSkipRequestWithDifferentBody() {
-        willSkipRequestExpectation = expectation(description: "Will Not Skip Request")
-        willSkipRequestExpectation?.assertForOverFulfill = false
-
-        for i in 1...5 {
-            requestForTestingBody.httpBody = try? Data(jsonWith: ["id": "\(i)"])
-            fetcher.send(requestForTestingBody) { [weak self] (result) in
-                XCTAssertNil(self?.skippedRequest, "Should be nil.")
-                if i == 5 {
-                    self?.willSkipRequestExpectation?.fulfill()
-                }
-            }
-        }
-
-        wait(for: [willSkipRequestExpectation!], timeout: 5)
-    }
-
-    func testWillSkipRequest() {
-        willSkipRequestExpectation = expectation(description: "Will Skip Request")
-        willSkipRequestExpectation?.assertForOverFulfill = false
-
-        for _ in 1...5 {
-            fetcher.send(requestForTestingWillSkip) { (result) in
-                XCTAssertEqual(self.requestForTestingWillSkip, self.skippedRequest)
-            }
-        }
-
-        wait(for: [willSkipRequestExpectation!], timeout: 5)
-    }
 
     func testWillSendRequest() {
         willSendRequestExpectation = expectation(description: "Will Send Request")
         willSendRequestExpectation?.assertForOverFulfill = false
 
-        fetcher.send(requestForTestingWillSend) { (result) in
+        fetcher.send(requestForTestingWillSend) { (_) in
             XCTAssertEqual(self.requestForTestingWillSend, self.sentRequest)
         }
 
@@ -283,7 +230,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
             switch result {
             case .success(let response):
                 XCTAssertEqual(response, self.receivedResult)
-            case .failure(_):
+            case .failure:
                 XCTAssert(true, "Should not fail.")
             }
         }
@@ -311,7 +258,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
         fetcher.send(requestForTestingInterceptResult) { (result) in
             let message = "Should throw `CustomError.interceptedResult` here."
             switch result {
-            case .success(_):
+            case .success:
                 XCTAssert(false, message)
             case .failure(let error):
                 XCTAssert(true, message)
@@ -329,26 +276,19 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
         for _ in 1...5 {
             fetcherForTestingDefaultFetcherDelegate.send(requestForTestingWillSend) { (result) in
                 switch result {
-                case .success(_):
+                case .success:
                     XCTAssert(true, "It should just work.")
-                case .failure(_):
+                case .failure:
                     XCTAssert(false, "It should not fail.")
                 }
                 defaultFetcherDelegateExpectation.fulfill()
             }
         }
-        
+
         wait(for: [defaultFetcherDelegateExpectation], timeout: 5)
     }
 
     // MARK: FetcherDelegate
-
-    func willSkipRequest(_ request: URLRequest, sender: Fetcher) {
-        if request == requestForTestingWillSkip {
-            skippedRequest = request
-            willSkipRequestExpectation?.fulfill()
-        }
-    }
 
     func willSendRequest(_ request: URLRequest, sender: Fetcher) {
         if request == requestForTestingWillSend {
@@ -359,7 +299,7 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
             XCTAssert(false, "Should be intercepted and replaced with `requestForTestingWillSend`.")
         }
     }
-    
+
     func willReceiveResult(_ result: Fetcher.ResponseResult, sender: Fetcher) {
         if let result = try? result.get(), result.request == requestForTestingWillReceiveResult {
             receivedResult = result
@@ -397,8 +337,8 @@ class FetcherDelegateTests: XCTestCase, FetcherDelegate {
 @available(iOS 10.0, macOS 10.12, *)
 class FetcherQueueTests: XCTestCase {
 
-    static var allTests : [(String, (FetcherQueueTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (FetcherQueueTests) -> () throws -> Void)] {
+        [
             ("testCompletionInMainQueue", testCompletionInMainQueue)
         ]
     }
@@ -412,7 +352,7 @@ class FetcherQueueTests: XCTestCase {
     func testCompletionInMainQueue() {
         let request = URLRequest.get(url: "https://httpbin.org/get")
         let queueExpectation = expectation(description: "Main")
-        fetcher.send(request) { (result) in
+        fetcher.send(request) { (_) in
             dispatchPrecondition(condition: .onQueue(.main))
             queueExpectation.fulfill()
         }

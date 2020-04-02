@@ -9,8 +9,8 @@ import XCTest
 
 class URLTests: XCTestCase {
 
-    static var allTests : [(String, (URLTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (URLTests) -> () throws -> Void)] {
+        [
             ("testReadingParameters", testReadingParameters),
             ("testParameterTypes", testParameterTypes),
             ("testURLInit", testURLInit)
@@ -22,12 +22,12 @@ class URLTests: XCTestCase {
     var url: URL = "https://httpbin.org"
 
     let parameters = [
-        "foo" : "bar",
-        "bar" : "foo",
-        "true" : "true",
-        "false" : "false",
-        "int" : "21",
-        "double" : "8.0"
+        "foo": "bar",
+        "bar": "foo",
+        "true": "true",
+        "false": "false",
+        "int": "21",
+        "double": "8.0"
     ]
 
     // MARK: Tests
@@ -52,14 +52,15 @@ class URLTests: XCTestCase {
                        "Should be able to parse String parameter.")
         XCTAssertEqual(urlWithParameters?.stringValue(forParameterKey: "undefined"), "",
                        "Should be able to return empty String.")
-        
+
         XCTAssertEqual(urlWithParameters?.boolValue(forParameterKey: "true"), true,
                        "Should be able to parse Bool parameter.")
         XCTAssertEqual(urlWithParameters?.boolValue(forParameterKey: "false"), false,
                        "Should be able to parse Bool parameter.")
         XCTAssertEqual(urlWithParameters?.intValue(forParameterKey: "int"), 21,
                        "Should be able to parse Int parameter.")
-        XCTAssertEqual(urlWithParameters?.doubleValue(forParameterKey: "double"), 8.0, "Should be able to parse Double parameter.")
+        XCTAssertEqual(urlWithParameters?.doubleValue(forParameterKey: "double"), 8.0,
+                       "Should be able to parse Double parameter.")
 
         XCTAssertNil(urlWithParameters?.boolValue(forParameterKey: "foo"),
                      "Should not be able to parse Bool parameter.")

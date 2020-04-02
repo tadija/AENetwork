@@ -9,24 +9,24 @@ import XCTest
 
 class NetworkTests: XCTestCase {
 
-    static var allTests : [(String, (NetworkTests) -> () throws -> Void)] {
-        return [
+    static var allTests: [(String, (NetworkTests) -> () throws -> Void)] {
+        [
             ("testFacadeForReachability", testFacadeForReachability),
             ("testFacadeForFetchingRequest", testFacadeForFetchingRequest)
         ]
     }
-    
+
     // MARK: Properties
-    
+
     let network = Network()
 
     // MARK: Tests
-    
+
     func testFacadeForReachability() {
         XCTAssertEqual(Network.isOnline, network.reachability.state.isOnline, "Should be equal.")
         XCTAssertEqual(Network.isOffline, !network.reachability.state.isOnline, "Should be opposite.")
     }
-    
+
     func testFacadeForFetchingRequest() {
         let requestExpectation = expectation(description: "Request")
         let request = URLRequest(url: "https://httpbin.org/get")

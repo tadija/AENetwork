@@ -7,11 +7,11 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 let anything: URL = "https://httpbin.org/anything"
 
 /// - Note: Easily add parameters to `URL`
-let url = anything.addingParameters(["foo" : "bar"])!
+let url = anything.addingParameters(["foo": "bar"])!
 
 /// - Note: Factory methods on `URLRequest`
-let body = try? Data(jsonWith: ["easy" : true])
-let request = URLRequest.post(url: url, headers: ["hello" : "world"], body: body)
+let body = try? Data(jsonWith: ["easy": true])
+let request = URLRequest.post(url: url, headers: ["hello": "world"], body: body)
 
 /// - Note: Convenient sending of request
 request.send { result in
@@ -37,7 +37,7 @@ network.reachability.stopMonitoring()
 network.fetcher.send(request) { (result) in
     do {
         let response = try result.get()
-        print("Headers: \(response.headers as? [String : Any])\n")
+        print("Headers: \(response.headers as? [String: Any])\n")
     } catch {
         print(error)
     }
@@ -58,10 +58,10 @@ extension Backend {
 }
 extension Backend.API {
     struct Anything: APIRequest {
-        var method: URLRequest.Method { return .get }
-        var path: String { return "anything" }
-        var headers: [String : String]? { return ["X-Hello" : "X-World"] }
-        var parameters: [String : Any]? { return ["easy" : true] }
+        var method: URLRequest.Method { .get }
+        var path: String { "anything" }
+        var headers: [String: String]? { ["X-Hello": "X-World"] }
+        var parameters: [String: Any]? { ["easy": true] }
     }
 }
 

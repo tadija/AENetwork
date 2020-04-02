@@ -18,12 +18,12 @@ public extension Data {
         )
     }
 
-    func jsonDictionary() throws -> [String : Any] {
-        return try serializeJSON()
+    func jsonDictionary() throws -> [String: Any] {
+        try serializeJSON()
     }
 
     func jsonArray() throws -> [Any] {
-        return try serializeJSON()
+        try serializeJSON()
     }
 
     // MARK: Helpers

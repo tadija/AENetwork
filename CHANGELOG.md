@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.9.0
+
+- Remove feature to queue duplicated requests and send them to server only once
+- Fix lint warnings and minor refactoring
+
 ## Version 0.8.6
 
 - Fix bug with `Equatable` behavior of `URLRequest` (it doesn't take `httpBody` into account)

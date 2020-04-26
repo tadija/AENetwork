@@ -69,6 +69,7 @@ public extension APIClient {
             request = URLRequest.delete(
                 url: url,
                 headers: apiRequest.headers,
+                urlParameters: apiRequest.parameters,
                 body: apiRequest.body
             )
         }

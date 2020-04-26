@@ -81,11 +81,13 @@ public extension URLRequest {
 
     static func delete(url: URL,
                        headers: [String: String]? = nil,
+                       urlParameters: [String: Any]? = nil,
                        body: Data? = nil) -> URLRequest {
         URLRequest(
             url: url,
             method: .delete,
             headers: headers,
+            urlParameters: urlParameters,
             body: body
         )
     }

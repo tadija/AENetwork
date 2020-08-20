@@ -9,8 +9,6 @@ import Foundation
 // MARK: - ExpressibleByStringLiteral
 
 extension URL: ExpressibleByStringLiteral {
-    public static let mock = URL(string: "https://mock.url")!
-
     public init(stringLiteral value: StaticString) {
         self = "\(value)".url
     }
@@ -18,13 +16,15 @@ extension URL: ExpressibleByStringLiteral {
 
 public extension String {
     var url: URL {
-        URL(string: self) ?? .mock
+        URL(string: self) ?? .ae
     }
 }
 
 // MARK: - Parameters
 
 public extension URL {
+
+    static let ae = URL(string: "ae.network")!
 
     // MARK: Read
 

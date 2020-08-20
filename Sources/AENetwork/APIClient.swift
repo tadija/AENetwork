@@ -130,7 +130,7 @@ public extension APIRequest {
                 return nil
         }
         return Fetcher.Response(
-            request: URLRequest(url: .mock),
+            request: URLRequest(url: .ae),
             response: HTTPURLResponse(),
             data: mockData
         )

@@ -9,7 +9,7 @@ import Foundation
 // MARK: - Downloadable
 
 public protocol Downloadable: DownloadStatusDelegate {
-    var downloadURL: URL? { get }
+    var downloadRequest: URLRequest? { get }
 }
 
 public protocol DownloadStatusDelegate {
@@ -51,7 +51,13 @@ extension Downloadable {
 }
 
 extension URL: Downloadable {
-    public var downloadURL: URL? {
+    public var downloadRequest: URLRequest? {
+        URLRequest(url: self)
+    }
+}
+
+extension URLRequest: Downloadable {
+    public var downloadRequest: URLRequest? {
         self
     }
 }
@@ -90,26 +96,34 @@ open class Downloader: NSObject {
     // MARK: API / Download
 
     public func start(with item: Downloadable) {
-        if let url = item.downloadURL {
+        if let url = item.downloadRequest {
             items.append(item)
             start(with: url)
         }
     }
 
     public func stop(for item: Downloadable) {
-        if let url = item.downloadURL {
+        if let url = item.downloadRequest {
             stop(for: url)
         }
     }
 
     // MARK: API / Helpers
 
+    public func task(with request: URLRequest) -> URLSessionDownloadTask? {
+        tasks.first(where: { $0.originalRequest == request })
+    }
+
     public func task(with url: URL) -> URLSessionDownloadTask? {
-        tasks.first(where: { $0.originalRequest?.url == url })
+        tasks.first(where: { $0.originalRequest == url.downloadRequest })
+    }
+
+    public func item(with request: URLRequest) -> Downloadable? {
+        items.first(where: { $0.downloadRequest == request })
     }
 
     public func item(with url: URL) -> Downloadable? {
-        items.first(where: { $0.downloadURL == url })
+        items.first(where: { $0.downloadRequest == url.downloadRequest })
     }
 
     public func replaceItem(at index: Int, with item: Downloadable) {
@@ -120,19 +134,19 @@ open class Downloader: NSObject {
 
     // MARK: Helpers
 
-    private func start(with url: URL) {
-        let task = session.downloadTask(with: url)
+    private func start(with request: URLRequest) {
+        let task = session.downloadTask(with: request)
         tasks.append(task)
         task.resume()
 
         delegate?.didStartDownloadTask(task, sender: self)
-        if let item = item(with: url) {
+        if let item = item(with: request) {
             item.didStartDownloadTask(task, sender: self)
         }
     }
 
-    private func stop(for url: URL) {
-        if let task = task(with: url) {
+    private func stop(for request: URLRequest) {
+        if let task = task(with: request) {
             task.cancel()
             let stoppedItem = item(with: task)
             performCleanup(for: task)
@@ -146,13 +160,13 @@ open class Downloader: NSObject {
         if let taskIndex = tasks.firstIndex(where: { $0.originalRequest?.url == task.originalRequest?.url }) {
             tasks.remove(at: taskIndex)
         }
-        if let itemIndex = items.firstIndex(where: { $0.downloadURL == task.originalRequest?.url }) {
+        if let itemIndex = items.firstIndex(where: { $0.downloadRequest == task.originalRequest }) {
             items.remove(at: itemIndex)
         }
     }
 
     fileprivate func item(with task: URLSessionTask) -> Downloadable? {
-        items.first(where: { $0.downloadURL == task.originalRequest?.url })
+        items.first(where: { $0.downloadRequest == task.originalRequest })
     }
 
 }
